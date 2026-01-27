@@ -202,6 +202,7 @@ const App = () => {
       ? `${import.meta.env.BASE_URL}menu-zh.jpeg`
       : `${import.meta.env.BASE_URL}menu-en.jpeg`;
   const placeholderSrc = `${import.meta.env.BASE_URL}placeholder.svg`;
+  const baseUrl = import.meta.env.BASE_URL || '/';
 
   return (
     <div className="min-h-screen bg-[#0F0F0F] font-sans selection:bg-[#FFE85F] selection:text-black overflow-x-hidden flex flex-col">
@@ -290,8 +291,8 @@ const App = () => {
           <div className="mb-16 flex flex-col md:flex-row items-end justify-between gap-6">
             <div>
               <h2 className="text-4xl md:text-6xl font-black text-white mb-2 tracking-tight font-bubble">
-                {currentText.grid_title_prefix}{' '}
-                <span className="text-[#FB458D]">{currentText.grid_title_suffix}</span>
+                <span className="block">{currentText.grid_title_prefix}</span>
+                <span className="block text-[#FB458D]">{currentText.grid_title_suffix}</span>
               </h2>
               <div className="h-2 w-32 bg-[#FFE85F]" />
             </div>
@@ -502,7 +503,10 @@ const App = () => {
             </div>
 
             <div className="flex flex-row flex-wrap gap-x-6 gap-y-2 font-bold">
-              <a href="#" className="hover:text-[#FFE85F] transition-colors">
+              <a
+                href={`${baseUrl}privacy.html`}
+                className="hover:text-[#FFE85F] transition-colors"
+              >
                 {currentText.footer_privacy}
               </a>
               <a href="#" className="hover:text-[#FB458D] transition-colors">

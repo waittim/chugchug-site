@@ -24,3 +24,8 @@ This repo includes a GitHub Actions workflow that builds and deploys to GitHub P
 
 1. Push to `main`
 2. GitHub repo → **Settings** → **Pages** → **Build and deployment** → select **GitHub Actions**
+
+## Pages
+
+- Home: `index.html`
+- Privacy Policy: `privacy.html`
