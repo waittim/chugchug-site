@@ -212,6 +212,20 @@ const App = () => {
             font-family: "SF Pro Rounded", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             font-weight: 800;
           }
+
+          @keyframes slow-sway {
+            0% { transform: rotate(-2deg); }
+            50% { transform: rotate(2deg); }
+            100% { transform: rotate(-2deg); }
+          }
+
+          @media (prefers-reduced-motion: no-preference) {
+            .slow-sway {
+              animation: slow-sway 6s ease-in-out infinite;
+              will-change: transform;
+              transform-origin: center;
+            }
+          }
         `}
       </style>
 
@@ -365,25 +379,12 @@ const App = () => {
 		                      [backface-visibility:hidden]
 		                      [transform:rotateY(180deg)]
 		                    `}
-		                  >
-		                    <div className="flex flex-col min-h-0">
-		                      <div className="flex items-start justify-between gap-4">
-		                        <div>
-		                          <p className="text-neutral-400 text-xs font-bold font-bubble">
-		                            {currentText.rules_title}
-		                          </p>
-	                          <h4 className="text-white text-xl md:text-2xl font-black font-bubble leading-tight">
-	                            {game.name[lang]}
-	                          </h4>
-	                        </div>
-	                        <div className="shrink-0 bg-white/10 p-2 rounded-xl">
-		                          {React.cloneElement(game.icon, { className: 'text-white' })}
-		                        </div>
-		                      </div>
-		                      <p className="mt-4 flex-1 min-h-0 text-neutral-200 text-sm md:text-base font-bold whitespace-pre-line font-bubble leading-relaxed overflow-auto">
-		                        {game.rules?.[lang] ?? ''}
-		                      </p>
-		                    </div>
+			                  >
+			                    <div className="flex flex-col min-h-0">
+			                      <p className="flex-1 min-h-0 text-neutral-200 text-sm md:text-base font-bold whitespace-pre-line font-bubble leading-relaxed overflow-auto">
+			                        {game.rules?.[lang] ?? ''}
+			                      </p>
+			                    </div>
 
 		                    <div className="text-neutral-400 text-xs font-bold font-bubble">
 		                      {currentText.card_hint_back}
@@ -397,17 +398,18 @@ const App = () => {
         </div>
       </section>
 
-      <section
-        id="download"
-        className="min-h-screen flex flex-col items-center relative px-4 bg-[#0F0F0F]"
-      >
-        <div className="z-10 text-center max-w-3xl flex-grow flex flex-col justify-center py-32">
-          <div className="mb-8 transform hover:rotate-3 transition-transform duration-300 cursor-default">
-            <span className="font-bubble text-[4rem] md:text-[6rem] leading-[0.9] text-white inline-block">
-              {lang === 'zh' ? (
-                <div className="flex gap-0 whitespace-nowrap tracking-tighter justify-center">
-                  <div style={{ textShadow: '6px 6px 0px #FFE85F' }}>
-                    {currentText.hero_title_1}
+	      <section
+	        id="download"
+	        className="min-h-screen flex flex-col relative bg-[#0F0F0F]"
+	      >
+	        <div className="z-10 mx-auto w-full max-w-3xl px-4 text-center flex-grow flex flex-col justify-center py-32">
+	          <div className="mb-8 transition-transform duration-300 cursor-default">
+	            <div className="slow-sway inline-block">
+	              <span className="font-bubble text-[4rem] md:text-[6rem] leading-[0.9] text-white inline-block">
+	              {lang === 'zh' ? (
+	                <div className="flex gap-0 whitespace-nowrap tracking-tighter justify-center">
+	                  <div style={{ textShadow: '6px 6px 0px #FFE85F' }}>
+	                    {currentText.hero_title_1}
                   </div>
                   <div style={{ textShadow: '6px 6px 0px #FFE85F' }}>
                     {currentText.hero_title_2}
@@ -421,13 +423,14 @@ const App = () => {
                   <div style={{ textShadow: '6px 6px 0px #FFE85F' }}>
                     {currentText.hero_title_1}
                   </div>
-                  <div style={{ textShadow: '6px 6px 0px #FFE85F' }}>
-                    {currentText.hero_title_2}
-                  </div>
-                </div>
-              )}
-            </span>
-          </div>
+	                  <div style={{ textShadow: '6px 6px 0px #FFE85F' }}>
+	                    {currentText.hero_title_2}
+	                  </div>
+	                </div>
+	              )}
+	              </span>
+	            </div>
+	          </div>
 
           <h2 className="text-2xl md:text-4xl font-bold text-white mb-10 leading-relaxed font-bubble">
             {currentText.cta_main}
@@ -473,15 +476,15 @@ const App = () => {
               <div className="w-3 h-3 rounded-full bg-[#22D3EE]" />
               <span>{currentText.feat_drunk}</span>
             </div>
-          </div>
-        </div>
+	          </div>
+	        </div>
 
-        <footer className="w-full -mx-4 md:-mx-12 py-8 border-t border-neutral-900 bg-[#0F0F0F] z-20 shrink-0">
-          <div className="w-full px-4 md:px-12 flex flex-row flex-wrap justify-between items-center text-neutral-600 text-xs md:text-sm gap-x-8 gap-y-4">
-            <div className="font-bold font-bubble">{currentText.footer_rights}</div>
+	        <footer className="w-full py-8 border-t border-neutral-900 bg-[#0F0F0F] shrink-0">
+	          <div className="w-full px-4 md:px-6 flex flex-row flex-wrap justify-between items-center text-neutral-600 text-xs md:text-sm gap-x-8 gap-y-4">
+	            <div className="font-bold font-bubble">{currentText.footer_rights}</div>
 
-            <div className="bg-neutral-800 rounded-full p-1 flex items-center border border-neutral-700">
-              <button
+	            <div className="bg-neutral-800 rounded-full p-1 flex items-center border border-neutral-700">
+	              <button
                 onClick={() => setLang('zh')}
                 className={`px-3 py-1 rounded-full text-xs font-bold transition-all duration-200 ${
                   lang === 'zh'
