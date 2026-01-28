@@ -398,9 +398,9 @@ const App = () => {
 
       <section
         id="download"
-        className="min-h-screen flex flex-col items-center relative px-4 bg-[#0F0F0F] py-32"
+        className="min-h-screen flex flex-col items-center relative px-4 bg-[#0F0F0F]"
       >
-        <div className="z-10 text-center max-w-3xl flex-grow flex flex-col justify-center">
+        <div className="z-10 text-center max-w-3xl flex-grow flex flex-col justify-center py-32">
           <div className="mb-8 transform hover:rotate-3 transition-transform duration-300 cursor-default">
             <span className="font-bubble text-[4rem] md:text-[6rem] leading-[0.9] text-white inline-block">
               {lang === 'zh' ? (
@@ -475,7 +475,7 @@ const App = () => {
           </div>
         </div>
 
-        <footer className="w-full py-8 border-t border-neutral-900 bg-[#0F0F0F] z-20 mt-32">
+        <footer className="w-full py-8 border-t border-neutral-900 bg-[#0F0F0F] z-20 shrink-0">
           <div className="container mx-auto px-6 flex flex-row flex-wrap justify-between items-center text-neutral-600 text-xs md:text-sm gap-x-8 gap-y-4">
             <div className="font-bold font-bubble">{currentText.footer_rights}</div>
 
