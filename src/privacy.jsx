@@ -1,5 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import ReactDOM from 'react-dom/client';
+import './nunito-font.css';
 import './index.css';
 
 const PrivacyPage = () => {

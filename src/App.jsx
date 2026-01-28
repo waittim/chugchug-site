@@ -217,11 +217,6 @@ const App = () => {
     <div className="min-h-screen bg-[#0F0F0F] font-sans selection:bg-[#FFE85F] selection:text-black overflow-x-hidden flex flex-col">
       <style>
         {`
-          .font-bubble {
-            font-family: "SF Pro Rounded", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            font-weight: 800;
-          }
-
           @keyframes slow-sway {
             0% { transform: rotate(-2deg); }
             50% { transform: rotate(2deg); }
@@ -259,22 +254,22 @@ const App = () => {
             <h1 className="font-bubble text-[5rem] md:text-[10rem] leading-[0.9] text-white select-none transition-transform hover:scale-105 duration-300 cursor-default">
               {lang === 'zh' ? (
                 <div className="flex gap-0 whitespace-nowrap tracking-tighter">
-                  <div style={{ textShadow: '10px 10px 0px #FFE85F' }}>
+                  <div className="title-shadow">
                     {currentText.hero_title_1}
                   </div>
-                  <div style={{ textShadow: '10px 10px 0px #FFE85F' }}>
+                  <div className="title-shadow">
                     {currentText.hero_title_2}
                   </div>
-                  <div style={{ textShadow: '10px 10px 0px #FFE85F' }}>
+                  <div className="title-shadow">
                     {currentText.hero_title_3}
                   </div>
                 </div>
               ) : (
                 <div className="flex flex-col tracking-tight -space-y-1 md:-space-y-3">
-                  <div style={{ textShadow: '10px 10px 0px #FFE85F' }}>
+                  <div className="title-shadow">
                     {currentText.hero_title_1}
                   </div>
-                  <div style={{ textShadow: '10px 10px 0px #FFE85F' }}>
+                  <div className="title-shadow">
                     {currentText.hero_title_2}
                   </div>
                 </div>
@@ -414,22 +409,22 @@ const App = () => {
 	              <span className="font-bubble text-[4rem] md:text-[6rem] leading-[0.9] text-white inline-block">
 	              {lang === 'zh' ? (
 	                <div className="flex gap-0 whitespace-nowrap tracking-tighter justify-center">
-	                  <div style={{ textShadow: '6px 6px 0px #FFE85F' }}>
+	                  <div className="title-shadow">
 	                    {currentText.hero_title_1}
-                  </div>
-                  <div style={{ textShadow: '6px 6px 0px #FFE85F' }}>
-                    {currentText.hero_title_2}
-                  </div>
-                  <div style={{ textShadow: '6px 6px 0px #FFE85F' }}>
-                    {currentText.hero_title_3}
-                  </div>
-                </div>
-              ) : (
-                <div className="flex flex-col tracking-tight -space-y-1 md:-space-y-2 items-center">
-                  <div style={{ textShadow: '6px 6px 0px #FFE85F' }}>
-                    {currentText.hero_title_1}
-                  </div>
-	                  <div style={{ textShadow: '6px 6px 0px #FFE85F' }}>
+	                  </div>
+	                  <div className="title-shadow">
+	                    {currentText.hero_title_2}
+	                  </div>
+	                  <div className="title-shadow">
+	                    {currentText.hero_title_3}
+	                  </div>
+	                </div>
+	              ) : (
+	                <div className="flex flex-col tracking-tight -space-y-1 md:-space-y-2 items-center">
+	                  <div className="title-shadow">
+	                    {currentText.hero_title_1}
+	                  </div>
+	                  <div className="title-shadow">
 	                    {currentText.hero_title_2}
 	                  </div>
 	                </div>
