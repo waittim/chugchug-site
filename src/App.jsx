@@ -223,7 +223,7 @@ const App = () => {
         <div className="flex items-center gap-3">
           <a
             href="#download"
-            className="hidden md:block bg-white text-black px-5 py-2 rounded-full font-bold border-2 border-transparent hover:scale-105 transition-transform duration-200"
+            className="bg-white text-black px-4 py-2 md:px-5 rounded-full text-sm md:text-base font-bold border-2 border-transparent hover:scale-105 transition-transform duration-200"
           >
             {currentText.nav_download}
           </a>
@@ -303,34 +303,34 @@ const App = () => {
 
 	          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
 	            {games.map((game) => (
-	              <div
-	                key={game.id}
-	                role="button"
-	                tabIndex={0}
-	                aria-label={`${game.name[lang]} - ${currentText.rules_title}`}
-	                onClick={() => toggleFlip(game.id)}
-	                onKeyDown={(e) => {
-	                  if (e.key === 'Enter' || e.key === ' ') {
-	                    e.preventDefault();
-	                    toggleFlip(game.id);
-	                  }
-	                }}
-	                className="group cursor-pointer select-none outline-none [perspective:1000px] focus-visible:ring-2 focus-visible:ring-[#FFE85F] focus-visible:ring-offset-2 focus-visible:ring-offset-[#121212]"
-	              >
-	                <div
-	                  className={`
-	                    relative aspect-square rounded-3xl
-	                    transition-transform duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)]
-	                    hover:-translate-y-2 hover:shadow-[8px_8px_0px_#000]
-	                    active:translate-y-0 active:shadow-none
-	                    [transform-style:preserve-3d]
-	                    ${flippedIds.has(game.id) ? '[transform:rotateY(180deg)]' : ''}
-	                  `}
-	                >
-	                  <div
-	                    className={`
-	                      absolute inset-0
-	                      ${game.color}
+		              <div
+		                key={game.id}
+		                role="button"
+		                tabIndex={0}
+		                aria-label={`${game.name[lang]} - ${currentText.rules_title}`}
+		                aria-pressed={flippedIds.has(game.id)}
+		                onClick={() => toggleFlip(game.id)}
+		                onKeyDown={(e) => {
+		                  if (e.key === 'Enter' || e.key === ' ') {
+		                    e.preventDefault();
+		                    toggleFlip(game.id);
+		                  }
+		                }}
+		                className="group cursor-pointer select-none outline-none [perspective:1000px] focus-visible:ring-2 focus-visible:ring-[#FFE85F] focus-visible:ring-offset-2 focus-visible:ring-offset-[#121212]"
+		              >
+		                <div className="relative aspect-square rounded-3xl transition-transform duration-200 hover:-translate-y-2 hover:shadow-[8px_8px_0px_#000] active:translate-y-0 active:shadow-none">
+		                  <div
+		                    className={`
+		                      absolute inset-0
+		                      transition-transform duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)]
+		                      [transform-style:preserve-3d]
+		                      ${flippedIds.has(game.id) ? '[transform:rotateY(180deg)]' : ''}
+		                    `}
+		                  >
+		                  <div
+		                    className={`
+		                      absolute inset-0
+		                      ${game.color}
 	                      rounded-3xl border-4 border-black
 	                      flex flex-col justify-between p-4 md:p-6
 	                      [backface-visibility:hidden]
@@ -385,14 +385,15 @@ const App = () => {
 		                      </p>
 		                    </div>
 
-	                    <div className="text-neutral-400 text-xs font-bold font-bubble">
-	                      {currentText.card_hint_back}
-	                    </div>
-	                  </div>
-	                </div>
-	              </div>
-	            ))}
-	          </div>
+		                    <div className="text-neutral-400 text-xs font-bold font-bubble">
+		                      {currentText.card_hint_back}
+		                    </div>
+		                  </div>
+		                  </div>
+		                </div>
+		              </div>
+		            ))}
+		          </div>
         </div>
       </section>
 
@@ -475,8 +476,8 @@ const App = () => {
           </div>
         </div>
 
-        <footer className="w-full py-8 border-t border-neutral-900 bg-[#0F0F0F] z-20 shrink-0">
-          <div className="container mx-auto px-6 flex flex-row flex-wrap justify-between items-center text-neutral-600 text-xs md:text-sm gap-x-8 gap-y-4">
+        <footer className="w-full -mx-4 md:-mx-12 py-8 border-t border-neutral-900 bg-[#0F0F0F] z-20 shrink-0">
+          <div className="w-full px-4 md:px-12 flex flex-row flex-wrap justify-between items-center text-neutral-600 text-xs md:text-sm gap-x-8 gap-y-4">
             <div className="font-bold font-bubble">{currentText.footer_rights}</div>
 
             <div className="bg-neutral-800 rounded-full p-1 flex items-center border border-neutral-700">

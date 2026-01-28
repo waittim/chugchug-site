@@ -215,12 +215,12 @@ const PrivacyPage = () => {
         </div>
       </main>
 
-	      <footer className="w-full py-8 border-t border-neutral-900 bg-[#0F0F0F]">
-	        <div className="container mx-auto px-6 flex flex-row flex-wrap justify-between items-center text-neutral-600 text-xs md:text-sm gap-x-8 gap-y-4">
-	          <div className="font-bold font-bubble">© 2026 CHUGCHUG APP</div>
-	          <div className="flex flex-row flex-wrap items-center gap-x-6 gap-y-3 font-bold">
-	            <a href={`${baseUrl}`} className="hover:text-[#FFE85F] transition-colors">
-	              {current.back}
+	      <footer className="w-screen relative left-1/2 -translate-x-1/2 py-8 border-t border-neutral-900 bg-[#0F0F0F]">
+		        <div className="w-full px-4 md:px-6 flex flex-row flex-wrap justify-between items-center text-neutral-600 text-xs md:text-sm gap-x-8 gap-y-4">
+		          <div className="font-bold font-bubble">© 2026 CHUGCHUG APP</div>
+		          <div className="flex flex-row flex-wrap items-center gap-x-6 gap-y-3 font-bold">
+		            <a href={`${baseUrl}`} className="hover:text-[#FFE85F] transition-colors">
+		              {current.back}
 	            </a>
 	            <div className="bg-neutral-800 rounded-full p-1 flex items-center border border-neutral-700">
 	              <button
