@@ -7,10 +7,19 @@ import {
   Fingerprint,
   Type,
   Search,
-  Smartphone,
   ArrowDown,
   AlertTriangle,
 } from 'lucide-react';
+
+const AppleLogo = ({ size = 36 }) => (
+  <span
+    aria-hidden="true"
+    className="inline-flex items-center justify-center leading-none select-none"
+    style={{ width: size, height: size, fontSize: size }}
+  >
+    {'\uf8ff'}
+  </span>
+);
 
 const App = () => {
   const [lang, setLang] = useState('zh'); // 'zh' or 'en'
@@ -386,12 +395,9 @@ const App = () => {
 			                      </p>
 			                    </div>
 
-		                    <div className="text-neutral-400 text-xs font-bold font-bubble">
-		                      {currentText.card_hint_back}
-		                    </div>
-		                  </div>
-		                  </div>
-		                </div>
+			                  </div>
+			                  </div>
+			                </div>
 		              </div>
 		            ))}
 		          </div>
@@ -458,7 +464,7 @@ const App = () => {
               href="#"
               aria-label={currentText.btn_download}
             >
-              <Smartphone size={36} strokeWidth={2.5} />
+              <AppleLogo size={36} />
               <span className="font-bubble">{currentText.btn_download}</span>
             </a>
           </div>
