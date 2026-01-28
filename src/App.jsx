@@ -229,7 +229,7 @@ const App = () => {
         `}
       </style>
 
-      <nav className="fixed top-0 w-full z-50 px-4 md:px-6 py-4 flex justify-between items-center mix-blend-difference text-white">
+      <nav className="fixed top-0 w-full z-50 px-4 md:px-6 py-4 flex justify-between items-center md:mix-blend-difference text-white">
         <div className="text-2xl font-black tracking-tighter font-bubble flex items-center gap-2">
           {lang === 'en' ? 'ChugChug' : '吨吨吨'}
         </div>
@@ -295,7 +295,7 @@ const App = () => {
           <div className="absolute bottom-0 left-0 w-full h-32 bg-gradient-to-t from-black/80 to-transparent pointer-events-none z-10" />
         </div>
 
-        <div className="animate-bounce absolute bottom-8 text-neutral-600">
+        <div className="motion-safe:animate-bounce absolute bottom-8 text-neutral-600">
           <ArrowDown size={32} />
         </div>
       </section>
@@ -442,7 +442,7 @@ const App = () => {
           </h2>
 
           <div className="relative inline-block">
-            <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[520px] h-[520px] bg-[#FB458D] rounded-full blur-[110px] opacity-15 animate-pulse pointer-events-none -z-10" />
+            <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[520px] h-[520px] bg-[#FB458D] rounded-full blur-[110px] opacity-15 motion-safe:animate-pulse pointer-events-none -z-10" />
             <a
               className="
                 group relative z-10 inline-flex items-center justify-center gap-4
