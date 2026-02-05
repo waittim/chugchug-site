@@ -21,8 +21,28 @@ const AppleLogo = ({ size = 36 }) => (
   </span>
 );
 
+const getInitialLang = () => {
+  if (typeof window !== 'undefined') {
+    const forced = window.__LANG__;
+    if (forced === 'zh' || forced === 'en') return forced;
+  }
+
+  if (typeof document !== 'undefined') {
+    const htmlLang = document.documentElement.lang?.toLowerCase() ?? '';
+    if (htmlLang.startsWith('zh')) return 'zh';
+    if (htmlLang.startsWith('en')) return 'en';
+  }
+
+  if (typeof navigator !== 'undefined') {
+    const navLang = navigator.language?.toLowerCase() ?? '';
+    if (navLang.startsWith('zh')) return 'zh';
+  }
+
+  return 'en';
+};
+
 const App = () => {
-  const [lang, setLang] = useState('zh'); // 'zh' or 'en'
+  const [lang] = useState(getInitialLang); // 'zh' or 'en'
   const [flippedIds, setFlippedIds] = useState(() => new Set());
 
   const toggleFlip = (id) => {
@@ -207,6 +227,10 @@ const App = () => {
   );
 
   const baseUrl = import.meta.env.BASE_URL || '/';
+  const enHomePath = baseUrl;
+  const zhHomePath = `${baseUrl}zh/`;
+  const privacyPath =
+    lang === 'zh' ? `${baseUrl}zh/privacy.html` : `${baseUrl}privacy.html`;
   const placeholderSrc = `${baseUrl}placeholder.svg`;
 
   const screenshotList = useMemo(() => {
@@ -582,33 +606,32 @@ const App = () => {
 	            <div className="font-bold font-bubble">{currentText.footer_rights}</div>
 
 	            <div className="bg-neutral-800 rounded-full p-1 flex items-center border border-neutral-700">
-	              <button
-                onClick={() => setLang('zh')}
-                className={`px-3 py-1 rounded-full text-xs font-bold transition-all duration-200 ${
-                  lang === 'zh'
-                    ? 'bg-[#FFE85F] text-black shadow-sm'
-                    : 'text-neutral-400 hover:text-white'
-                }`}
-              >
-                中
-              </button>
-              <button
-                onClick={() => setLang('en')}
-                className={`px-3 py-1 rounded-full text-xs font-bold transition-all duration-200 ${
-                  lang === 'en'
-                    ? 'bg-[#FFE85F] text-black shadow-sm'
-                    : 'text-neutral-400 hover:text-white'
-                }`}
-              >
-                EN
-              </button>
-            </div>
+	              <a
+	                href={zhHomePath}
+	                aria-current={lang === 'zh' ? 'page' : undefined}
+	                className={`px-3 py-1 rounded-full text-xs font-bold transition-all duration-200 ${
+	                  lang === 'zh'
+	                    ? 'bg-[#FFE85F] text-black shadow-sm'
+	                    : 'text-neutral-400 hover:text-white'
+	                }`}
+	              >
+	                中
+	              </a>
+	              <a
+	                href={enHomePath}
+	                aria-current={lang === 'en' ? 'page' : undefined}
+	                className={`px-3 py-1 rounded-full text-xs font-bold transition-all duration-200 ${
+	                  lang === 'en'
+	                    ? 'bg-[#FFE85F] text-black shadow-sm'
+	                    : 'text-neutral-400 hover:text-white'
+	                }`}
+	              >
+	                EN
+	              </a>
+	            </div>
 
             <div className="flex flex-row flex-wrap gap-x-6 gap-y-2 font-bold">
-              <a
-                href={`${baseUrl}privacy.html`}
-                className="hover:text-[#FFE85F] transition-colors"
-              >
+              <a href={privacyPath} className="hover:text-[#FFE85F] transition-colors">
                 {currentText.footer_privacy}
               </a>
               <a href="#" className="hover:text-[#FB458D] transition-colors">

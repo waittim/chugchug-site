@@ -33,6 +33,8 @@ export default defineConfig(() => ({
       input: {
         main: resolve(__dirname, 'index.html'),
         privacy: resolve(__dirname, 'privacy.html'),
+        zh: resolve(__dirname, 'zh/index.html'),
+        zhPrivacy: resolve(__dirname, 'zh/privacy.html'),
       },
     },
   },

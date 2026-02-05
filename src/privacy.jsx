@@ -1,13 +1,30 @@
 import React, { useMemo, useState } from 'react';
-import ReactDOM from 'react-dom/client';
+import { createRoot, hydrateRoot } from 'react-dom/client';
 import './nunito-font.css';
 import './index.css';
 
+const getInitialLang = () => {
+  if (typeof window !== 'undefined') {
+    const forced = window.__LANG__;
+    if (forced === 'zh' || forced === 'en') return forced;
+  }
+
+  if (typeof document !== 'undefined') {
+    const htmlLang = document.documentElement.lang?.toLowerCase() ?? '';
+    if (htmlLang.startsWith('zh')) return 'zh';
+    if (htmlLang.startsWith('en')) return 'en';
+  }
+
+  if (typeof navigator !== 'undefined') {
+    const navLang = navigator.language?.toLowerCase() ?? '';
+    if (navLang.startsWith('zh')) return 'zh';
+  }
+
+  return 'en';
+};
+
 const PrivacyPage = () => {
-  const [lang, setLang] = useState(() => {
-    if (typeof navigator === 'undefined') return 'zh';
-    return navigator.language?.toLowerCase().startsWith('zh') ? 'zh' : 'en';
-  });
+  const [lang] = useState(getInitialLang);
 
   const t = useMemo(
     () => ({
@@ -101,6 +118,9 @@ const PrivacyPage = () => {
 
   const current = t[lang];
   const baseUrl = import.meta.env.BASE_URL || '/';
+  const enHomePath = baseUrl;
+  const zhHomePath = `${baseUrl}zh/`;
+  const homePath = lang === 'zh' ? zhHomePath : enHomePath;
 
   return (
     <div className="min-h-screen bg-[#0F0F0F] font-sans selection:bg-[#FFE85F] selection:text-black overflow-x-hidden flex flex-col">
@@ -115,7 +135,7 @@ const PrivacyPage = () => {
 
       <nav className="fixed top-0 w-full z-50 px-4 md:px-6 py-4 flex justify-between items-center mix-blend-difference text-white">
         <a
-          href={`${baseUrl}`}
+          href={homePath}
           className="text-2xl font-black tracking-tighter font-bubble flex items-center gap-2"
           aria-label={current.back}
         >
@@ -124,7 +144,7 @@ const PrivacyPage = () => {
 
 	        <div className="flex items-center gap-3">
 	          <a
-	            href={`${baseUrl}`}
+	            href={homePath}
 	            className="hidden md:block bg-white text-black px-5 py-2 rounded-full font-bold border-2 border-transparent hover:scale-105 transition-transform duration-200"
 	          >
 	            {current.back}
@@ -220,12 +240,13 @@ const PrivacyPage = () => {
 		        <div className="w-full px-4 md:px-6 flex flex-row flex-wrap justify-between items-center text-neutral-600 text-xs md:text-sm gap-x-8 gap-y-4">
 		          <div className="font-bold font-bubble">© 2026 CHUGCHUG APP</div>
 		          <div className="flex flex-row flex-wrap items-center gap-x-6 gap-y-3 font-bold">
-		            <a href={`${baseUrl}`} className="hover:text-[#FFE85F] transition-colors">
+		            <a href={homePath} className="hover:text-[#FFE85F] transition-colors">
 		              {current.back}
 	            </a>
 	            <div className="bg-neutral-800 rounded-full p-1 flex items-center border border-neutral-700">
-	              <button
-	                onClick={() => setLang('zh')}
+	              <a
+	                href={zhHomePath}
+	                aria-current={lang === 'zh' ? 'page' : undefined}
 	                className={`px-3 py-1 rounded-full text-xs font-bold transition-all duration-200 ${
 	                  lang === 'zh'
 	                    ? 'bg-[#FFE85F] text-black shadow-sm'
@@ -233,9 +254,10 @@ const PrivacyPage = () => {
 	                }`}
 	              >
 	                中
-	              </button>
-	              <button
-	                onClick={() => setLang('en')}
+	              </a>
+	              <a
+	                href={enHomePath}
+	                aria-current={lang === 'en' ? 'page' : undefined}
 	                className={`px-3 py-1 rounded-full text-xs font-bold transition-all duration-200 ${
 	                  lang === 'en'
 	                    ? 'bg-[#FFE85F] text-black shadow-sm'
@@ -243,7 +265,7 @@ const PrivacyPage = () => {
 	                }`}
 	              >
 	                EN
-	              </button>
+	              </a>
 	            </div>
 	          </div>
 	        </div>
@@ -252,8 +274,19 @@ const PrivacyPage = () => {
   );
 };
 
-ReactDOM.createRoot(document.getElementById('root')).render(
-  <React.StrictMode>
-    <PrivacyPage />
-  </React.StrictMode>,
-);
+const container = document.getElementById('root');
+
+if (container?.hasChildNodes()) {
+  hydrateRoot(
+    container,
+    <React.StrictMode>
+      <PrivacyPage />
+    </React.StrictMode>,
+  );
+} else {
+  createRoot(container).render(
+    <React.StrictMode>
+      <PrivacyPage />
+    </React.StrictMode>,
+  );
+}
