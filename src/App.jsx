@@ -324,7 +324,7 @@ const App = () => {
               {screenshotList.map((shot) => (
                 <div key={`a-${shot.id}`} className="relative z-0 isolate shrink-0">
                   <div
-                    className={`relative z-10 w-[clamp(210px,32vw,280px)] aspect-[719/1500] bg-black rounded-[clamp(2.1rem,5.8vw,2.9rem)] border-[5px] border-neutral-800 overflow-hidden ring-1 ring-neutral-700 ${
+                    className={`relative z-10 w-[clamp(210px,32vw,280px)] aspect-[719/1500] bg-black rounded-[clamp(2.1rem,5.8vw,2.9rem)] border-[5px] border-black overflow-hidden ring-1 ring-neutral-700 ${
                       shot.isMenu
                         ? 'shadow-[0_0_32px_rgba(255,232,95,0.22)]'
                         : 'shadow-[0_0_24px_rgba(255,255,255,0.12)]'
@@ -361,7 +361,7 @@ const App = () => {
               {screenshotList.map((shot) => (
                 <div key={`b-${shot.id}`} className="relative z-0 isolate shrink-0">
                   <div
-                    className={`relative z-10 w-[clamp(210px,32vw,280px)] aspect-[719/1500] bg-black rounded-[clamp(2.1rem,5.8vw,2.9rem)] border-[5px] border-neutral-800 overflow-hidden ring-1 ring-neutral-700 ${
+                    className={`relative z-10 w-[clamp(210px,32vw,280px)] aspect-[719/1500] bg-black rounded-[clamp(2.1rem,5.8vw,2.9rem)] border-[5px] border-black overflow-hidden ring-1 ring-neutral-700 ${
                       shot.isMenu
                         ? 'shadow-[0_0_32px_rgba(255,232,95,0.22)]'
                         : 'shadow-[0_0_24px_rgba(255,255,255,0.12)]'
