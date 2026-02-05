@@ -20,7 +20,11 @@
       "/privacy.html?lang=en",
       "/privacy.html?lang=zh"
     ],
-    "skipThirdPartyRequests": true
+    "skipThirdPartyRequests": true,
+    "puppeteerArgs": [
+      "--no-sandbox",
+      "--disable-setuid-sandbox"
+    ]
   },
   "dependencies": {
     "lucide-react": "^0.542.0",
