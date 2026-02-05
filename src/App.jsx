@@ -206,12 +206,32 @@ const App = () => {
     [],
   );
 
-  const screenshotSrc =
-    lang === 'zh'
-      ? `${import.meta.env.BASE_URL}menu-zh.jpeg`
-      : `${import.meta.env.BASE_URL}menu-en.jpeg`;
-  const placeholderSrc = `${import.meta.env.BASE_URL}placeholder.svg`;
   const baseUrl = import.meta.env.BASE_URL || '/';
+  const placeholderSrc = `${baseUrl}placeholder.svg`;
+
+  const screenshotList = useMemo(() => {
+    const folder = `${baseUrl}screenshot/${lang === 'zh' ? 'zh' : 'en'}/`;
+    const menuFile = lang === 'zh' ? 'menu-zh.jpeg' : 'menu.jpeg';
+    const order = [
+      'dice.jpeg',
+      'poker.jpeg',
+      'sixone.jpeg',
+      'lucky.jpeg',
+      'truthordare.jpeg',
+      menuFile,
+      'kingsgame.jpeg',
+      'mostlikelyto.jpeg',
+      'headsupcategory.jpeg',
+      'undercover.jpeg',
+    ];
+
+    return order.map((file) => ({
+      id: file.replace('.jpeg', ''),
+      src: `${folder}${file}`,
+      isMenu: file === menuFile,
+    }));
+  }, [baseUrl, lang]);
+
 
   return (
     <div className="min-h-screen bg-[#0F0F0F] font-sans selection:bg-[#FFE85F] selection:text-black overflow-x-hidden flex flex-col">
@@ -223,11 +243,28 @@ const App = () => {
             100% { transform: rotate(-2deg); }
           }
 
+          @keyframes marquee {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+          }
+
           @media (prefers-reduced-motion: no-preference) {
             .slow-sway {
               animation: slow-sway 6s ease-in-out infinite;
               will-change: transform;
               transform-origin: center;
+            }
+
+            .marquee {
+              animation: marquee 40s linear infinite;
+              will-change: transform;
+            }
+          }
+
+          @media (prefers-reduced-motion: reduce) {
+            .marquee {
+              animation: none;
+              transform: translateX(0);
             }
           }
         `}
@@ -281,22 +318,82 @@ const App = () => {
           </p>
         </div>
 
-        <div className="relative w-full max-w-[340px] aspect-[1/2.1] bg-black rounded-[3rem] border-[10px] border-neutral-800 shadow-[0_0_80px_rgba(255,232,95,0.15)] overflow-hidden mb-12 ring-1 ring-neutral-700">
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-7 bg-black rounded-b-2xl z-20 border-b border-x border-neutral-800" />
-
-          <div className="w-full h-full bg-[#1A1A1A] relative group">
-            <img
-              src={screenshotSrc}
-              alt="ChugChug App Interface"
-              className="w-full h-full object-cover object-top opacity-90 transition-opacity duration-500 hover:opacity-100"
-              loading="lazy"
-              onError={(e) => {
-                e.currentTarget.src = placeholderSrc;
-              }}
-            />
+        <div className="relative w-full mb-12 overflow-x-hidden overflow-y-visible">
+          <div className="marquee flex w-max">
+            <div className="flex items-center gap-[clamp(18px,4vw,32px)] pr-[clamp(18px,4vw,32px)] py-[clamp(18px,5vw,36px)]">
+              {screenshotList.map((shot) => (
+                <div key={`a-${shot.id}`} className="relative z-0 isolate shrink-0">
+                  <div
+                    className={`relative z-10 w-[clamp(210px,32vw,280px)] aspect-[719/1500] bg-black rounded-[clamp(2.1rem,5.8vw,2.9rem)] border-[5px] border-neutral-800 overflow-hidden ring-1 ring-neutral-700 ${
+                      shot.isMenu
+                        ? 'shadow-[0_0_32px_rgba(255,232,95,0.22)]'
+                        : 'shadow-[0_0_24px_rgba(255,255,255,0.12)]'
+                    }`}
+                  >
+                    <div className="w-full h-full bg-[#1A1A1A] relative">
+                      <img
+                        src={shot.src}
+                        alt={
+                          shot.isMenu
+                            ? lang === 'zh'
+                              ? '主菜单截图'
+                              : 'Main menu screenshot'
+                            : lang === 'zh'
+                              ? '游戏截图'
+                              : 'Game screenshot'
+                        }
+                        className="w-full h-full object-cover object-top opacity-90 transition-opacity duration-500 hover:opacity-100"
+                        loading="lazy"
+                        onError={(e) => {
+                          e.currentTarget.src = placeholderSrc;
+                        }}
+                      />
+                    </div>
+                    <div className="absolute bottom-0 left-0 w-full h-24 bg-gradient-to-t from-black/80 to-transparent pointer-events-none z-10" />
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div
+              className="flex items-center gap-[clamp(18px,4vw,32px)] pr-[clamp(18px,4vw,32px)] py-[clamp(18px,5vw,36px)]"
+              aria-hidden="true"
+            >
+              {screenshotList.map((shot) => (
+                <div key={`b-${shot.id}`} className="relative z-0 isolate shrink-0">
+                  <div
+                    className={`relative z-10 w-[clamp(210px,32vw,280px)] aspect-[719/1500] bg-black rounded-[clamp(2.1rem,5.8vw,2.9rem)] border-[5px] border-neutral-800 overflow-hidden ring-1 ring-neutral-700 ${
+                      shot.isMenu
+                        ? 'shadow-[0_0_32px_rgba(255,232,95,0.22)]'
+                        : 'shadow-[0_0_24px_rgba(255,255,255,0.12)]'
+                    }`}
+                  >
+                    <div className="w-full h-full bg-[#1A1A1A] relative">
+                      <img
+                        src={shot.src}
+                        alt={
+                          shot.isMenu
+                            ? lang === 'zh'
+                              ? '主菜单截图'
+                              : 'Main menu screenshot'
+                            : lang === 'zh'
+                              ? '游戏截图'
+                              : 'Game screenshot'
+                        }
+                        className="w-full h-full object-cover object-top opacity-90 transition-opacity duration-500 hover:opacity-100"
+                        loading="lazy"
+                        onError={(e) => {
+                          e.currentTarget.src = placeholderSrc;
+                        }}
+                      />
+                    </div>
+                    <div className="absolute bottom-0 left-0 w-full h-24 bg-gradient-to-t from-black/80 to-transparent pointer-events-none z-10" />
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
-
-          <div className="absolute bottom-0 left-0 w-full h-32 bg-gradient-to-t from-black/80 to-transparent pointer-events-none z-10" />
+          <div className="pointer-events-none absolute inset-y-0 left-0 w-10 bg-gradient-to-r from-[#0F0F0F] to-transparent md:hidden" />
+          <div className="pointer-events-none absolute inset-y-0 right-0 w-10 bg-gradient-to-l from-[#0F0F0F] to-transparent md:hidden" />
         </div>
 
         <div className="motion-safe:animate-bounce absolute bottom-8 text-neutral-600">
@@ -456,7 +553,7 @@ const App = () => {
                 transition-all duration-200
                 active:translate-y-1 active:translate-x-1 active:shadow-[0px_0px_0px_#000]
               "
-              href="#"
+              href="https://apps.apple.com/us/app/chugchug-party-game/id6758532049"
               aria-label={currentText.btn_download}
             >
               <AppleLogo size={36} />

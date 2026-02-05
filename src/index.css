@@ -23,3 +23,12 @@ body {
 .title-shadow {
   text-shadow: 0.0625em 0.0625em 0 #ffe85f;
 }
+
+.no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
