@@ -29,6 +29,7 @@ export default defineConfig(() => ({
   base: getBase(),
   plugins: [react()],
   build: {
+    target: 'es2019',
     rollupOptions: {
       input: {
         main: resolve(__dirname, 'index.html'),
