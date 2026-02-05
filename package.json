@@ -15,10 +15,10 @@
   "reactSnap": {
     "source": "dist",
     "include": [
-      "/",
-      "/privacy.html",
-      "/zh/",
-      "/zh/privacy.html"
+      "/?lang=en",
+      "/?lang=zh",
+      "/privacy.html?lang=en",
+      "/privacy.html?lang=zh"
     ],
     "skipThirdPartyRequests": true
   },

@@ -118,8 +118,10 @@ const PrivacyPage = () => {
 
   const current = t[lang];
   const baseUrl = import.meta.env.BASE_URL || '/';
-  const enHomePath = baseUrl;
-  const zhHomePath = `${baseUrl}zh/`;
+  const enHomePath = `${baseUrl}?lang=en`;
+  const zhHomePath = `${baseUrl}?lang=zh`;
+  const enPrivacyPath = `${baseUrl}privacy.html?lang=en`;
+  const zhPrivacyPath = `${baseUrl}privacy.html?lang=zh`;
   const homePath = lang === 'zh' ? zhHomePath : enHomePath;
 
   return (
@@ -245,7 +247,7 @@ const PrivacyPage = () => {
 	            </a>
 	            <div className="bg-neutral-800 rounded-full p-1 flex items-center border border-neutral-700">
 	              <a
-	                href={zhHomePath}
+	                href={zhPrivacyPath}
 	                aria-current={lang === 'zh' ? 'page' : undefined}
 	                className={`px-3 py-1 rounded-full text-xs font-bold transition-all duration-200 ${
 	                  lang === 'zh'
@@ -256,7 +258,7 @@ const PrivacyPage = () => {
 	                中
 	              </a>
 	              <a
-	                href={enHomePath}
+	                href={enPrivacyPath}
 	                aria-current={lang === 'en' ? 'page' : undefined}
 	                className={`px-3 py-1 rounded-full text-xs font-bold transition-all duration-200 ${
 	                  lang === 'en'

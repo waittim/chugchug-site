@@ -8,20 +8,20 @@
       name="description"
       content="Privacy policy for ChugChug, the party drinking game app."
     />
-    <link rel="canonical" href="https://chugchug.app/privacy.html" />
-    <link rel="alternate" hreflang="en" href="https://chugchug.app/privacy.html" />
-    <link rel="alternate" hreflang="zh-Hans" href="https://chugchug.app/zh/privacy.html" />
-    <link rel="alternate" hreflang="x-default" href="https://chugchug.app/privacy.html" />
+    <link rel="canonical" href="https://chugchug.app/privacy.html?lang=en" />
+    <link rel="alternate" hreflang="en" href="https://chugchug.app/privacy.html?lang=en" />
+    <link rel="alternate" hreflang="zh-Hans" href="https://chugchug.app/privacy.html?lang=zh" />
+    <link rel="alternate" hreflang="x-default" href="https://chugchug.app/privacy.html?lang=en" />
 
     <meta property="og:title" content="Privacy Policy - ChugChug" />
     <meta
       property="og:description"
       content="Privacy policy for the ChugChug party drinking game app."
     />
-    <meta property="og:image" content="https://chugchug.app/og-image.jpg" />
+    <meta property="og:image" content="https://chugchug.app/og-image.jpg?v=20260205" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
-    <meta property="og:url" content="https://chugchug.app/privacy.html" />
+    <meta property="og:url" content="https://chugchug.app/privacy.html?lang=en" />
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="ChugChug" />
     <meta property="og:locale" content="en_US" />
@@ -33,7 +33,7 @@
       name="twitter:description"
       content="Privacy policy for the ChugChug party drinking game app."
     />
-    <meta name="twitter:image" content="https://chugchug.app/og-image.jpg" />
+    <meta name="twitter:image" content="https://chugchug.app/og-image.jpg?v=20260205" />
 
     <link rel="icon" href="/favicon.ico" type="image/x-icon" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
@@ -47,7 +47,29 @@
 
     <title>Privacy Policy - ChugChug</title>
     <script>
-      window.__LANG__ = 'en';
+      (function () {
+        var params = new URLSearchParams(window.location.search);
+        var forced = params.get('lang');
+        if (forced) {
+          var isZhForced = String(forced).toLowerCase().indexOf('zh') === 0;
+          window.__LANG__ = isZhForced ? 'zh' : 'en';
+          document.documentElement.lang = isZhForced ? 'zh-Hans' : 'en';
+          return;
+        }
+
+        var langs =
+          (navigator.languages && navigator.languages.length
+            ? navigator.languages
+            : [navigator.language || '']
+          ).map(function (lang) {
+            return String(lang).toLowerCase();
+          });
+        var isZh = langs.some(function (lang) {
+          return lang.indexOf('zh') === 0;
+        });
+        window.__LANG__ = isZh ? 'zh' : 'en';
+        document.documentElement.lang = isZh ? 'zh-Hans' : 'en';
+      })();
     </script>
   </head>
   <body>

@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://chugchug.app/</loc>
+    <loc>https://chugchug.app/?lang=en</loc>
   </url>
   <url>
-    <loc>https://chugchug.app/privacy.html</loc>
+    <loc>https://chugchug.app/privacy.html?lang=en</loc>
   </url>
   <url>
-    <loc>https://chugchug.app/zh/</loc>
+    <loc>https://chugchug.app/?lang=zh</loc>
   </url>
   <url>
-    <loc>https://chugchug.app/zh/privacy.html</loc>
+    <loc>https://chugchug.app/privacy.html?lang=zh</loc>
   </url>
 </urlset>

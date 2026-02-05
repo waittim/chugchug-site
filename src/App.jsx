@@ -227,10 +227,9 @@ const App = () => {
   );
 
   const baseUrl = import.meta.env.BASE_URL || '/';
-  const enHomePath = baseUrl;
-  const zhHomePath = `${baseUrl}zh/`;
-  const privacyPath =
-    lang === 'zh' ? `${baseUrl}zh/privacy.html` : `${baseUrl}privacy.html`;
+  const enHomePath = `${baseUrl}?lang=en`;
+  const zhHomePath = `${baseUrl}?lang=zh`;
+  const privacyPath = `${baseUrl}privacy.html?lang=${lang}`;
   const placeholderSrc = `${baseUrl}placeholder.svg`;
 
   const screenshotList = useMemo(() => {
