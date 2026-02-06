@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { createRoot, hydrateRoot } from 'react-dom/client';
 import './nunito-font.css';
 import './index.css';
@@ -123,6 +123,12 @@ const PrivacyPage = () => {
   const enPrivacyPath = `${baseUrl}privacy.html?lang=en`;
   const zhPrivacyPath = `${baseUrl}privacy.html?lang=zh`;
   const homePath = lang === 'zh' ? zhHomePath : enHomePath;
+
+  useEffect(() => {
+    if (typeof document === 'undefined') return;
+    document.title =
+      lang === 'zh' ? '隐私政策 - 吨吨吨' : 'Privacy Policy - ChugChug';
+  }, [lang]);
 
   return (
     <div className="min-h-screen bg-[#0F0F0F] font-sans selection:bg-[#FFE85F] selection:text-black overflow-x-hidden flex flex-col">

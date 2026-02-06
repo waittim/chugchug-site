@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import {
   Dices,
   Spade,
@@ -124,6 +124,14 @@ const App = () => {
   );
 
   const currentText = t[lang];
+
+  useEffect(() => {
+    if (typeof document === 'undefined') return;
+    document.title =
+      lang === 'zh'
+        ? '吨吨吨 - 派对游戏 App'
+        : 'ChugChug - Party Game App';
+  }, [lang]);
 
   const games = useMemo(
     () => [
