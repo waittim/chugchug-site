@@ -22,6 +22,7 @@ const AppleLogo = ({ size = 36 }) => (
 );
 
 const APP_STORE_URL = 'https://apps.apple.com/us/app/chugchug-party-game/id6758532049';
+const DOWNLOAD_ANCHOR = '#download';
 
 const getInitialLang = () => {
   if (typeof window !== 'undefined') {
@@ -55,6 +56,19 @@ const App = () => {
       event_category: 'outbound',
       event_label: 'app_store',
       link_url: APP_STORE_URL,
+      language: lang,
+      transport_type: 'beacon',
+    });
+  };
+
+  const trackNavbarDownloadClick = () => {
+    if (typeof window === 'undefined') return;
+    if (typeof window.gtag !== 'function') return;
+
+    window.gtag('event', 'navbar_download_click', {
+      event_category: 'navigation',
+      event_label: 'download_anchor',
+      link_url: DOWNLOAD_ANCHOR,
       language: lang,
       transport_type: 'beacon',
     });
@@ -323,8 +337,9 @@ const App = () => {
 
         <div className="flex items-center gap-3">
           <a
-            href="#download"
+            href={DOWNLOAD_ANCHOR}
             className="bg-white text-black px-4 py-2 md:px-5 rounded-full text-sm md:text-base font-bold border-2 border-transparent hover:scale-105 transition-transform duration-200"
+            onClick={trackNavbarDownloadClick}
           >
             {currentText.nav_download}
           </a>
