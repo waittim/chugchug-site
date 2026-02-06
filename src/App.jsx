@@ -21,6 +21,8 @@ const AppleLogo = ({ size = 36 }) => (
   </span>
 );
 
+const APP_STORE_URL = 'https://apps.apple.com/us/app/chugchug-party-game/id6758532049';
+
 const getInitialLang = () => {
   if (typeof window !== 'undefined') {
     const forced = window.__LANG__;
@@ -44,6 +46,19 @@ const getInitialLang = () => {
 const App = () => {
   const [lang] = useState(getInitialLang); // 'zh' or 'en'
   const [flippedIds, setFlippedIds] = useState(() => new Set());
+
+  const trackAppStoreClick = () => {
+    if (typeof window === 'undefined') return;
+    if (typeof window.gtag !== 'function') return;
+
+    window.gtag('event', 'app_store_click', {
+      event_category: 'outbound',
+      event_label: 'app_store',
+      link_url: APP_STORE_URL,
+      language: lang,
+      transport_type: 'beacon',
+    });
+  };
 
   const toggleFlip = (id) => {
     setFlippedIds((prev) => {
@@ -576,8 +591,9 @@ const App = () => {
                 transition-all duration-200
                 active:translate-y-1 active:translate-x-1 active:shadow-[0px_0px_0px_#000]
               "
-              href="https://apps.apple.com/us/app/chugchug-party-game/id6758532049"
+              href={APP_STORE_URL}
               aria-label={currentText.btn_download}
+              onClick={trackAppStoreClick}
             >
               <AppleLogo size={36} />
               <span className="font-bubble">{currentText.btn_download}</span>
