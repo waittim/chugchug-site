@@ -672,7 +672,11 @@ const App = () => {
               <a href={privacyPath} className="hover:text-[#FFE85F] transition-colors">
                 {currentText.footer_privacy}
               </a>
-              <a href="#" className="hover:text-[#FB458D] transition-colors">
+              <a
+                href="mailto:support@chugchug.app"
+                className="hover:text-[#FB458D] transition-colors"
+                aria-label={currentText.footer_contact}
+              >
                 {currentText.footer_contact}
               </a>
             </div>
