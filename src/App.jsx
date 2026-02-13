@@ -9,6 +9,7 @@ import {
   Search,
   ArrowDown,
   AlertTriangle,
+  Radio,
 } from 'lucide-react';
 
 const AppleLogo = ({ size = 36 }) => (
@@ -156,7 +157,7 @@ const App = () => {
 	        icon: <Dices size={32} className="text-black" />,
 	        desc: { zh: '大话骰必备', en: "Liar's Dice Essential" },
 	        rules: {
-	          zh: '掷骰决定点数/顺序（按你们玩法）。\n每轮结束后，输的人喝一口或接受惩罚。',
+	          zh: '用于“吹牛骰”，“大话骰”。\n或者掷骰决定点数/顺序（按你们玩法）。\n每轮结束后，输的人喝一口或接受惩罚。',
 	          en: 'Roll to decide numbers/order (house rules).\nEnd of round: loser drinks or takes a challenge.',
 	        },
 	      },
@@ -200,8 +201,8 @@ const App = () => {
 	        icon: <Heart size={32} className="text-black" />,
 	        desc: { zh: '包含3个等级', en: '3 Levels of Heat' },
 	        rules: {
-	          zh: '轮到你：选 真心话 / 大冒险。\n拒绝回答或完成：喝一口。\n可选等级：轻松/刺激/爆炸。',
-	          en: 'On your turn: choose Truth or Dare.\nRefuse = drink.\nPick a level: mild / spicy / chaos.',
+	          zh: '轮到你：选 真心话 / 大冒险。\n拒绝回答或完成：喝一口。\n可选不同等级。',
+	          en: 'On your turn: choose Truth or Dare.\nRefuse to answer or complete = drink.\nOptional different levels.',
 	        },
 	      },
 	      {
@@ -244,21 +245,32 @@ const App = () => {
 	        icon: <AlertTriangle size={32} className="text-black" />,
 	        desc: { zh: '社死现场', en: 'Expose Your Friends' },
 	        rules: {
-	          zh: '读出题目“最可能…”。\n大家同时指向一个人。\n票最多的人喝一口（可选解释）。',
-	          en: 'Read a “Most likely to…” prompt.\nEveryone points at once.\nMost votes drinks (optional explain).',
+	          zh: '读出题目“最可能…”。\n大家同时指向一个人。\n票最多的和指自己的人喝一口。',
+	          en: 'Read a “Most likely to…” prompt.\nEveryone points at once.\nMost votes and self-pointers drink.',
 	        },
 	      },
-	      {
-	        id: 'undercover',
-	        name: { zh: '谁是卧底', en: 'Undercover' },
-	        color: 'bg-[#6EE7F3]',
-	        icon: <Search size={32} className="text-black" />,
-	        desc: { zh: '逻辑推理', en: 'Social Deduction' },
-	        rules: {
-	          zh: '每人拿到词：多数相同，卧底不同。\n轮流描述但不能说出词。\n投票淘汰：找出卧底或卧底活到最后。',
-	          en: 'Everyone gets a word: most same, undercover different.\nDescribe without saying it.\nVote out players; find undercover or they survive.',
-	        },
-	      },
+      {
+        id: 'undercover',
+        name: { zh: '谁是卧底', en: 'Undercover' },
+        color: 'bg-[#6EE7F3]',
+        icon: <Search size={32} className="text-black" />,
+        desc: { zh: '逻辑推理', en: 'Social Deduction' },
+        rules: {
+          zh: '每人拿到词：多数相同，卧底不同。\n轮流描述但不能说出词。\n每一轮投票淘汰，直到找出卧底或卧底活到最后。',
+          en: 'Everyone gets a word: most same, undercover different.\nTake turns describing without saying the word.\nVote each round to eliminate until finding the undercover or they survive to the end.',
+        },
+      },
+      {
+        id: 'wavelength',
+        name: { zh: '心电感应', en: 'Wavelength' },
+        color: 'bg-[#9664ED]',
+        icon: <Radio size={32} className="text-black" />,
+        desc: { zh: '心灵默契', en: 'Mind Reading' },
+        rules: {
+          zh: '出题人记住目标位置。\n根据出题人给出的例子，猜测方拖动指针。\n确认后揭晓答案，判断误差。根据结果进行奖惩。',
+          en: 'Psychic remembers target position.\nBased on Psychic\'s examples, guessers drag pointer.\nConfirm to reveal answer and judge error.\nReward or penalty based on results.',
+        },
+      },
     ],
     [],
   );
@@ -283,6 +295,7 @@ const App = () => {
       'mostlikelyto.jpeg',
       'headsupcategory.jpeg',
       'undercover.jpeg',
+      'wavelength.jpeg',
     ];
 
     return order.map((file) => ({
