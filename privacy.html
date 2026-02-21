@@ -11,6 +11,7 @@
     <link rel="canonical" href="https://chugchug.app/privacy.html?lang=en" />
     <link rel="alternate" hreflang="en" href="https://chugchug.app/privacy.html?lang=en" />
     <link rel="alternate" hreflang="zh-Hans" href="https://chugchug.app/privacy.html?lang=zh" />
+    <link rel="alternate" hreflang="zh-Hant" href="https://chugchug.app/privacy.html?lang=zh-Hant" />
     <link rel="alternate" hreflang="x-default" href="https://chugchug.app/privacy.html?lang=en" />
 
     <meta property="og:title" content="Privacy Policy - ChugChug" />
@@ -26,6 +27,7 @@
     <meta property="og:site_name" content="ChugChug" />
     <meta property="og:locale" content="en_US" />
     <meta property="og:locale:alternate" content="zh_CN" />
+    <meta property="og:locale:alternate" content="zh_TW" />
 
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="Privacy Policy - ChugChug" />
@@ -57,12 +59,33 @@
     <title>Privacy Policy - ChugChug</title>
     <script>
       (function () {
+        function normalizeLang(value) {
+          if (!value) return null;
+          var normalized = String(value).toLowerCase().replace('_', '-');
+          if (
+            normalized.indexOf('zh-hant') === 0 ||
+            normalized.indexOf('zh-tw') === 0 ||
+            normalized.indexOf('zh-hk') === 0 ||
+            normalized.indexOf('zh-mo') === 0
+          ) {
+            return 'zh-Hant';
+          }
+          if (normalized.indexOf('zh') === 0) return 'zh';
+          if (normalized.indexOf('en') === 0) return 'en';
+          return null;
+        }
+
+        function toHtmlLang(lang) {
+          if (lang === 'zh-Hant') return 'zh-Hant';
+          if (lang === 'zh') return 'zh-Hans';
+          return 'en';
+        }
+
         var params = new URLSearchParams(window.location.search);
-        var forced = params.get('lang');
+        var forced = normalizeLang(params.get('lang'));
         if (forced) {
-          var isZhForced = String(forced).toLowerCase().indexOf('zh') === 0;
-          window.__LANG__ = isZhForced ? 'zh' : 'en';
-          document.documentElement.lang = isZhForced ? 'zh-Hans' : 'en';
+          window.__LANG__ = forced;
+          document.documentElement.lang = toHtmlLang(forced);
           return;
         }
 
@@ -70,14 +93,15 @@
           (navigator.languages && navigator.languages.length
             ? navigator.languages
             : [navigator.language || '']
-          ).map(function (lang) {
-            return String(lang).toLowerCase();
-          });
-        var isZh = langs.some(function (lang) {
-          return lang.indexOf('zh') === 0;
-        });
-        window.__LANG__ = isZh ? 'zh' : 'en';
-        document.documentElement.lang = isZh ? 'zh-Hans' : 'en';
+          );
+        var matched = null;
+        for (var i = 0; i < langs.length; i += 1) {
+          matched = normalizeLang(langs[i]);
+          if (matched) break;
+        }
+
+        window.__LANG__ = matched || 'en';
+        document.documentElement.lang = toHtmlLang(window.__LANG__);
       })();
     </script>
   </head>

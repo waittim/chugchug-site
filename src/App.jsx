@@ -25,28 +25,47 @@ const AppleLogo = ({ size = 36 }) => (
 const APP_STORE_URL = 'https://apps.apple.com/us/app/chugchug-party-game/id6758532049';
 const DOWNLOAD_ANCHOR = '#download';
 
+const normalizeLang = (value) => {
+  if (!value) return null;
+  const normalized = String(value).toLowerCase().replace('_', '-');
+  if (
+    normalized.startsWith('zh-hant') ||
+    normalized.startsWith('zh-tw') ||
+    normalized.startsWith('zh-hk') ||
+    normalized.startsWith('zh-mo')
+  ) {
+    return 'zh-Hant';
+  }
+  if (normalized.startsWith('zh')) return 'zh';
+  if (normalized.startsWith('en')) return 'en';
+  return null;
+};
+
 const getInitialLang = () => {
   if (typeof window !== 'undefined') {
-    const forced = window.__LANG__;
-    if (forced === 'zh' || forced === 'en') return forced;
+    const forced = normalizeLang(window.__LANG__);
+    if (forced) return forced;
   }
 
   if (typeof document !== 'undefined') {
-    const htmlLang = document.documentElement.lang?.toLowerCase() ?? '';
-    if (htmlLang.startsWith('zh')) return 'zh';
-    if (htmlLang.startsWith('en')) return 'en';
+    const htmlLang = normalizeLang(document.documentElement.lang);
+    if (htmlLang) return htmlLang;
   }
 
   if (typeof navigator !== 'undefined') {
-    const navLang = navigator.language?.toLowerCase() ?? '';
-    if (navLang.startsWith('zh')) return 'zh';
+    const preferred =
+      (navigator.languages && navigator.languages.length
+        ? navigator.languages
+        : [navigator.language || '']
+      ).map(normalizeLang).find(Boolean);
+    if (preferred) return preferred;
   }
 
   return 'en';
 };
 
 const App = () => {
-  const [lang] = useState(getInitialLang); // 'zh' or 'en'
+  const [lang] = useState(getInitialLang);
   const [flippedIds, setFlippedIds] = useState(() => new Set());
 
   const trackAppStoreClick = () => {
@@ -99,17 +118,41 @@ const App = () => {
         cta_main: '告别复杂的规则解释，',
         cta_highlight: '防误触',
         cta_suffix: '设计，让派对更尽兴。',
-	        btn_download: 'App Store 下载',
-	        feat_ios: 'iOS 独占',
-	        feat_ads: '无广告',
-	        feat_drunk: '防醉酒模式',
-	        card_hint_front: '点击查看规则',
-	        card_hint_back: '点击返回',
-	        rules_title: '规则',
-	        footer_rights: '© 2026 CHUGCHUG APP',
-	        footer_privacy: '隐私政策',
-	        footer_contact: '联系我们',
-	      },
+        btn_download: 'App Store 下载',
+        feat_ios: 'iOS 独占',
+        feat_ads: '无广告',
+        feat_drunk: '防醉酒模式',
+        card_hint_front: '点击查看规则',
+        card_hint_back: '点击返回',
+        rules_title: '规则',
+        footer_rights: '© 2026 CHUGCHUG APP',
+        footer_privacy: '隐私政策',
+        footer_contact: '联系我们',
+      },
+      'zh-Hant': {
+        nav_download: '下載 App',
+        hero_title_1: 'Chug',
+        hero_title_2: 'Chug',
+        hero_title_3: '',
+        hero_subtitle: '不帶道具，也能玩到散場',
+        hero_feature: '派對神器 · 防誤觸 · 拒絕冷場',
+        grid_title_prefix: '派對遊戲',
+        grid_title_suffix: 'All-in-One',
+        grid_desc: '不管是真心話還是大冒險，\n一個 App 拯救所有局。',
+        cta_main: '告別複雜的規則解釋，',
+        cta_highlight: '防誤觸',
+        cta_suffix: '設計，讓派對更盡興。',
+        btn_download: 'App Store 下載',
+        feat_ios: 'iOS 獨佔',
+        feat_ads: '無廣告',
+        feat_drunk: '防醉酒模式',
+        card_hint_front: '點擊查看規則',
+        card_hint_back: '點擊返回',
+        rules_title: '規則',
+        footer_rights: '© 2026 CHUGCHUG APP',
+        footer_privacy: '隱私政策',
+        footer_contact: '聯繫我們',
+      },
       en: {
         nav_download: 'Download',
         hero_title_1: 'Chug',
@@ -123,151 +166,181 @@ const App = () => {
         cta_main: 'No more explaining rules.',
         cta_highlight: 'Drunk-Proof',
         cta_suffix: 'design for better parties.',
-	        btn_download: 'Download on App Store',
-	        feat_ios: 'iOS Only',
-	        feat_ads: 'No Ads',
-	        feat_drunk: 'Drunk Mode',
-	        card_hint_front: 'Tap for rules',
-	        card_hint_back: 'Tap to go back',
-	        rules_title: 'Rules',
-	        footer_rights: '© 2026 CHUGCHUG APP',
-	        footer_privacy: 'Privacy',
-	        footer_contact: 'Contact',
-	      },
-	    }),
+        btn_download: 'Download on App Store',
+        feat_ios: 'iOS Only',
+        feat_ads: 'No Ads',
+        feat_drunk: 'Drunk Mode',
+        card_hint_front: 'Tap for rules',
+        card_hint_back: 'Tap to go back',
+        rules_title: 'Rules',
+        footer_rights: '© 2026 CHUGCHUG APP',
+        footer_privacy: 'Privacy',
+        footer_contact: 'Contact',
+      },
+    }),
     [],
   );
 
-  const currentText = t[lang];
+  const currentText = t[lang] ?? t.en;
+  const isChineseLang = lang === 'zh' || lang === 'zh-Hant';
+  const isTraditionalChinese = lang === 'zh-Hant';
 
   useEffect(() => {
     if (typeof document === 'undefined') return;
-    document.title =
-      lang === 'zh'
-        ? '吨吨吨 - 派对游戏 App'
-        : 'ChugChug - Party Game App';
+    if (lang === 'zh') {
+      document.title = '吨吨吨 - 派对游戏 App';
+      return;
+    }
+    if (lang === 'zh-Hant') {
+      document.title = 'ChugChug - 派對遊戲 App';
+      return;
+    }
+    document.title = 'ChugChug - Party Game App';
   }, [lang]);
 
   const games = useMemo(
     () => [
-	      {
-	        id: 'dice',
-	        name: { zh: '骰子', en: 'Dice' },
-	        color: 'bg-[#FFE85F]',
-	        icon: <Dices size={32} className="text-black" />,
-	        desc: { zh: '大话骰必备', en: "Liar's Dice Essential" },
-	        rules: {
-	          zh: '用于“吹牛骰”，“大话骰”。\n或者掷骰决定点数/顺序（按你们玩法）。\n每轮结束后，输的人喝一口或接受惩罚。',
-	          en: 'Roll to decide numbers/order (house rules).\nEnd of round: loser drinks or takes a challenge.',
-	        },
-	      },
-	      {
-	        id: 'poker',
-	        name: { zh: '扑克', en: 'Poker' },
-	        color: 'bg-white',
-	        icon: <Spade size={32} className="text-black" />,
-	        desc: { zh: '虚拟抽卡', en: 'Virtual Cards' },
-	        rules: {
-	          zh: '点击抽牌。\n按牌面执行你们的规则（例如：A=指定喝，K=罚酒等）。',
-	          en: 'Tap to draw.\nFollow your card rules (e.g., A=pick, K=penalty).',
-	        },
-	      },
+      {
+        id: 'dice',
+        name: { zh: '骰子', 'zh-Hant': '骰子', en: 'Dice' },
+        color: 'bg-[#FFE85F]',
+        icon: <Dices size={32} className="text-black" />,
+        desc: { zh: '大话骰必备', 'zh-Hant': '大話骰必備', en: "Liar's Dice Essential" },
+        rules: {
+          zh: '用于“吹牛骰”，“大话骰”。\n或者掷骰决定点数/顺序（按你们玩法）。\n每轮结束后，输的人喝一口或接受惩罚。',
+          'zh-Hant': '用於「吹牛骰」、「大話骰」。\n或者擲骰決定點數/順序（按你們玩法）。\n每輪結束後，輸的人喝一口或接受懲罰。',
+          en: 'Roll to decide numbers/order (house rules).\nEnd of round: loser drinks or takes a challenge.',
+        },
+      },
+      {
+        id: 'poker',
+        name: { zh: '扑克', 'zh-Hant': '撲克', en: 'Poker' },
+        color: 'bg-white',
+        icon: <Spade size={32} className="text-black" />,
+        desc: { zh: '虚拟抽卡', 'zh-Hant': '虛擬抽卡', en: 'Virtual Cards' },
+        rules: {
+          zh: '点击抽牌。\n按牌面执行你们的规则（例如：A=指定喝，K=罚酒等）。',
+          'zh-Hant': '點擊抽牌。\n按牌面執行你們的規則（例如：A=指定喝，K=罰酒等）。',
+          en: 'Tap to draw.\nFollow your card rules (e.g., A=pick, K=penalty).',
+        },
+      },
+      {
+        id: 'buzzcards',
+        name: { zh: '上头卡牌', 'zh-Hant': '上頭卡牌', en: 'Buzz Cards' },
+        color: 'bg-[#F5D0FE]',
+        icon: <Spade size={32} className="text-black" />,
+        desc: { zh: '抽卡惩罚', 'zh-Hant': '抽卡懲罰', en: 'Draw & Punish' },
+        rules: {
+          zh: '抽取一张卡牌。\n根据抽中的卡牌执行惩罚。',
+          'zh-Hant': '抽取一張卡牌。\n根據抽中的卡牌執行懲罰。',
+          en: 'Draw a card.\nFollow the penalty on the drawn card.',
+        },
+      },
       {
         id: 'six',
-        name: { zh: '六一', en: 'Six Ones' },
+        name: { zh: '六一', 'zh-Hant': '六一', en: 'Six Ones' },
         color: 'bg-[#6EE7F3]',
         icon: <Dices size={32} className="text-black" />,
-        desc: { zh: '经典酒桌游戏', en: 'Classic Drinking Game' },
+        desc: { zh: '经典酒桌游戏', 'zh-Hant': '經典酒桌遊戲', en: 'Classic Drinking Game' },
         rules: {
           zh: '双方各 5 颗骰子。\n同时摇骰：掷到 6 的骰子移除；掷到 1 的骰子转给对方。\n先清空自己所有骰子的一方获胜！',
+          'zh-Hant': '雙方各 5 顆骰子。\n同時搖骰：擲到 6 的骰子移除；擲到 1 的骰子轉給對方。\n先清空自己所有骰子的一方獲勝！',
           en: 'Each side has 5 dice.\nRoll together: 6s are removed; 1s are given to the opponent.\nFirst to have 0 dice wins!',
         },
       },
       {
         id: 'lucky',
-        name: { zh: 'Lucky', en: 'Lucky' },
+        name: { zh: 'Lucky', 'zh-Hant': 'Lucky', en: 'Lucky' },
         color: 'bg-[#FB458D]',
         icon: <Dices size={32} className="text-black" />,
-        desc: { zh: '拼手气', en: 'Test Your Luck' },
+        desc: { zh: '拼手气', 'zh-Hant': '拼手氣', en: 'Test Your Luck' },
         rules: {
           zh: '5 骰=牌型；大小：1（Ace）>6≥5≥4≥3≥2。\n同时按住摇骰比牌，输家可锁定部分骰子重摇未锁定的骰子。\n若翻盘则胜负互换；否则输家出局。\n循环直到有人救场失败，最后留下者获胜！',
+          'zh-Hant': '5 骰=牌型；大小：1（Ace）>6≥5≥4≥3≥2。\n同時按住搖骰比牌，輸家可鎖定部分骰子重搖未鎖定的骰子。\n若翻盤則勝負互換；否則輸家出局。\n循環直到有人救場失敗，最後留下者獲勝！',
           en: '5 dice form a hand; rank: 1 (Ace) > 6 ≥ 5 ≥ 4 ≥ 3 ≥ 2.\nRoll together; compare hands. Loser may lock dice and re-roll the rest.\nIf the new hand beats the winner, swap roles; otherwise the loser is out.\nRepeat until someone can’t save—last player standing wins.',
         },
       },
-	      {
-	        id: 'truth',
-	        name: { zh: '真心话大冒险', en: 'Truth or Dare' },
-	        color: 'bg-[#9664ED]',
-	        icon: <Heart size={32} className="text-black" />,
-	        desc: { zh: '包含3个等级', en: '3 Levels of Heat' },
-	        rules: {
-	          zh: '轮到你：选 真心话 / 大冒险。\n拒绝回答或完成：喝一口。\n可选不同等级。',
-	          en: 'On your turn: choose Truth or Dare.\nRefuse to answer or complete = drink.\nOptional different levels.',
-	        },
-	      },
-	      {
-	        id: 'roulette',
-	        name: { zh: '指尖轮盘', en: 'Finger Roulette' },
-	        color: 'bg-[#50C3F6]',
-	        icon: <Fingerprint size={32} className="text-black" />,
-	        desc: { zh: '随机点名', en: 'Random Picker' },
-	        rules: {
-	          zh: '点击开始随机点名。\n被选中的人执行：喝/讲故事/做任务（任选）。',
-	          en: 'Tap to randomly pick someone.\nChosen player: drink / story / task (your choice).',
-	        },
-	      },
-	      {
-	        id: 'king',
-	        name: { zh: '国王游戏', en: "King's Game" },
-	        color: 'bg-[#FFE85F]',
-	        icon: <Crown size={32} className="text-black" />,
-	        desc: { zh: '绝对服从', en: 'Absolute Obedience' },
-	        rules: {
-	          zh: '抽到国王的人下命令。\n被点到的人必须执行。\n拒绝：喝两口或加罚。',
-	          en: 'The King gives a command.\nChosen player must obey.\nRefuse = 2 sips or penalty.',
-	        },
-	      },
+      {
+        id: 'truth',
+        name: { zh: '真心话大冒险', 'zh-Hant': '真心話大冒險', en: 'Truth or Dare' },
+        color: 'bg-[#9664ED]',
+        icon: <Heart size={32} className="text-black" />,
+        desc: { zh: '包含3个等级', 'zh-Hant': '包含 3 個等級', en: '3 Levels of Heat' },
+        rules: {
+          zh: '轮到你：选 真心话 / 大冒险。\n拒绝回答或完成：喝一口。\n可选不同等级。',
+          'zh-Hant': '輪到你：選 真心話 / 大冒險。\n拒絕回答或完成：喝一口。\n可選不同等級。',
+          en: 'On your turn: choose Truth or Dare.\nRefuse to answer or complete = drink.\nOptional different levels.',
+        },
+      },
+      {
+        id: 'roulette',
+        name: { zh: '指尖轮盘', 'zh-Hant': '指尖輪盤', en: 'Finger Roulette' },
+        color: 'bg-[#50C3F6]',
+        icon: <Fingerprint size={32} className="text-black" />,
+        desc: { zh: '随机点名', 'zh-Hant': '隨機點名', en: 'Random Picker' },
+        rules: {
+          zh: '点击开始随机点名。\n被选中的人执行：喝/讲故事/做任务（任选）。',
+          'zh-Hant': '點擊開始隨機點名。\n被選中的人執行：喝/講故事/做任務（任選）。',
+          en: 'Tap to randomly pick someone.\nChosen player: drink / story / task (your choice).',
+        },
+      },
+      {
+        id: 'king',
+        name: { zh: '国王游戏', 'zh-Hant': '國王遊戲', en: "King's Game" },
+        color: 'bg-[#FFE85F]',
+        icon: <Crown size={32} className="text-black" />,
+        desc: { zh: '绝对服从', 'zh-Hant': '絕對服從', en: 'Absolute Obedience' },
+        rules: {
+          zh: '抽到国王的人下命令。\n被点到的人必须执行。\n拒绝：喝两口或加罚。',
+          'zh-Hant': '抽到國王的人下命令。\n被點到的人必須執行。\n拒絕：喝兩口或加罰。',
+          en: 'The King gives a command.\nChosen player must obey.\nRefuse = 2 sips or penalty.',
+        },
+      },
       {
         id: 'charades',
-        name: { zh: '猜词游戏', en: 'Heads Up' },
+        name: { zh: '猜词游戏', 'zh-Hant': '猜詞遊戲', en: 'Heads Up' },
         color: 'bg-[#FB458D]',
         icon: <Type size={32} className="text-black" />,
-        desc: { zh: '多种类别', en: 'Various Categories' },
+        desc: { zh: '多种类别', 'zh-Hant': '多種類別', en: 'Various Categories' },
         rules: {
           zh: '选择类别并开始计时。\n表演/描述但不能说出关键词。\n猜中得分；失败喝一口。',
+          'zh-Hant': '選擇類別並開始計時。\n表演/描述但不能說出關鍵詞。\n猜中得分；失敗喝一口。',
           en: 'Pick a category and start timer.\nAct/describe without saying the word.\nCorrect = point; fail = drink.',
         },
       },
-	      {
-	        id: 'execution',
-	        name: { zh: '公开处刑', en: 'Most Likely To' },
-	        color: 'bg-[#FF6B6B]',
-	        icon: <AlertTriangle size={32} className="text-black" />,
-	        desc: { zh: '社死现场', en: 'Expose Your Friends' },
-	        rules: {
-	          zh: '读出题目“最可能…”。\n大家同时指向一个人。\n票最多的和指自己的人喝一口。',
-	          en: 'Read a “Most likely to…” prompt.\nEveryone points at once.\nMost votes and self-pointers drink.',
-	        },
-	      },
+      {
+        id: 'execution',
+        name: { zh: '公开处刑', 'zh-Hant': '公開處刑', en: 'Most Likely To' },
+        color: 'bg-[#FF6B6B]',
+        icon: <AlertTriangle size={32} className="text-black" />,
+        desc: { zh: '社死现场', 'zh-Hant': '社死現場', en: 'Expose Your Friends' },
+        rules: {
+          zh: '读出题目“最可能…”。\n大家同时指向一个人。\n票最多的和指自己的人喝一口。',
+          'zh-Hant': '讀出題目「最可能…」。\n大家同時指向一個人。\n票最多的和指自己的人喝一口。',
+          en: 'Read a “Most likely to…” prompt.\nEveryone points at once.\nMost votes and self-pointers drink.',
+        },
+      },
       {
         id: 'undercover',
-        name: { zh: '谁是卧底', en: 'Undercover' },
+        name: { zh: '谁是卧底', 'zh-Hant': '誰是臥底', en: 'Undercover' },
         color: 'bg-[#6EE7F3]',
         icon: <Search size={32} className="text-black" />,
-        desc: { zh: '逻辑推理', en: 'Social Deduction' },
+        desc: { zh: '逻辑推理', 'zh-Hant': '邏輯推理', en: 'Social Deduction' },
         rules: {
           zh: '每人拿到词：多数相同，卧底不同。\n轮流描述但不能说出词。\n每一轮投票淘汰，直到找出卧底或卧底活到最后。',
+          'zh-Hant': '每人拿到詞：多數相同，臥底不同。\n輪流描述但不能說出詞。\n每一輪投票淘汰，直到找出臥底或臥底活到最後。',
           en: 'Everyone gets a word: most same, undercover different.\nTake turns describing without saying the word.\nVote each round to eliminate until finding the undercover or they survive to the end.',
         },
       },
       {
         id: 'wavelength',
-        name: { zh: '心电感应', en: 'Wavelength' },
+        name: { zh: '心电感应', 'zh-Hant': '心電感應', en: 'Wavelength' },
         color: 'bg-[#9664ED]',
         icon: <Radio size={32} className="text-black" />,
-        desc: { zh: '心灵默契', en: 'Mind Reading' },
+        desc: { zh: '心灵默契', 'zh-Hant': '心靈默契', en: 'Mind Reading' },
         rules: {
           zh: '出题人记住目标位置。\n根据出题人给出的例子，猜测方拖动指针。\n确认后揭晓答案，判断误差。根据结果进行奖惩。',
+          'zh-Hant': '出題人記住目標位置。\n根據出題人給出的例子，猜測方拖動指針。\n確認後揭曉答案，判斷誤差。根據結果進行獎懲。',
           en: 'Psychic remembers target position.\nBased on Psychic\'s examples, guessers drag pointer.\nConfirm to reveal answer and judge error.\nReward or penalty based on results.',
         },
       },
@@ -278,15 +351,17 @@ const App = () => {
   const baseUrl = import.meta.env.BASE_URL || '/';
   const enHomePath = `${baseUrl}?lang=en`;
   const zhHomePath = `${baseUrl}?lang=zh`;
+  const zhHantHomePath = `${baseUrl}?lang=zh-Hant`;
   const privacyPath = `${baseUrl}privacy.html?lang=${lang}`;
   const placeholderSrc = `${baseUrl}placeholder.svg`;
 
   const screenshotList = useMemo(() => {
-    const folder = `${baseUrl}screenshot/${lang === 'zh' ? 'zh' : 'en'}/`;
-    const menuFile = lang === 'zh' ? 'menu-zh.jpeg' : 'menu.jpeg';
+    const folder = `${baseUrl}screenshot/${isChineseLang ? 'zh' : 'en'}/`;
+    const menuFile = isChineseLang ? 'menu-zh.jpeg' : 'menu.jpeg';
     const order = [
       'dice.jpeg',
       'poker.jpeg',
+      'buzzcards.jpeg',
       'sixone.jpeg',
       'lucky.jpeg',
       'truthordare.jpeg',
@@ -303,7 +378,7 @@ const App = () => {
       src: `${folder}${file}`,
       isMenu: file === menuFile,
     }));
-  }, [baseUrl, lang]);
+  }, [baseUrl, isChineseLang]);
 
 
   return (
@@ -345,7 +420,7 @@ const App = () => {
 
       <nav className="fixed top-0 w-full z-50 px-4 md:px-6 py-4 flex justify-between items-center md:mix-blend-difference text-white">
         <div className="text-2xl font-black tracking-tighter font-bubble flex items-center gap-2">
-          {lang === 'en' ? 'ChugChug' : '吨吨吨'}
+          {lang === 'en' || isTraditionalChinese ? 'ChugChug' : '吨吨吨'}
         </div>
 
         <div className="flex items-center gap-3">
@@ -409,11 +484,15 @@ const App = () => {
                         src={shot.src}
                         alt={
                           shot.isMenu
-                            ? lang === 'zh'
-                              ? '主菜单截图'
+                            ? isTraditionalChinese
+                              ? '主選單截圖'
+                              : isChineseLang
+                                ? '主菜单截图'
                               : 'Main menu screenshot'
-                            : lang === 'zh'
-                              ? '游戏截图'
+                            : isTraditionalChinese
+                              ? '遊戲截圖'
+                              : isChineseLang
+                                ? '游戏截图'
                               : 'Game screenshot'
                         }
                         className="w-full h-full object-cover object-top opacity-90 transition-opacity duration-500 hover:opacity-100"
@@ -446,11 +525,15 @@ const App = () => {
                         src={shot.src}
                         alt={
                           shot.isMenu
-                            ? lang === 'zh'
-                              ? '主菜单截图'
+                            ? isTraditionalChinese
+                              ? '主選單截圖'
+                              : isChineseLang
+                                ? '主菜单截图'
                               : 'Main menu screenshot'
-                            : lang === 'zh'
-                              ? '游戏截图'
+                            : isTraditionalChinese
+                              ? '遊戲截圖'
+                              : isChineseLang
+                                ? '游戏截图'
                               : 'Game screenshot'
                         }
                         className="w-full h-full object-cover object-top opacity-90 transition-opacity duration-500 hover:opacity-100"
@@ -491,12 +574,12 @@ const App = () => {
           </div>
 
 	          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
-	            {games.map((game) => (
-		              <div
-		                key={game.id}
-		                role="button"
-		                tabIndex={0}
-		                aria-label={`${game.name[lang]} - ${currentText.rules_title}`}
+		            {games.map((game) => (
+			              <div
+			                key={game.id}
+			                role="button"
+			                tabIndex={0}
+			                aria-label={`${game.name[lang] ?? game.name.zh ?? game.name.en} - ${currentText.rules_title}`}
 		                aria-pressed={flippedIds.has(game.id)}
 		                onClick={() => toggleFlip(game.id)}
 		                onKeyDown={(e) => {
@@ -531,13 +614,13 @@ const App = () => {
 	                      </div>
 	                    </div>
 
-	                    <div>
-	                      <h3 className="text-xl md:text-2xl font-black text-black leading-tight mb-1 font-bubble">
-	                        {game.name[lang]}
-	                      </h3>
-	                      <p className="text-black font-bold text-xs md:text-sm opacity-60 uppercase tracking-wide font-bubble">
-	                        {lang === 'zh' ? game.name.en : game.desc.en}
-	                      </p>
+		                    <div>
+		                      <h3 className="text-xl md:text-2xl font-black text-black leading-tight mb-1 font-bubble">
+		                        {game.name[lang] ?? game.name.zh ?? game.name.en}
+		                      </h3>
+		                      <p className="text-black font-bold text-xs md:text-sm opacity-60 uppercase tracking-wide font-bubble">
+		                        {isChineseLang ? game.name.en : game.desc.en}
+		                      </p>
 	                      <p className="mt-2 text-black/70 text-xs md:text-sm font-bold font-bubble">
 	                        {currentText.card_hint_front}
 	                      </p>
@@ -555,11 +638,11 @@ const App = () => {
 		                      [transform:rotateY(180deg)]
 		                    `}
 			                  >
-			                    <div className="flex flex-col min-h-0">
-			                      <p className="flex-1 min-h-0 text-neutral-200 text-sm md:text-base font-bold whitespace-pre-line font-bubble leading-relaxed overflow-auto">
-			                        {game.rules?.[lang] ?? ''}
-			                      </p>
-			                    </div>
+				                    <div className="flex flex-col min-h-0">
+				                      <p className="flex-1 min-h-0 text-neutral-200 text-sm md:text-base font-bold whitespace-pre-line font-bubble leading-relaxed overflow-auto">
+				                        {game.rules?.[lang] ?? game.rules?.zh ?? game.rules?.en ?? ''}
+				                      </p>
+				                    </div>
 
 			                  </div>
 			                  </div>
@@ -578,8 +661,8 @@ const App = () => {
 	          <div className="mb-8 transition-transform duration-300 cursor-default">
 	            <div className="slow-sway inline-block">
 	              <span className="font-bubble text-[4rem] md:text-[6rem] leading-[0.9] text-white inline-block">
-	              {lang === 'zh' ? (
-	                <div className="flex gap-0 whitespace-nowrap tracking-tighter justify-center">
+		              {lang === 'zh' ? (
+		                <div className="flex gap-0 whitespace-nowrap tracking-tighter justify-center">
 	                  <div className="title-shadow">
 	                    {currentText.hero_title_1}
 	                  </div>
@@ -656,18 +739,29 @@ const App = () => {
 	          <div className="w-full px-4 md:px-6 flex flex-row flex-wrap justify-between items-center text-neutral-600 text-xs md:text-sm gap-x-8 gap-y-4">
 	            <div className="font-bold font-bubble">{currentText.footer_rights}</div>
 
-	            <div className="bg-neutral-800 rounded-full p-1 flex items-center border border-neutral-700">
-	              <a
-	                href={zhHomePath}
-	                aria-current={lang === 'zh' ? 'page' : undefined}
-	                className={`px-3 py-1 rounded-full text-xs font-bold transition-all duration-200 ${
-	                  lang === 'zh'
-	                    ? 'bg-[#FFE85F] text-black shadow-sm'
-	                    : 'text-neutral-400 hover:text-white'
-	                }`}
-	              >
-	                中
-	              </a>
+		            <div className="bg-neutral-800 rounded-full p-1 flex items-center border border-neutral-700">
+		              <a
+		                href={zhHomePath}
+		                aria-current={lang === 'zh' ? 'page' : undefined}
+		                className={`px-3 py-1 rounded-full text-xs font-bold transition-all duration-200 ${
+		                  lang === 'zh'
+		                    ? 'bg-[#FFE85F] text-black shadow-sm'
+		                    : 'text-neutral-400 hover:text-white'
+		                }`}
+		              >
+		                简
+		              </a>
+		              <a
+		                href={zhHantHomePath}
+		                aria-current={lang === 'zh-Hant' ? 'page' : undefined}
+		                className={`px-3 py-1 rounded-full text-xs font-bold transition-all duration-200 ${
+		                  lang === 'zh-Hant'
+		                    ? 'bg-[#FFE85F] text-black shadow-sm'
+		                    : 'text-neutral-400 hover:text-white'
+		                }`}
+		              >
+		                繁
+		              </a>
 	              <a
 	                href={enHomePath}
 	                aria-current={lang === 'en' ? 'page' : undefined}

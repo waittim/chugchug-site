@@ -17,8 +17,10 @@
     "include": [
       "/?lang=en",
       "/?lang=zh",
+      "/?lang=zh-Hant",
       "/privacy.html?lang=en",
-      "/privacy.html?lang=zh"
+      "/privacy.html?lang=zh",
+      "/privacy.html?lang=zh-Hant"
     ],
     "skipThirdPartyRequests": true,
     "puppeteerArgs": [

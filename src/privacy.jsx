@@ -3,21 +3,40 @@ import { createRoot, hydrateRoot } from 'react-dom/client';
 import './nunito-font.css';
 import './index.css';
 
+const normalizeLang = (value) => {
+  if (!value) return null;
+  const normalized = String(value).toLowerCase().replace('_', '-');
+  if (
+    normalized.startsWith('zh-hant') ||
+    normalized.startsWith('zh-tw') ||
+    normalized.startsWith('zh-hk') ||
+    normalized.startsWith('zh-mo')
+  ) {
+    return 'zh-Hant';
+  }
+  if (normalized.startsWith('zh')) return 'zh';
+  if (normalized.startsWith('en')) return 'en';
+  return null;
+};
+
 const getInitialLang = () => {
   if (typeof window !== 'undefined') {
-    const forced = window.__LANG__;
-    if (forced === 'zh' || forced === 'en') return forced;
+    const forced = normalizeLang(window.__LANG__);
+    if (forced) return forced;
   }
 
   if (typeof document !== 'undefined') {
-    const htmlLang = document.documentElement.lang?.toLowerCase() ?? '';
-    if (htmlLang.startsWith('zh')) return 'zh';
-    if (htmlLang.startsWith('en')) return 'en';
+    const htmlLang = normalizeLang(document.documentElement.lang);
+    if (htmlLang) return htmlLang;
   }
 
   if (typeof navigator !== 'undefined') {
-    const navLang = navigator.language?.toLowerCase() ?? '';
-    if (navLang.startsWith('zh')) return 'zh';
+    const preferred =
+      (navigator.languages && navigator.languages.length
+        ? navigator.languages
+        : [navigator.language || '']
+      ).map(normalizeLang).find(Boolean);
+    if (preferred) return preferred;
   }
 
   return 'en';
@@ -70,6 +89,48 @@ const PrivacyPage = () => {
         s7: '7. 联系我们',
         s7b: '如果你对本隐私政策有任何疑问，请通过以下方式联系我们：',
       },
+      'zh-Hant': {
+        brand: 'ChugChug',
+        back: '返回主頁',
+        title: '隱私政策',
+        subtitle:
+          'ChugChug（「我們」）非常重視你的隱私。ChugChug 是一款用於線下聚會的本地喝酒遊戲 App，設計目標是：無需帳號、無需聯網、無需收集個人資訊即可使用。',
+        website_label: 'Website',
+        website: 'https://chugchug.app',
+        s1: '1. 我們收集的資訊',
+        s1b:
+          '我們不會收集、儲存或上傳任何可識別個人身分的資訊（PII），包括但不限於：',
+        s1l1: '姓名、郵箱、電話號碼',
+        s1l2: '位置資訊',
+        s1l3: '通訊錄',
+        s1l4: '照片、音訊或影片',
+        s1l5: '社交帳號或登入資訊',
+        s1c: '所有遊戲內容、隨機結果與操作均在使用者裝置本地完成。',
+        s2: '2. 裝置權限說明',
+        s2b: 'ChugChug 僅使用實現基礎功能所需的系統能力，例如：',
+        s2l1: '觸控 / 螢幕互動：用於遊戲操作',
+        s2l2: '震動 / 音效（如啟用）：用於增強遊戲體驗',
+        s2c: '我們不會請求或存取以下權限：',
+        s2d1: '相機',
+        s2d2: '麥克風',
+        s2d3: '相簿',
+        s2d4: '通訊錄',
+        s2d5: '定位資訊',
+        s3: '3. 第三方服務',
+        s3b:
+          '目前，ChugChug 不整合任何第三方廣告、分析、統計或追蹤服務。如果未來引入相關服務，我們將更新本隱私政策並明確說明。',
+        s4: '4. 未成年人聲明',
+        s4b:
+          'ChugChug 僅適用於達到當地法定飲酒年齡的使用者。我們不會有意收集任何未成年人的資訊。',
+        s5: '5. 資料安全',
+        s5b:
+          '由於我們不收集、儲存或傳輸使用者的個人資料，因此不存在使用者資料被洩露、出售或濫用的風險。',
+        s6: '6. 隱私政策的變更',
+        s6b:
+          '我們可能會不定期更新本隱私政策。更新後的版本將發布在應用內或官方網站上。繼續使用本應用即表示你接受更新後的隱私政策。',
+        s7: '7. 聯絡我們',
+        s7b: '如果你對本隱私政策有任何疑問，請透過以下方式聯絡我們：',
+      },
       en: {
         brand: 'ChugChug',
         back: 'Back to Home',
@@ -116,18 +177,32 @@ const PrivacyPage = () => {
     [],
   );
 
-  const current = t[lang];
+  const current = t[lang] ?? t.en;
   const baseUrl = import.meta.env.BASE_URL || '/';
   const enHomePath = `${baseUrl}?lang=en`;
   const zhHomePath = `${baseUrl}?lang=zh`;
+  const zhHantHomePath = `${baseUrl}?lang=zh-Hant`;
   const enPrivacyPath = `${baseUrl}privacy.html?lang=en`;
   const zhPrivacyPath = `${baseUrl}privacy.html?lang=zh`;
-  const homePath = lang === 'zh' ? zhHomePath : enHomePath;
+  const zhHantPrivacyPath = `${baseUrl}privacy.html?lang=zh-Hant`;
+  const homePathByLang = {
+    zh: zhHomePath,
+    'zh-Hant': zhHantHomePath,
+    en: enHomePath,
+  };
+  const homePath = homePathByLang[lang] ?? enHomePath;
 
   useEffect(() => {
     if (typeof document === 'undefined') return;
-    document.title =
-      lang === 'zh' ? '隐私政策 - 吨吨吨' : 'Privacy Policy - ChugChug';
+    if (lang === 'zh') {
+      document.title = '隐私政策 - 吨吨吨';
+      return;
+    }
+    if (lang === 'zh-Hant') {
+      document.title = '隱私政策 - ChugChug';
+      return;
+    }
+    document.title = 'Privacy Policy - ChugChug';
   }, [lang]);
 
   return (
@@ -251,20 +326,31 @@ const PrivacyPage = () => {
 		            <a href={homePath} className="hover:text-[#FFE85F] transition-colors">
 		              {current.back}
 	            </a>
-	            <div className="bg-neutral-800 rounded-full p-1 flex items-center border border-neutral-700">
-	              <a
-	                href={zhPrivacyPath}
-	                aria-current={lang === 'zh' ? 'page' : undefined}
-	                className={`px-3 py-1 rounded-full text-xs font-bold transition-all duration-200 ${
-	                  lang === 'zh'
-	                    ? 'bg-[#FFE85F] text-black shadow-sm'
-	                    : 'text-neutral-400 hover:text-white'
-	                }`}
-	              >
-	                中
-	              </a>
-	              <a
-	                href={enPrivacyPath}
+		            <div className="bg-neutral-800 rounded-full p-1 flex items-center border border-neutral-700">
+		              <a
+		                href={zhPrivacyPath}
+		                aria-current={lang === 'zh' ? 'page' : undefined}
+		                className={`px-3 py-1 rounded-full text-xs font-bold transition-all duration-200 ${
+		                  lang === 'zh'
+		                    ? 'bg-[#FFE85F] text-black shadow-sm'
+		                    : 'text-neutral-400 hover:text-white'
+		                }`}
+		              >
+		                简
+		              </a>
+		              <a
+		                href={zhHantPrivacyPath}
+		                aria-current={lang === 'zh-Hant' ? 'page' : undefined}
+		                className={`px-3 py-1 rounded-full text-xs font-bold transition-all duration-200 ${
+		                  lang === 'zh-Hant'
+		                    ? 'bg-[#FFE85F] text-black shadow-sm'
+		                    : 'text-neutral-400 hover:text-white'
+		                }`}
+		              >
+		                繁
+		              </a>
+		              <a
+		                href={enPrivacyPath}
 	                aria-current={lang === 'en' ? 'page' : undefined}
 	                className={`px-3 py-1 rounded-full text-xs font-bold transition-all duration-200 ${
 	                  lang === 'en'

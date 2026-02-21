@@ -10,6 +10,12 @@
     <loc>https://chugchug.app/?lang=zh</loc>
   </url>
   <url>
+    <loc>https://chugchug.app/?lang=zh-Hant</loc>
+  </url>
+  <url>
     <loc>https://chugchug.app/privacy.html?lang=zh</loc>
+  </url>
+  <url>
+    <loc>https://chugchug.app/privacy.html?lang=zh-Hant</loc>
   </url>
 </urlset>
