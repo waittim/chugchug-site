@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { createRoot, hydrateRoot } from 'react-dom/client';
+import { SUPPORT_EMAIL } from './contact.js';
 import { PRIVACY_COPY } from './content/privacy.js';
 import { getInitialLang } from './i18n.js';
 import './nunito-font.css';
@@ -133,6 +134,15 @@ const PrivacyPage = () => {
               <h2 className="text-white text-2xl md:text-3xl font-black font-bubble">{current.s7}</h2>
               <p className="text-neutral-300 font-bold mt-3 whitespace-pre-line">{current.s7b}</p>
               <ul className="mt-4 space-y-2 text-neutral-300 font-bold list-disc pl-5">
+                <li>
+                  {current.email_label}:{' '}
+                  <a
+                    className="text-[#FFE85F] hover:underline"
+                    href={`mailto:${SUPPORT_EMAIL}`}
+                  >
+                    {SUPPORT_EMAIL}
+                  </a>
+                </li>
                 <li>
                   {current.website_label}:{' '}
                   <a

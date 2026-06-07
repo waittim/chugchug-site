@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { ArrowDown } from 'lucide-react';
+import { SUPPORT_EMAIL } from './contact.js';
 import { GAMES } from './content/games.jsx';
 import { HOME_COPY } from './content/home.js';
 import { getInitialLang } from './i18n.js';
@@ -514,7 +515,7 @@ const App = () => {
                 {currentText.footer_privacy}
               </a>
               <a
-                href="mailto:support@chugchug.app"
+                href={`mailto:${SUPPORT_EMAIL}`}
                 className="hover:text-[#FB458D] transition-colors"
                 aria-label={currentText.footer_contact}
               >

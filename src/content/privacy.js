@@ -5,6 +5,7 @@ export const PRIVACY_COPY = {
     title: '隐私政策',
     subtitle:
       'ChugChug（“我们”）非常重视你的隐私。ChugChug 是一款用于线下聚会的本地喝酒游戏 App，设计目标是：无需账号、无需联网、无需收集个人信息即可使用。',
+    email_label: '邮箱',
     website_label: 'Website',
     website: 'https://chugchug.app',
     s1: '1. 我们收集的信息',
@@ -47,6 +48,7 @@ export const PRIVACY_COPY = {
     title: '隱私政策',
     subtitle:
       'ChugChug（「我們」）非常重視你的隱私。ChugChug 是一款用於線下聚會的本地喝酒遊戲 App，設計目標是：無需帳號、無需聯網、無需收集個人資訊即可使用。',
+    email_label: '電子郵件',
     website_label: 'Website',
     website: 'https://chugchug.app',
     s1: '1. 我們收集的資訊',
@@ -89,6 +91,7 @@ export const PRIVACY_COPY = {
     title: 'Privacy Policy',
     subtitle:
       'ChugChug ("we", "our", or "us") respects your privacy. ChugChug is designed as a local party drinking game app that does not require an account, internet connection, or personal data to function.',
+    email_label: 'Email',
     website_label: 'Website',
     website: 'https://chugchug.app',
     s1: '1. Information We Collect',
