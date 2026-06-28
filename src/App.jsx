@@ -18,6 +18,42 @@ const AppleLogo = ({ size = 36 }) => (
 const APP_STORE_URL = 'https://apps.apple.com/us/app/chugchug-party-game/id6758532049';
 const DOWNLOAD_ANCHOR = '#download';
 
+const HIGHLIGHTS_COPY = {
+  zh: {
+    label: '亮点',
+    title: '少说，多玩。',
+    desc: '规则、道具、冷场空档，都交给 ChugChug。',
+    items: [
+      ['01', '打开就玩', '不用翻规则，不用找道具。'],
+      ['02', '离线可玩', '没信号也不扫兴。'],
+      ['03', '防误触', '按钮够大，步骤够少。'],
+      ['04', '不冷场', '抽卡、点名、惩罚接得上。'],
+    ],
+  },
+  'zh-Hant': {
+    label: '亮點',
+    title: '少說，多玩。',
+    desc: '規則、道具、冷場空檔，都交給 ChugChug。',
+    items: [
+      ['01', '打開就玩', '不用翻規則，不用找道具。'],
+      ['02', '離線可玩', '沒訊號也不掃興。'],
+      ['03', '防誤觸', '按鈕夠大，步驟夠少。'],
+      ['04', '不冷場', '抽卡、點名、懲罰接得上。'],
+    ],
+  },
+  en: {
+    label: 'Highlights',
+    title: 'Less talk. More play.',
+    desc: 'Rules, props, and dead air are handled by ChugChug.',
+    items: [
+      ['01', 'Open and play', 'No rules to search. No props to find.'],
+      ['02', 'Offline ready', 'Bad signal will not kill the night.'],
+      ['03', 'Drunk-proof', 'Big buttons. Fewer steps.'],
+      ['04', 'No dead air', 'Cards, picks, and penalties keep moving.'],
+    ],
+  },
+};
+
 const App = () => {
   const [lang] = useState(getInitialLang);
   const [flippedIds, setFlippedIds] = useState(() => new Set());
@@ -58,6 +94,7 @@ const App = () => {
   };
 
   const currentText = HOME_COPY[lang] ?? HOME_COPY.en;
+  const highlightText = HIGHLIGHTS_COPY[lang] ?? HIGHLIGHTS_COPY.en;
   const isChineseLang = lang === 'zh' || lang === 'zh-Hant';
   const isTraditionalChinese = lang === 'zh-Hant';
   const heroPointColors = ['bg-[#FFE85F]', 'bg-[#FB458D]', 'bg-[#22D3EE]'];
@@ -290,6 +327,49 @@ const App = () => {
 
         <div className="motion-safe:animate-bounce absolute bottom-8 text-neutral-600">
           <ArrowDown size={32} />
+        </div>
+      </section>
+
+      <section className="py-20 px-4 md:px-12 bg-[#0F0F0F] border-y border-neutral-900">
+        <div className="max-w-6xl mx-auto grid gap-10 lg:grid-cols-[0.85fr_1.15fr] lg:items-end">
+          <div>
+            <p className="text-[#FB458D] text-sm font-black uppercase tracking-[0.22em] font-bubble">
+              {highlightText.label}
+            </p>
+            <h2 className="mt-4 text-4xl md:text-6xl font-black text-white leading-none tracking-tight font-bubble">
+              {highlightText.title}
+            </h2>
+            <p className="mt-5 text-neutral-400 text-lg md:text-xl font-bold leading-relaxed max-w-xl">
+              {highlightText.desc}
+            </p>
+            <div className="mt-8 h-2 w-32 bg-[#FFE85F]" />
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-5">
+            {highlightText.items.map(([number, title, body], index) => {
+              const accentColors = ['text-[#FFE85F]', 'text-[#22D3EE]', 'text-[#FB458D]', 'text-[#FFE85F]'];
+
+              return (
+                <article
+                  key={number}
+                  className="rounded-3xl border border-neutral-800 bg-[#121212] p-6 shadow-[0_0_24px_rgba(255,255,255,0.04)]"
+                >
+                  <div className="flex items-start justify-between gap-4">
+                    <span className={`font-bubble text-5xl font-black leading-none ${accentColors[index]}`}>
+                      {number}
+                    </span>
+                    <span className="mt-1 h-3 w-3 rounded-full bg-white/20" />
+                  </div>
+                  <h3 className="mt-7 text-2xl font-black text-white font-bubble">
+                    {title}
+                  </h3>
+                  <p className="mt-3 text-neutral-400 text-base font-bold leading-relaxed">
+                    {body}
+                  </p>
+                </article>
+              );
+            })}
+          </div>
         </div>
       </section>
 
