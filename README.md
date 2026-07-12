@@ -46,6 +46,8 @@ Both pages support:
 - `?lang=zh`
 - `?lang=zh-Hant`
 
+
+
 ## Project Structure
 
 - `src/App.jsx`: home page layout and interactions
@@ -56,6 +58,8 @@ Both pages support:
 - `src/content/privacy.js`: privacy policy copy
 - `src/index.css`: global Tailwind and shared styles
 - `src/nunito-font.css`: local font-face declarations
+
+
 
 ## Assets
 
@@ -79,6 +83,8 @@ Other important assets:
 - `public/fonts/`: bundled Nunito font files
 - `public/robots.txt`, `public/sitemap.xml`: search engine metadata
 
+
+
 ## Deploy
 
 This repo includes a GitHub Actions workflow that builds and deploys to GitHub Pages.
@@ -100,3 +106,4 @@ You can override the Vite base path at build time:
 ```bash
 VITE_BASE=/custom-base/ npm run build
 ```
+
