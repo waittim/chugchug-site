@@ -98,8 +98,8 @@ const CTA_COPY = {
 };
 
 const STORE_BADGE_LEAD = {
-  zh: '下载自',
-  'zh-Hant': '下載自',
+  zh: '前往',
+  'zh-Hant': '前往',
   en: 'Download on the',
 };
 
