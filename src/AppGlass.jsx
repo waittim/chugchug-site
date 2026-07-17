@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { ArrowDown, ArrowUpRight, Clock3, Sparkles, Wine } from 'lucide-react';
+import SiteFooter from './components/SiteFooter.jsx';
 import { SUPPORT_EMAIL } from './contact.js';
 import { GAMES } from './content/games.jsx';
 import { HOME_COPY } from './content/home.js';
@@ -262,12 +263,6 @@ const App = () => {
     });
   };
 
-  const languageLinks = [
-    ['zh', '简'],
-    ['zh-Hant', '繁'],
-    ['en', 'EN'],
-  ];
-
   return (
     <div className="site-shell">
       <nav className="site-nav" aria-label="Primary">
@@ -443,26 +438,22 @@ const App = () => {
         </section>
       </main>
 
-      <footer className="site-footer">
-        <div className="brand-mark">{brand}</div>
-        <div className="language-switcher glass-pill">
-          {languageLinks.map(([code, label]) => (
-            <a
-              key={code}
-              href={`${baseUrl}?lang=${code}`}
-              className={lang === code ? 'is-active' : ''}
-              aria-current={lang === code ? 'page' : undefined}
-            >
-              {label}
-            </a>
-          ))}
-        </div>
-        <div className="footer-links">
-          <a href={`${baseUrl}privacy.html?lang=${lang}`}>{currentText.footer_privacy}</a>
-          <a href={`mailto:${SUPPORT_EMAIL}`}>{currentText.footer_contact}</a>
-        </div>
-        <p>{currentText.footer_rights}</p>
-      </footer>
+      <SiteFooter
+        lang={lang}
+        brand={brand}
+        copyright={currentText.footer_rights}
+        languageHref={(code) => `${baseUrl}?lang=${code}`}
+        links={[
+          {
+            href: `${baseUrl}privacy.html?lang=${lang}`,
+            label: currentText.footer_privacy,
+          },
+          {
+            href: `mailto:${SUPPORT_EMAIL}`,
+            label: currentText.footer_contact,
+          },
+        ]}
+      />
     </div>
   );
 };

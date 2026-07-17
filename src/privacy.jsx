@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { createRoot, hydrateRoot } from 'react-dom/client';
+import { ArrowLeft } from 'lucide-react';
+import SiteFooter from './components/SiteFooter.jsx';
 import { SUPPORT_EMAIL } from './contact.js';
 import { PRIVACY_COPY } from './content/privacy.js';
 import { getInitialLang } from './i18n.js';
@@ -10,13 +12,11 @@ const PrivacyPage = () => {
   const [lang] = useState(getInitialLang);
 
   const current = PRIVACY_COPY[lang] ?? PRIVACY_COPY.en;
+  const brand = lang === 'zh' ? '吨吨吨·ChugChug' : 'ChugChug';
   const baseUrl = import.meta.env.BASE_URL || '/';
   const enHomePath = `${baseUrl}?lang=en`;
   const zhHomePath = `${baseUrl}?lang=zh`;
   const zhHantHomePath = `${baseUrl}?lang=zh-Hant`;
-  const enPrivacyPath = `${baseUrl}privacy.html?lang=en`;
-  const zhPrivacyPath = `${baseUrl}privacy.html?lang=zh`;
-  const zhHantPrivacyPath = `${baseUrl}privacy.html?lang=zh-Hant`;
   const homePathByLang = {
     zh: zhHomePath,
     'zh-Hant': zhHantHomePath,
@@ -38,49 +38,37 @@ const PrivacyPage = () => {
   }, [lang]);
 
   return (
-    <div className="min-h-screen bg-[#0F0F0F] font-sans selection:bg-[#FFE85F] selection:text-black overflow-x-hidden flex flex-col">
-      <style>
-        {`
-          .font-bubble {
-            font-family: "SF Pro Rounded", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            font-weight: 800;
-          }
-        `}
-      </style>
+    <div className="privacy-shell">
+      <div className="privacy-ambient" aria-hidden="true">
+        <span className="privacy-ambient__light privacy-ambient__light--gold" />
+        <span className="privacy-ambient__light privacy-ambient__light--pink" />
+      </div>
 
-      <nav className="fixed top-0 w-full z-50 px-4 md:px-6 py-4 flex justify-between items-center mix-blend-difference text-white">
+      <nav className="privacy-nav">
         <a
           href={homePath}
-          className="text-2xl font-black tracking-tighter font-bubble flex items-center gap-2"
+          className="brand-mark"
           aria-label={current.back}
         >
-          {current.brand}
+          {brand}
         </a>
 
-	        <div className="flex items-center gap-3">
-	          <a
-	            href={homePath}
-	            className="hidden md:block bg-white text-black px-5 py-2 rounded-full font-bold border-2 border-transparent hover:scale-105 transition-transform duration-200"
-	          >
-	            {current.back}
-	          </a>
-	        </div>
-	      </nav>
+        <a href={homePath} className="privacy-back glass-pill">
+          <ArrowLeft size={15} aria-hidden="true" />
+          {current.back}
+        </a>
+      </nav>
 
-      <main className="flex-1 pt-24 pb-16 px-4 md:px-12">
-        <div className="max-w-4xl mx-auto">
-          <header className="mb-10">
-            <h1 className="text-4xl md:text-6xl font-black text-white tracking-tight font-bubble">
-              {current.title}
-            </h1>
-            <div className="h-2 w-40 bg-[#FFE85F] mt-4" />
-            <p className="text-neutral-400 text-lg md:text-xl font-bold mt-6 font-bubble">
-              {current.subtitle}
-            </p>
+      <main className="privacy-main">
+        <div className="privacy-layout">
+          <header className="privacy-header">
+            <p className="section-kicker">Privacy · ChugChug</p>
+            <h1>{current.title}</h1>
+            <p>{current.subtitle}</p>
           </header>
 
-          <section className="space-y-10">
-            <div className="bg-[#121212] border border-neutral-900 rounded-3xl p-6 md:p-8">
+          <section className="privacy-content">
+            <article className="privacy-card">
               <h2 className="text-white text-2xl md:text-3xl font-black font-bubble">{current.s1}</h2>
               <p className="text-neutral-300 font-bold mt-3 whitespace-pre-line">{current.s1b}</p>
               <ul className="mt-4 space-y-2 text-neutral-300 font-bold list-disc pl-5">
@@ -91,9 +79,9 @@ const PrivacyPage = () => {
                 <li>{current.s1l5}</li>
               </ul>
               <p className="text-neutral-300 font-bold mt-4 whitespace-pre-line">{current.s1c}</p>
-            </div>
+            </article>
 
-            <div className="bg-[#121212] border border-neutral-900 rounded-3xl p-6 md:p-8">
+            <article className="privacy-card">
               <h2 className="text-white text-2xl md:text-3xl font-black font-bubble">{current.s2}</h2>
               <p className="text-neutral-300 font-bold mt-3 whitespace-pre-line">{current.s2b}</p>
               <ul className="mt-4 space-y-2 text-neutral-300 font-bold list-disc pl-5">
@@ -108,29 +96,29 @@ const PrivacyPage = () => {
                 <li>{current.s2d4}</li>
                 <li>{current.s2d5}</li>
               </ul>
-            </div>
+            </article>
 
-            <div className="bg-[#121212] border border-neutral-900 rounded-3xl p-6 md:p-8">
+            <article className="privacy-card">
               <h2 className="text-white text-2xl md:text-3xl font-black font-bubble">{current.s3}</h2>
               <p className="text-neutral-300 font-bold mt-3 whitespace-pre-line">{current.s3b}</p>
-            </div>
+            </article>
 
-            <div className="bg-[#121212] border border-neutral-900 rounded-3xl p-6 md:p-8">
+            <article className="privacy-card">
               <h2 className="text-white text-2xl md:text-3xl font-black font-bubble">{current.s4}</h2>
               <p className="text-neutral-300 font-bold mt-3 whitespace-pre-line">{current.s4b}</p>
-            </div>
+            </article>
 
-            <div className="bg-[#121212] border border-neutral-900 rounded-3xl p-6 md:p-8">
+            <article className="privacy-card">
               <h2 className="text-white text-2xl md:text-3xl font-black font-bubble">{current.s5}</h2>
               <p className="text-neutral-300 font-bold mt-3 whitespace-pre-line">{current.s5b}</p>
-            </div>
+            </article>
 
-            <div className="bg-[#121212] border border-neutral-900 rounded-3xl p-6 md:p-8">
+            <article className="privacy-card">
               <h2 className="text-white text-2xl md:text-3xl font-black font-bubble">{current.s6}</h2>
               <p className="text-neutral-300 font-bold mt-3 whitespace-pre-line">{current.s6b}</p>
-            </div>
+            </article>
 
-            <div className="bg-[#121212] border border-neutral-900 rounded-3xl p-6 md:p-8">
+            <article className="privacy-card privacy-card--contact">
               <h2 className="text-white text-2xl md:text-3xl font-black font-bubble">{current.s7}</h2>
               <p className="text-neutral-300 font-bold mt-3 whitespace-pre-line">{current.s7b}</p>
               <ul className="mt-4 space-y-2 text-neutral-300 font-bold list-disc pl-5">
@@ -155,56 +143,20 @@ const PrivacyPage = () => {
                   </a>
                 </li>
               </ul>
-            </div>
+            </article>
           </section>
         </div>
       </main>
 
-	      <footer className="w-screen relative left-1/2 -translate-x-1/2 py-8 border-t border-neutral-900 bg-[#0F0F0F]">
-		        <div className="w-full px-4 md:px-6 flex flex-row flex-wrap justify-between items-center text-neutral-600 text-xs md:text-sm gap-x-8 gap-y-4">
-		          <div className="font-bold font-bubble">© 2026 CHUGCHUG APP</div>
-		          <div className="flex flex-row flex-wrap items-center gap-x-6 gap-y-3 font-bold">
-		            <a href={homePath} className="hover:text-[#FFE85F] transition-colors">
-		              {current.back}
-	            </a>
-		            <div className="bg-neutral-800 rounded-full p-1 flex items-center border border-neutral-700">
-		              <a
-		                href={zhPrivacyPath}
-		                aria-current={lang === 'zh' ? 'page' : undefined}
-		                className={`px-3 py-1 rounded-full text-xs font-bold transition-all duration-200 ${
-		                  lang === 'zh'
-		                    ? 'bg-[#FFE85F] text-black shadow-sm'
-		                    : 'text-neutral-400 hover:text-white'
-		                }`}
-		              >
-		                简
-		              </a>
-		              <a
-		                href={zhHantPrivacyPath}
-		                aria-current={lang === 'zh-Hant' ? 'page' : undefined}
-		                className={`px-3 py-1 rounded-full text-xs font-bold transition-all duration-200 ${
-		                  lang === 'zh-Hant'
-		                    ? 'bg-[#FFE85F] text-black shadow-sm'
-		                    : 'text-neutral-400 hover:text-white'
-		                }`}
-		              >
-		                繁
-		              </a>
-		              <a
-		                href={enPrivacyPath}
-	                aria-current={lang === 'en' ? 'page' : undefined}
-	                className={`px-3 py-1 rounded-full text-xs font-bold transition-all duration-200 ${
-	                  lang === 'en'
-	                    ? 'bg-[#FFE85F] text-black shadow-sm'
-	                    : 'text-neutral-400 hover:text-white'
-	                }`}
-	              >
-	                EN
-	              </a>
-	            </div>
-	          </div>
-	        </div>
-	      </footer>
+      <SiteFooter
+        lang={lang}
+        brand={brand}
+        languageHref={(code) => `${baseUrl}privacy.html?lang=${code}`}
+        links={[
+          { href: homePath, label: current.back },
+          { href: `mailto:${SUPPORT_EMAIL}`, label: current.email_label },
+        ]}
+      />
     </div>
   );
 };
