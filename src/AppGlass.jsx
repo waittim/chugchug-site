@@ -118,7 +118,7 @@ const App = () => {
   const ctaText = CTA_COPY[lang] ?? CTA_COPY.en;
   const isChinese = lang === 'zh' || lang === 'zh-Hant';
   const isTraditional = lang === 'zh-Hant';
-  const brand = lang === 'zh' ? '吨吨吨' : 'ChugChug';
+  const brand = lang === 'zh' ? '吨吨吨 · ChugChug' : 'ChugChug';
   const baseUrl = import.meta.env.BASE_URL || '/';
 
   useEffect(() => {

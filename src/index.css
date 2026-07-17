@@ -99,6 +99,10 @@ button {
   letter-spacing: -0.05em;
 }
 
+.site-nav .brand-mark {
+  color: var(--gold);
+}
+
 .glass-pill {
   display: inline-flex;
   align-items: center;
