@@ -12,7 +12,7 @@ const PrivacyPage = () => {
   const [lang] = useState(getInitialLang);
 
   const current = PRIVACY_COPY[lang] ?? PRIVACY_COPY.en;
-  const brand = lang === 'zh' ? '吨吨吨·ChugChug' : 'ChugChug';
+  const brand = lang === 'zh' ? '吨吨吨 · ChugChug' : 'ChugChug';
   const baseUrl = import.meta.env.BASE_URL || '/';
   const enHomePath = `${baseUrl}?lang=en`;
   const zhHomePath = `${baseUrl}?lang=zh`;
