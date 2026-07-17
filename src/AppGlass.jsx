@@ -97,6 +97,12 @@ const CTA_COPY = {
   },
 };
 
+const STORE_BADGE_LEAD = {
+  zh: '下载自',
+  'zh-Hant': '下載自',
+  en: 'Download on the',
+};
+
 const AppleLogo = ({ size = 30 }) => (
   <span aria-hidden="true" className="apple-mark" style={{ fontSize: size }}>
     {'\uf8ff'}
@@ -426,7 +432,7 @@ const App = () => {
               onClick={() => track('app_store_click', APP_STORE_URL)}
             >
               <AppleLogo />
-              <span><small>Download on the</small>{currentText.btn_download}</span>
+              <span><small>{STORE_BADGE_LEAD[lang] ?? STORE_BADGE_LEAD.en}</small>App Store</span>
               <ArrowUpRight size={19} aria-hidden="true" />
             </a>
             <div className="download-facts">
