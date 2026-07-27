@@ -50,6 +50,7 @@ body {
   --cta-ink: #171512;
   --touch-min: 44px;
   --touch-circle: 48px;
+  --rounded-phone: clamp(32px, 4vw, 44px);
   --cta-height: 60px;
 }
 
@@ -397,7 +398,7 @@ button:focus-visible {
   flex: 0 0 auto;
   overflow: hidden;
   border: 5px solid #050505;
-  border-radius: clamp(32px, 4vw, 44px);
+  border-radius: var(--rounded-phone);
   background: #111;
   box-shadow: 0 32px 80px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(255, 255, 255, 0.12);
   transition: opacity 300ms ease;
@@ -1023,9 +1024,9 @@ button:focus-visible {
 }
 
 .language-switcher a {
-  min-width: 28px;
-  min-height: 26px;
-  padding: 0 8px;
+  min-width: var(--touch-min);
+  min-height: var(--touch-min);
+  padding: 0 10px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -1038,8 +1039,7 @@ button:focus-visible {
 
 @media (pointer: coarse) {
   .language-switcher a {
-    min-width: var(--touch-min);
-    min-height: var(--touch-min);
+    padding: 0 12px;
   }
 }
 

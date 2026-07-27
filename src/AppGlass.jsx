@@ -139,6 +139,7 @@ const App = () => {
 
     let offset = 0;
     let rafId = 0;
+    let resumeTimeoutId = 0;
     let lastTime = 0;
     let activePointerId = null;
     let dragStartX = 0;
@@ -156,21 +157,58 @@ const App = () => {
       marquee.style.transform = `translate3d(${-offset}px, 0, 0)`;
     };
 
-    const step = (time) => {
-      if (lastTime === 0) lastTime = time;
-      const dt = Math.min((time - lastTime) / 1000, 0.1);
-      lastTime = time;
+    const stopAuto = () => {
+      if (rafId) cancelAnimationFrame(rafId);
+      rafId = 0;
+      if (resumeTimeoutId) window.clearTimeout(resumeTimeoutId);
+      resumeTimeoutId = 0;
+      lastTime = 0;
+      setWillChange(false);
+    };
 
-      if (activePointerId === null && time >= resumeAt && !reduceMotionQuery.matches) {
+    const scheduleAutoResume = () => {
+      if (reduceMotionQuery.matches || activePointerId !== null) return;
+      if (resumeTimeoutId) window.clearTimeout(resumeTimeoutId);
+      const delay = Math.max(0, resumeAt - performance.now());
+      resumeTimeoutId = window.setTimeout(() => {
+        resumeTimeoutId = 0;
+        startAuto();
+      }, delay);
+    };
+
+    const startAuto = () => {
+      if (reduceMotionQuery.matches || activePointerId !== null || rafId) return;
+      if (performance.now() < resumeAt) {
+        scheduleAutoResume();
+        return;
+      }
+
+      const step = (time) => {
+        if (activePointerId !== null || reduceMotionQuery.matches) {
+          stopAuto();
+          return;
+        }
+        if (time < resumeAt) {
+          stopAuto();
+          scheduleAutoResume();
+          return;
+        }
+
+        if (lastTime === 0) lastTime = time;
+        const dt = Math.min((time - lastTime) / 1000, 0.1);
+        lastTime = time;
         setWillChange(true);
         offset += autoSpeed * dt;
         applyOffset();
-      }
+        rafId = requestAnimationFrame(step);
+      };
+
       rafId = requestAnimationFrame(step);
     };
 
     const onPointerDown = (event) => {
       if (!event.isPrimary) return;
+      stopAuto();
       activePointerId = event.pointerId;
       dragStartX = event.clientX;
       dragStartOffset = offset;
@@ -197,7 +235,8 @@ const App = () => {
       activePointerId = null;
       marquee.classList.remove('is-dragging');
       resumeAt = performance.now() + resumeDelayMs;
-      if (reduceMotionQuery.matches) setWillChange(false);
+      setWillChange(false);
+      scheduleAutoResume();
     };
 
     const onClickCapture = (event) => {
@@ -209,22 +248,23 @@ const App = () => {
     };
 
     const onReduceMotionChange = () => {
-      if (reduceMotionQuery.matches) setWillChange(false);
+      stopAuto();
+      if (!reduceMotionQuery.matches) scheduleAutoResume();
     };
 
     marqueeApiRef.current = {
       nudge: (delta) => {
+        stopAuto();
         setWillChange(true);
         offset += delta;
         applyOffset();
         resumeAt = performance.now() + resumeDelayMs;
-        if (reduceMotionQuery.matches) {
-          window.setTimeout(() => setWillChange(false), 320);
-        }
+        window.setTimeout(() => setWillChange(false), 320);
+        scheduleAutoResume();
       },
     };
 
-    if (!reduceMotionQuery.matches) setWillChange(true);
+    if (!reduceMotionQuery.matches) scheduleAutoResume();
 
     marquee.addEventListener('pointerdown', onPointerDown);
     marquee.addEventListener('pointermove', onPointerMove);
@@ -232,10 +272,9 @@ const App = () => {
     marquee.addEventListener('pointercancel', endDrag);
     marquee.addEventListener('click', onClickCapture, true);
     reduceMotionQuery.addEventListener('change', onReduceMotionChange);
-    rafId = requestAnimationFrame(step);
 
     return () => {
-      cancelAnimationFrame(rafId);
+      stopAuto();
       marquee.removeEventListener('pointerdown', onPointerDown);
       marquee.removeEventListener('pointermove', onPointerMove);
       marquee.removeEventListener('pointerup', endDrag);
@@ -327,6 +366,7 @@ const App = () => {
             className="screens-stage"
             role="region"
             aria-label={currentText.a11y_screens}
+            tabIndex={0}
             onKeyDown={onScreensKeyDown}
           >
             <button
@@ -423,11 +463,6 @@ const App = () => {
                 .replace('{name}', name)
                 .replace('{level}', String(drunkLevel))
                 .replace('{duration}', String(duration));
-              const drunkLabel = (currentText.a11y_drunk_level || 'Drunk level {level} of 5').replace(
-                '{level}',
-                String(drunkLevel),
-              );
-
               return (
                 <button
                   type="button"
@@ -446,11 +481,12 @@ const App = () => {
                       <span className="game-card__spacer" />
                       <strong>{name}</strong>
                       <span className="game-card__meta">
-                        <span className="wine-level" aria-label={drunkLabel}>
+                        <span className="wine-level" aria-hidden="true">
                           {Array.from({ length: 5 }, (_, index) => (
                             <Wine
                               key={index}
                               size={10}
+                              aria-hidden="true"
                               className={index < drunkLevel ? 'is-full' : ''}
                             />
                           ))}

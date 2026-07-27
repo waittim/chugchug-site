@@ -59,7 +59,7 @@ const PrivacyPage = () => {
       <main className="privacy-main" id="privacy-content">
         <div className="privacy-layout">
           <header className="privacy-header">
-            <p className="section-kicker">Privacy · ChugChug</p>
+            <p className="section-kicker">{current.kicker}</p>
             <h1>{current.title}</h1>
             <p>{current.subtitle}</p>
           </header>

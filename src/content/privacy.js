@@ -2,6 +2,7 @@ export const PRIVACY_COPY = {
   zh: {
     brand: '吨吨吨',
     back: '返回主页',
+    kicker: '隐私 · 吨吨吨',
     title: '隐私政策',
     subtitle:
       'ChugChug（“我们”）非常重视你的隐私。ChugChug 是一款用于线下聚会的本地喝酒游戏 App，设计目标是：无需账号、无需联网、无需收集个人信息即可使用。',
@@ -49,6 +50,7 @@ export const PRIVACY_COPY = {
   'zh-Hant': {
     brand: 'ChugChug',
     back: '返回主頁',
+    kicker: '隱私 · ChugChug',
     title: '隱私政策',
     subtitle:
       'ChugChug（「我們」）非常重視你的隱私。ChugChug 是一款用於線下聚會的本地喝酒遊戲 App，設計目標是：無需帳號、無需聯網、無需收集個人資訊即可使用。',
@@ -96,6 +98,7 @@ export const PRIVACY_COPY = {
   en: {
     brand: 'ChugChug',
     back: 'Back to Home',
+    kicker: 'Privacy · ChugChug',
     title: 'Privacy Policy',
     subtitle:
       'ChugChug ("we", "our", or "us") respects your privacy. ChugChug is designed as a local party drinking game app that does not require an account, internet connection, or personal data to function.',

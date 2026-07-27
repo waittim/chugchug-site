@@ -81,12 +81,66 @@ typography:
     fontSize: "16px"
     fontWeight: 700
     lineHeight: 1.1
+  hero-subtitle:
+    fontFamily: "-apple-system, BlinkMacSystemFont, SF Pro Display, Helvetica Neue, Arial, sans-serif"
+    fontSize: "clamp(18px, 2vw, 26px)"
+    fontWeight: 500
+    lineHeight: 1.35
+    letterSpacing: "-0.02em"
+  games-emphasis:
+    fontFamily: "-apple-system, BlinkMacSystemFont, SF Pro Display, Helvetica Neue, Arial, sans-serif"
+    fontSize: "clamp(42px, 6vw, 76px)"
+    fontWeight: 650
+    lineHeight: 1.05
+    letterSpacing: "-0.035em"
+  game-card-title:
+    fontFamily: "-apple-system, BlinkMacSystemFont, SF Pro Display, Helvetica Neue, Arial, sans-serif"
+    fontSize: "clamp(18px, 1.8vw, 24px)"
+    fontWeight: 700
+    lineHeight: 1.2
+    letterSpacing: "-0.03em"
+  game-card-featured-title:
+    fontFamily: "-apple-system, BlinkMacSystemFont, SF Pro Display, Helvetica Neue, Arial, sans-serif"
+    fontSize: "clamp(26px, 2.8vw, 36px)"
+    fontWeight: 700
+    lineHeight: 1.15
+    letterSpacing: "-0.03em"
+  download-title:
+    fontFamily: "-apple-system, BlinkMacSystemFont, SF Pro Display, Helvetica Neue, Arial, sans-serif"
+    fontSize: "clamp(34px, 4.6vw, 56px)"
+    fontWeight: 650
+    lineHeight: 1.05
+    letterSpacing: "-0.035em"
+  privacy-title:
+    fontFamily: "-apple-system, BlinkMacSystemFont, SF Pro Display, Helvetica Neue, Arial, sans-serif"
+    fontSize: "clamp(48px, 6vw, 76px)"
+    fontWeight: 650
+    lineHeight: 1.05
+    letterSpacing: "-0.035em"
+  privacy-section:
+    fontFamily: "-apple-system, BlinkMacSystemFont, SF Pro Display, Helvetica Neue, Arial, sans-serif"
+    fontSize: "clamp(22px, 2.4vw, 30px)"
+    fontWeight: 620
+    lineHeight: 1.2
+    letterSpacing: "-0.03em"
+  display-mobile:
+    fontFamily: "ChugChug Rounded, ui-rounded, system-ui, sans-serif"
+    fontSize: "clamp(44px, 14vw, 62px)"
+    fontWeight: 800
+    lineHeight: 0.9
+    letterSpacing: "-0.04em"
+  display-mobile-wide:
+    fontFamily: "ChugChug Rounded, ui-rounded, system-ui, sans-serif"
+    fontSize: "clamp(56px, 18vw, 88px)"
+    fontWeight: 800
+    lineHeight: 0.9
+    letterSpacing: "-0.04em"
 rounded:
   card: "22px"
   control: "999px"
   download: "28px"
   download-mobile: "20px"
-  phone: "44px"
+  phone: "clamp(32px, 4vw, 44px)"
   phone-min: "32px"
 spacing:
   section: "clamp(96px, 12vw, 160px)"
@@ -147,12 +201,14 @@ components:
 
 ## Typography
 
-展示层用 ChugChug Rounded；界面层用系统 SF/Helvetica 栈以贴近 iOS。
+展示层用 ChugChug Rounded；界面层用系统 SF/Helvetica 栈以贴近 iOS。除固定 body 阶梯外，营销区块允许流体 `clamp()` 字号（已写入 frontmatter）。
 
-- Display：hero 品牌名，极大字号、极紧行高
-- Headline / Title：分区与功能标题
-- Body：说明与规则
-- Label：kicker 与卡片提示（大写字距）
+- **Display**：hero 品牌名，`clamp(64px, 11vw, 148px)`；窄屏另有 `display-mobile` / `display-mobile-wide`
+- **Headline / Title**：分区标题；游戏区强调用 `games-emphasis`
+- **Hero subtitle**：`hero-subtitle`，副文案单层说明
+- **Game card title**：普通卡 `game-card-title`；精选卡 `game-card-featured-title`
+- **Download / Privacy**：`download-title`、`privacy-title`、`privacy-section`
+- **Body / Label**：17px body、11px label kicker
 
 ## Layout
 
@@ -171,7 +227,7 @@ components:
 
 - 卡片：`22px`
 - 控件/导航：全圆角 pill
-- 手机框：大圆角 + 深色边框，像实体设备
+- 手机框：`clamp(32px, 4vw, 44px)` 大圆角 + 深色边框，像实体设备
 
 ## Components
 

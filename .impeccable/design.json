@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-07-27T02:31:00.000Z",
+  "generatedAt": "2026-07-27T03:55:00.000Z",
   "title": "Design System: ChugChug",
   "extensions": {
     "colorMeta": {
@@ -28,6 +28,13 @@
     "typographyMeta": {
       "display": { "displayName": "Display", "purpose": "Hero brand lockup only." },
       "headline": { "displayName": "Headline", "purpose": "Section titles." },
+      "hero-subtitle": { "displayName": "Hero Subtitle", "purpose": "Single-line hero supporting copy." },
+      "games-emphasis": { "displayName": "Games Emphasis", "purpose": "Italic emphasis in games section title." },
+      "game-card-title": { "displayName": "Game Card Title", "purpose": "Standard game tile title." },
+      "game-card-featured-title": { "displayName": "Featured Game Title", "purpose": "Featured game tile title." },
+      "download-title": { "displayName": "Download Title", "purpose": "Download section headline." },
+      "privacy-title": { "displayName": "Privacy Title", "purpose": "Privacy page H1." },
+      "privacy-section": { "displayName": "Privacy Section", "purpose": "Privacy card headings." },
       "body": { "displayName": "Body", "purpose": "Supporting copy and rules." }
     },
     "shadows": [
