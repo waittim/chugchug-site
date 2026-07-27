@@ -327,7 +327,6 @@ const App = () => {
             className="screens-stage"
             role="region"
             aria-label={currentText.a11y_screens}
-            tabIndex={0}
             onKeyDown={onScreensKeyDown}
           >
             <button

@@ -75,7 +75,7 @@ typography:
     fontFamily: "ChugChug Rounded, ui-rounded, system-ui, sans-serif"
     fontSize: "19px"
     fontWeight: 800
-    letterSpacing: "-0.05em"
+    letterSpacing: "-0.04em"
   store:
     fontFamily: "-apple-system, BlinkMacSystemFont, SF Pro Display, Helvetica Neue, Arial, sans-serif"
     fontSize: "16px"

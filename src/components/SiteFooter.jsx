@@ -16,31 +16,30 @@ const SiteFooter = ({
   languageLabel = 'Language',
 }) => (
   <footer className="unified-footer">
-    <div className="unified-footer__top">
+    <div className="unified-footer__brand">
       <div className="brand-mark">{brand}</div>
-      <nav className="unified-footer__links" aria-label={footerLabel}>
-        {links.map(({ href, label }) => (
-          <a href={href} key={`${href}-${label}`}>{label}</a>
-        ))}
-      </nav>
+      <p className="unified-footer__copy">{copyright}</p>
     </div>
 
-    <div className="unified-footer__bottom">
-      <p>{copyright}</p>
-      <nav className="language-switcher glass-pill" aria-label={languageLabel}>
-        {LANGUAGES.map(([code, label]) => (
-          <a
-            key={code}
-            href={languageHref(code)}
-            className={lang === code ? 'is-active' : ''}
-            aria-current={lang === code ? 'page' : undefined}
-            lang={code === 'zh' ? 'zh-Hans' : code}
-          >
-            {label}
-          </a>
-        ))}
-      </nav>
-    </div>
+    <nav className="unified-footer__links" aria-label={footerLabel}>
+      {links.map(({ href, label }) => (
+        <a href={href} key={`${href}-${label}`}>{label}</a>
+      ))}
+    </nav>
+
+    <nav className="language-switcher glass-pill" aria-label={languageLabel}>
+      {LANGUAGES.map(([code, label]) => (
+        <a
+          key={code}
+          href={languageHref(code)}
+          className={lang === code ? 'is-active' : ''}
+          aria-current={lang === code ? 'page' : undefined}
+          lang={code === 'zh' ? 'zh-Hans' : code}
+        >
+          {label}
+        </a>
+      ))}
+    </nav>
   </footer>
 );
 

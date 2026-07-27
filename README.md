@@ -78,8 +78,9 @@ Menu screenshots:
 Other important assets:
 
 - `public/og-image.jpg`: social preview image
-- `public/favicon.ico`, `public/favicon.svg`: favicons
+- `public/favicon.ico`: favicon
 - `public/apple-touch-icon.png`: Apple touch icon
+- `public/placeholder.svg`: screenshot fallback image
 - `public/fonts/`: bundled Nunito font files
 - `public/robots.txt`, `public/sitemap.xml`: search engine metadata
 
