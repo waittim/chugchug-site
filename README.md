@@ -65,15 +65,15 @@ Both pages support:
 
 Static assets live in `public/`.
 
-App screenshots used by the homepage carousel:
+App screenshots used by the homepage carousel (JPEG + WebP):
 
-- English: `public/screenshot/en/*.jpeg`
-- Simplified Chinese: `public/screenshot/zh/*.jpeg`
+- English: `public/screenshot/en/*.{jpeg,webp}`
+- Simplified Chinese: `public/screenshot/zh/*.{jpeg,webp}`
 
 Menu screenshots:
 
-- English menu: `public/screenshot/en/menu.jpeg`
-- Chinese menu: `public/screenshot/zh/menu-zh.jpeg`
+- English menu: `public/screenshot/en/menu.jpeg` (+ `.webp`)
+- Chinese menu: `public/screenshot/zh/menu-zh.jpeg` (+ `.webp`)
 
 Other important assets:
 

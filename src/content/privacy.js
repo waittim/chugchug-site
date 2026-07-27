@@ -41,6 +41,10 @@ export const PRIVACY_COPY = {
       '我们可能会不定期更新本隐私政策。更新后的版本将发布在应用内或官方网站上。继续使用本应用即表示你接受更新后的隐私政策。',
     s7: '7. 联系我们',
     s7b: '如果你对本隐私政策有任何疑问，请通过以下方式联系我们：',
+    a11y_skip: '跳到主要内容',
+    a11y_nav: '主导航',
+    a11y_footer: '页脚',
+    a11y_language: '语言',
   },
   'zh-Hant': {
     brand: 'ChugChug',
@@ -84,6 +88,10 @@ export const PRIVACY_COPY = {
       '我們可能會不定期更新本隱私政策。更新後的版本將發布在應用內或官方網站上。繼續使用本應用即表示你接受更新後的隱私政策。',
     s7: '7. 聯絡我們',
     s7b: '如果你對本隱私政策有任何疑問，請透過以下方式聯絡我們：',
+    a11y_skip: '跳到主要內容',
+    a11y_nav: '主導航',
+    a11y_footer: '頁腳',
+    a11y_language: '語言',
   },
   en: {
     brand: 'ChugChug',
@@ -127,5 +135,9 @@ export const PRIVACY_COPY = {
       'We may update this Privacy Policy from time to time. The updated version will be published within the app or on our website. Continued use of the app indicates acceptance of the updated policy.',
     s7: '7. Contact Us',
     s7b: 'If you have any questions about this Privacy Policy, please contact us:',
+    a11y_skip: 'Skip to main content',
+    a11y_nav: 'Primary',
+    a11y_footer: 'Footer',
+    a11y_language: 'Language',
   },
 };

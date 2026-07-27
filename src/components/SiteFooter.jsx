@@ -12,11 +12,13 @@ const SiteFooter = ({
   links,
   languageHref,
   copyright = '© 2026 CHUGCHUG APP',
+  footerLabel = 'Footer',
+  languageLabel = 'Language',
 }) => (
   <footer className="unified-footer">
     <div className="unified-footer__top">
       <div className="brand-mark">{brand}</div>
-      <nav className="unified-footer__links" aria-label="Footer">
+      <nav className="unified-footer__links" aria-label={footerLabel}>
         {links.map(({ href, label }) => (
           <a href={href} key={`${href}-${label}`}>{label}</a>
         ))}
@@ -25,7 +27,7 @@ const SiteFooter = ({
 
     <div className="unified-footer__bottom">
       <p>{copyright}</p>
-      <nav className="language-switcher glass-pill" aria-label="Language">
+      <nav className="language-switcher glass-pill" aria-label={languageLabel}>
         {LANGUAGES.map(([code, label]) => (
           <a
             key={code}

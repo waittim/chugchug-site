@@ -46,23 +46,6 @@ const GAME_META = {
   angryoldman: [3, '1m'],
 };
 
-const GAME_ACCENTS = {
-  dice: '#F2CF79',
-  poker: '#F4F1EB',
-  buzzcards: '#79CBD2',
-  six: '#79CBD2',
-  lucky: '#DC8BC9',
-  truth: '#B082DD',
-  roulette: '#79CBD2',
-  king: '#F2CF79',
-  charades: '#B082DD',
-  execution: '#E58B92',
-  undercover: '#E9AA6B',
-  wavelength: '#DC8BC9',
-  aron36: '#DC8BC9',
-  angryoldman: '#E9AA6B',
-};
-
 const AppleLogo = ({ size = 30 }) => (
   <span aria-hidden="true" className="apple-mark" style={{ fontSize: size }}>
     {'\uf8ff'}
@@ -116,6 +99,7 @@ const App = () => {
     return SCREENSHOT_REEL.map((entry) => {
       const file =
         entry.featured && isChinese ? 'menu-zh.jpeg' : `${entry.file}.jpeg`;
+      const webp = file.replace(/\.jpeg$/, '.webp');
       const game = entry.gameId ? gameById[entry.gameId] : null;
       const gameName = game
         ? game.name[lang] ?? game.name.zh ?? game.name.en
@@ -124,6 +108,7 @@ const App = () => {
       return {
         id: entry.file,
         src: `${folder}${file}`,
+        srcWebp: `${folder}${webp}`,
         featured: Boolean(entry.featured),
         alt: entry.featured
           ? currentText.a11y_screen_menu
@@ -304,7 +289,7 @@ const App = () => {
         {currentText.a11y_skip}
       </a>
 
-      <nav className="site-nav" aria-label="Primary">
+      <nav className="site-nav" aria-label={currentText.a11y_nav}>
         <a href="#top" className="brand-mark">{brand}</a>
         <a
           href={DOWNLOAD_ANCHOR}
@@ -357,7 +342,7 @@ const App = () => {
               <div className="screens-marquee" ref={marqueeRef}>
                 {[false, true].map((isDuplicate) => (
                   <div
-                    className="screens-group"
+                    className={`screens-group${isDuplicate ? ' screens-group--clone' : ''}`}
                     key={isDuplicate ? 'duplicate' : 'primary'}
                     aria-hidden={isDuplicate || undefined}
                   >
@@ -366,19 +351,22 @@ const App = () => {
                         key={`${isDuplicate ? 'duplicate' : 'primary'}-${shot.id}`}
                         className={`phone-frame ${shot.featured ? 'phone-frame--featured' : ''}`}
                       >
-                        <img
-                          src={shot.src}
-                          width={SCREEN_WIDTH}
-                          height={SCREEN_HEIGHT}
-                          alt={isDuplicate ? '' : shot.alt}
-                          loading={isDuplicate || index > 2 ? 'lazy' : 'eager'}
-                          decoding="async"
-                          fetchPriority={isDuplicate || index > 0 ? 'low' : 'high'}
-                          draggable={false}
-                          onError={(event) => {
-                            event.currentTarget.src = `${baseUrl}placeholder.svg`;
-                          }}
-                        />
+                        <picture>
+                          <source srcSet={shot.srcWebp} type="image/webp" />
+                          <img
+                            src={shot.src}
+                            width={SCREEN_WIDTH}
+                            height={SCREEN_HEIGHT}
+                            alt={isDuplicate ? '' : shot.alt}
+                            loading={isDuplicate || index > 2 ? 'lazy' : 'eager'}
+                            decoding="async"
+                            fetchPriority={isDuplicate || index > 0 ? 'low' : 'high'}
+                            draggable={false}
+                            onError={(event) => {
+                              event.currentTarget.src = `${baseUrl}placeholder.svg`;
+                            }}
+                          />
+                        </picture>
                       </figure>
                     ))}
                   </div>
@@ -432,7 +420,6 @@ const App = () => {
               const isFlipped = flippedIds.has(game.id);
               const isFeatured = FEATURED_IDS.has(game.id);
               const name = game.name[lang] ?? game.name.zh ?? game.name.en;
-              const accent = GAME_ACCENTS[game.id] ?? '#F2CF79';
               const cardLabel = (currentText.a11y_game_card || '{name}, drunk level {level}, duration {duration}')
                 .replace('{name}', name)
                 .replace('{level}', String(drunkLevel))
@@ -447,7 +434,6 @@ const App = () => {
                   type="button"
                   key={game.id}
                   className={`game-card ${isFeatured ? 'game-card--featured' : ''} ${isFlipped ? 'is-flipped' : ''}`}
-                  style={{ '--accent': accent }}
                   aria-label={cardLabel}
                   aria-pressed={isFlipped}
                   data-game-key={game.id}
@@ -519,6 +505,8 @@ const App = () => {
         lang={lang}
         brand={brand}
         copyright={currentText.footer_rights}
+        footerLabel={currentText.a11y_footer}
+        languageLabel={currentText.a11y_language}
         languageHref={(code) => `${baseUrl}?lang=${code}`}
         links={[
           {

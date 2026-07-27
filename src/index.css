@@ -23,7 +23,7 @@ body {
 }
 
 .title-shadow {
-  text-shadow: 0.0625em 0.0625em 0 #ffe85f;
+  text-shadow: 0.0625em 0.0625em 0 var(--gold);
 }
 
 .no-scrollbar {
@@ -134,8 +134,8 @@ button:focus-visible {
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.12),
     0 16px 50px rgba(0, 0, 0, 0.24);
-  backdrop-filter: blur(22px) saturate(125%);
-  -webkit-backdrop-filter: blur(22px) saturate(125%);
+  backdrop-filter: blur(16px) saturate(125%);
+  -webkit-backdrop-filter: blur(16px) saturate(125%);
   transform: translateX(-50%);
 }
 
@@ -381,6 +381,11 @@ button:focus-visible {
   gap: var(--screen-gap);
 }
 
+.screens-group--clone {
+  content-visibility: auto;
+  contain-intrinsic-size: 280px 560px;
+}
+
 .phone-frame {
   position: relative;
   width: clamp(184px, 20vw, 250px);
@@ -399,10 +404,14 @@ button:focus-visible {
   opacity: 0.9;
 }
 
+.phone-frame picture,
 .phone-frame img {
   width: 100%;
   height: 100%;
   display: block;
+}
+
+.phone-frame img {
   object-fit: cover;
   object-position: top;
 }
@@ -533,6 +542,7 @@ button:focus-visible {
 }
 
 .game-card {
+  --accent: var(--gold);
   position: relative;
   aspect-ratio: 1 / 1.04;
   padding: 0;
@@ -542,6 +552,41 @@ button:focus-visible {
   background: transparent;
   cursor: pointer;
   perspective: 900px;
+}
+
+.game-card[data-game-key='dice'],
+.game-card[data-game-key='king'] {
+  --accent: #f2cf79;
+}
+
+.game-card[data-game-key='poker'] {
+  --accent: #f4f1eb;
+}
+
+.game-card[data-game-key='buzzcards'],
+.game-card[data-game-key='six'],
+.game-card[data-game-key='roulette'] {
+  --accent: #79cbd2;
+}
+
+.game-card[data-game-key='lucky'],
+.game-card[data-game-key='wavelength'],
+.game-card[data-game-key='aron36'] {
+  --accent: #dc8bc9;
+}
+
+.game-card[data-game-key='truth'],
+.game-card[data-game-key='charades'] {
+  --accent: #b082dd;
+}
+
+.game-card[data-game-key='execution'] {
+  --accent: #e58b92;
+}
+
+.game-card[data-game-key='undercover'],
+.game-card[data-game-key='angryoldman'] {
+  --accent: #e9aa6b;
 }
 
 .game-card--featured {
@@ -575,22 +620,36 @@ button:focus-visible {
   background:
     linear-gradient(
       145deg,
-      rgba(255, 255, 255, 0.045),
-      rgba(255, 255, 255, 0.01)
+      rgba(255, 255, 255, 0.07),
+      rgba(255, 255, 255, 0.02)
     ),
-    linear-gradient(
-      145deg,
-      var(--glass-tint),
-      rgba(255, 255, 255, 0.035)
-    );
+    rgba(18, 18, 19, 0.88);
   background-clip: padding-box;
   box-shadow:
     inset 0 0 0 0.75px rgba(255, 255, 255, 0.12),
     inset 0 1px 0 rgba(255, 255, 255, 0.08),
     var(--glass-shadow);
-  backdrop-filter: blur(20px) saturate(120%);
-  -webkit-backdrop-filter: blur(20px) saturate(120%);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
   backface-visibility: hidden;
+}
+
+@media (hover: hover) and (min-width: 901px) {
+  .game-card__face {
+    backdrop-filter: blur(12px) saturate(120%);
+    -webkit-backdrop-filter: blur(12px) saturate(120%);
+    background:
+      linear-gradient(
+        145deg,
+        rgba(255, 255, 255, 0.045),
+        rgba(255, 255, 255, 0.01)
+      ),
+      linear-gradient(
+        145deg,
+        var(--glass-tint),
+        rgba(255, 255, 255, 0.035)
+      );
+  }
 }
 
 .game-card__face::before {
@@ -781,14 +840,30 @@ button:focus-visible {
   border: 0.75px solid var(--glass-stroke);
   border-radius: 28px;
   background:
-    linear-gradient(145deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0.01)),
-    linear-gradient(145deg, var(--glass-tint), rgba(255, 255, 255, 0.035));
+    linear-gradient(145deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.02)),
+    rgba(18, 18, 19, 0.9);
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.1),
     var(--glass-shadow),
     0 28px 80px rgba(0, 0, 0, 0.22);
-  backdrop-filter: blur(28px) saturate(125%);
-  -webkit-backdrop-filter: blur(28px) saturate(125%);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+@media (hover: hover) and (min-width: 901px) {
+  .download-card {
+    backdrop-filter: blur(16px) saturate(125%);
+    -webkit-backdrop-filter: blur(16px) saturate(125%);
+    background:
+      linear-gradient(145deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0.01)),
+      linear-gradient(145deg, var(--glass-tint), rgba(255, 255, 255, 0.035));
+  }
+
+  .site-nav,
+  .privacy-nav {
+    backdrop-filter: blur(16px) saturate(125%);
+    -webkit-backdrop-filter: blur(16px) saturate(125%);
+  }
 }
 
 .download-card__lead {
@@ -1033,8 +1108,8 @@ button:focus-visible {
   border-radius: 999px;
   background: rgba(20, 20, 21, 0.58);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 16px 50px rgba(0, 0, 0, 0.24);
-  backdrop-filter: blur(22px) saturate(125%);
-  -webkit-backdrop-filter: blur(22px) saturate(125%);
+  backdrop-filter: blur(16px) saturate(125%);
+  -webkit-backdrop-filter: blur(16px) saturate(125%);
   transform: translateX(-50%);
 }
 
@@ -1341,7 +1416,8 @@ button:focus-visible {
   }
 
   html[lang^="zh"] .download-card h2 {
-    white-space: nowrap;
+    white-space: normal;
+    text-wrap: balance;
   }
 
   .screens-control--prev {
@@ -1358,11 +1434,15 @@ button:focus-visible {
   }
 
   .site-nav,
-  .privacy-nav,
-  .download-card,
-  .game-card__face {
+  .privacy-nav {
     backdrop-filter: blur(14px) saturate(120%);
     -webkit-backdrop-filter: blur(14px) saturate(120%);
+  }
+
+  .download-card,
+  .game-card__face {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
   }
 
   .store-button {

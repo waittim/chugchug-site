@@ -1,0 +1,120 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-07-27T02:31:00.000Z",
+  "title": "Design System: ChugChug",
+  "extensions": {
+    "colorMeta": {
+      "gold": {
+        "role": "primary",
+        "displayName": "Warm Gold",
+        "tonalRamp": ["#3a2f14", "#5c4a1d", "#7f6528", "#a38336", "#c6a246", "#f2cf79", "#f7dea0", "#fbf0d2"]
+      },
+      "canvas": {
+        "role": "neutral",
+        "displayName": "Night Canvas",
+        "tonalRamp": ["#050505", "#09090a", "#141416", "#1f1f22", "#2c2c30", "#4a4a50", "#8a8a92", "#f4f1eb"]
+      },
+      "ambient-balance": {
+        "role": "secondary",
+        "displayName": "Ambient Pink",
+        "tonalRamp": ["#2a1524", "#4a2540", "#6e3760", "#964f84", "#bc6ba8", "#d688c2", "#e5b0d6", "#f4d8ec"]
+      },
+      "cta": {
+        "role": "primary",
+        "displayName": "CTA Champagne",
+        "tonalRamp": ["#3a3424", "#5c5338", "#7f734d", "#a39464", "#c6b57d", "#e9d5a3", "#f3e2b8", "#faf3e0"]
+      }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Display", "purpose": "Hero brand lockup only." },
+      "headline": { "displayName": "Headline", "purpose": "Section titles." },
+      "body": { "displayName": "Body", "purpose": "Supporting copy and rules." }
+    },
+    "shadows": [
+      {
+        "name": "glass",
+        "value": "0 7px 12px rgba(0, 0, 0, 0.16)",
+        "purpose": "Default glass elevation."
+      },
+      {
+        "name": "phone",
+        "value": "0 32px 80px rgba(0, 0, 0, 0.55)",
+        "purpose": "Screenshot device frame depth."
+      }
+    ],
+    "motion": [
+      {
+        "name": "ease-flip",
+        "value": "cubic-bezier(0.2, 0.72, 0.2, 1)",
+        "purpose": "Game card flip and hover settle."
+      },
+      {
+        "name": "duration-control",
+        "value": "180ms",
+        "purpose": "Buttons and nav micro-interactions."
+      }
+    ],
+    "breakpoints": [
+      { "name": "tablet", "value": "900px" },
+      { "name": "mobile", "value": "680px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Store Button",
+      "kind": "button",
+      "refersTo": "button-store",
+      "description": "Primary App Store CTA.",
+      "html": "<a class=\"ds-store\" href=\"#\"><span class=\"ds-store__mark\" aria-hidden=\"true\"></span><span class=\"ds-store__copy\"><small>Download on the</small>App Store</span></a>",
+      "css": ".ds-store{display:inline-flex;align-items:center;gap:13px;min-height:60px;padding:12px 22px;border-radius:999px;background:#e9d5a3;color:#171512;text-decoration:none;box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 7px 12px rgba(0,0,0,.16);transition:transform .18s ease,background .18s ease}.ds-store:hover{background:#f3e2b8;transform:translateY(-2px)}.ds-store:focus-visible{outline:2px solid #f2cf79;outline-offset:4px}.ds-store__mark{font-size:30px;line-height:1}.ds-store__copy{display:flex;flex-direction:column;align-items:flex-start;font-size:16px;font-weight:700;line-height:1.1}.ds-store__copy small{font-size:11px;font-weight:600;opacity:.78;margin-bottom:3px}"
+    },
+    {
+      "name": "Glass Nav",
+      "kind": "nav",
+      "refersTo": "nav-pill",
+      "description": "Fixed floating primary navigation.",
+      "html": "<nav class=\"ds-nav\" aria-label=\"Primary\"><a class=\"ds-nav__brand\" href=\"#\">ChugChug</a><a class=\"ds-nav__cta\" href=\"#download\">Download</a></nav>",
+      "css": ".ds-nav{display:flex;align-items:center;justify-content:space-between;min-height:54px;padding:7px 8px 7px 18px;border-radius:999px;border:.75px solid rgba(255,255,255,.11);background:linear-gradient(145deg,rgba(255,255,255,.1),rgba(255,255,255,.035)),rgba(20,20,21,.72);backdrop-filter:blur(16px)}.ds-nav__brand{color:#f2cf79;font-family:ui-rounded,system-ui,sans-serif;font-weight:800;font-size:19px;text-decoration:none;letter-spacing:-.05em}.ds-nav__cta{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 16px;border-radius:999px;color:#f4f1eb;background:rgba(255,255,255,.07);text-decoration:none;font-size:14px;font-weight:650}.ds-nav__cta:focus-visible,.ds-nav__brand:focus-visible{outline:2px solid #f2cf79;outline-offset:3px}"
+    },
+    {
+      "name": "Game Card",
+      "kind": "card",
+      "refersTo": "game-card",
+      "description": "Flipable game tile with per-game accent.",
+      "html": "<button class=\"ds-game\" type=\"button\" data-game-key=\"dice\"><strong>Dice</strong><span>Tap for rules</span></button>",
+      "css": ".ds-game{--accent:#f2cf79;aspect-ratio:1/1.04;width:180px;border:0;border-radius:22px;padding:20px;text-align:left;color:#f4f1eb;background:linear-gradient(145deg,rgba(255,255,255,.07),rgba(255,255,255,.02)),rgba(18,18,19,.88);box-shadow:inset 0 0 0 .75px rgba(255,255,255,.12),0 7px 12px rgba(0,0,0,.16);cursor:pointer}.ds-game strong{display:block;font-size:22px;letter-spacing:-.03em}.ds-game span{display:block;margin-top:10px;color:rgba(244,241,235,.56);font-size:12px;font-weight:600}.ds-game:focus-visible{outline:none;box-shadow:0 0 0 2px #09090a,0 0 0 4px #f2cf79}"
+    }
+  ],
+  "narrative": {
+    "northStar": "After-Hours Glass Bar",
+    "overview": "Deep night canvas with glass surfaces and warm gold highlights. Brand type leads; real phone screenshots prove the product. iOS-marketing restraint over SaaS dashboard templates.",
+    "keyCharacteristics": [
+      "Dark canvas + warm gold accent",
+      "Glass stroke and short elevation",
+      "Brand display type over body UI type",
+      "Real screenshots as primary evidence"
+    ],
+    "rules": [
+      {
+        "name": "Brand First",
+        "body": "The first viewport must still read as ChugChug after removing the nav.",
+        "section": "typography"
+      },
+      {
+        "name": "Readable Secondary",
+        "body": "Secondary text uses muted paper at contrast ≥4.5:1, never ultra-faint gray.",
+        "section": "colors"
+      }
+    ],
+    "dos": [
+      "Do keep one hero composition with brand, one line, CTA, and screenshots",
+      "Do route game accents through data-game-key CSS variables",
+      "Do respect reduced motion for marquee and transitions"
+    ],
+    "donts": [
+      "Don't fill the hero with stats, badges, or promo chips",
+      "Don't reintroduce purple-neon or cream-serif AI defaults",
+      "Don't leave heavy backdrop-filter on every card at rest"
+    ]
+  }
+}

@@ -20,8 +20,6 @@ const PrivacyPage = () => {
     en: `${baseUrl}?lang=en`,
   };
   const homePath = homePathByLang[lang] ?? homePathByLang.en;
-  const skipLabel =
-    lang === 'zh' ? '跳到主要内容' : lang === 'zh-Hant' ? '跳到主要內容' : 'Skip to main content';
 
   useEffect(() => {
     if (typeof document === 'undefined') return;
@@ -39,7 +37,7 @@ const PrivacyPage = () => {
   return (
     <div className="privacy-shell">
       <a href="#privacy-content" className="skip-link">
-        {skipLabel}
+        {current.a11y_skip}
       </a>
 
       <div className="privacy-ambient" aria-hidden="true">
@@ -47,7 +45,7 @@ const PrivacyPage = () => {
         <span className="privacy-ambient__light privacy-ambient__light--pink" />
       </div>
 
-      <nav className="privacy-nav" aria-label="Primary">
+      <nav className="privacy-nav" aria-label={current.a11y_nav}>
         <a href={homePath} className="brand-mark">
           {brand}
         </a>
@@ -140,6 +138,8 @@ const PrivacyPage = () => {
       <SiteFooter
         lang={lang}
         brand={brand}
+        footerLabel={current.a11y_footer}
+        languageLabel={current.a11y_language}
         languageHref={(code) => `${baseUrl}privacy.html?lang=${code}`}
         links={[
           { href: homePath, label: current.back },
