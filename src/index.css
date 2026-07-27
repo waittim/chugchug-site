@@ -258,7 +258,8 @@ button:focus-visible {
 
 .hero-section {
   min-height: 100dvh;
-  padding: 96px 0 56px;
+  /* Clears fixed nav (~70px) with ~86–102px open air below it */
+  padding: 172px 0 64px;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -1244,7 +1245,7 @@ button:focus-visible {
   }
 
   .hero-section {
-    padding: 88px 0 40px;
+    padding: 148px 0 44px;
     min-height: auto;
   }
 
