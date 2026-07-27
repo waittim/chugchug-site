@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { ArrowDown, ArrowUpRight, Clock3, Sparkles, Wine } from 'lucide-react';
+import { Clock3, Wine } from 'lucide-react';
 import SiteFooter from './components/SiteFooter.jsx';
 import { SUPPORT_EMAIL } from './contact.js';
 import { GAMES } from './content/games.jsx';
@@ -8,6 +8,8 @@ import { getInitialLang } from './i18n.js';
 
 const APP_STORE_URL = 'https://apps.apple.com/us/app/chugchug-party-game/id6758532049';
 const DOWNLOAD_ANCHOR = '#download';
+
+const FEATURED_IDS = new Set(['undercover', 'dice']);
 
 const GAME_META = {
   dice: [3, '∞'],
@@ -43,66 +45,6 @@ const GAME_ACCENTS = {
   angryoldman: '#E9AA6B',
 };
 
-const HIGHLIGHTS_COPY = {
-  zh: {
-    eyebrow: '为真实派对而生',
-    title: '少解释，\n多尽兴。',
-    intro: '从开场到散场，一切都保持简单、直接、不会冷场。',
-    items: [
-      ['01', '打开就玩', '规则和道具都已准备好。'],
-      ['02', '完全离线', '地下室、露营地、弱网环境，照样开局。'],
-      ['03', '醉酒友好', '更大的触控区域，更少的操作步骤。'],
-      ['04', '14 种玩法', '骰子、抽牌、点名与破冰，一站集齐。'],
-    ],
-  },
-  'zh-Hant': {
-    eyebrow: '為真實派對而生',
-    title: '少解釋，\n多盡興。',
-    intro: '從開場到散場，一切都保持簡單、直接、不會冷場。',
-    items: [
-      ['01', '打開就玩', '規則和道具都已準備好。'],
-      ['02', '完全離線', '地下室、露營地、弱網環境，照樣開局。'],
-      ['03', '醉酒友好', '更大的觸控區域，更少的操作步驟。'],
-      ['04', '14 種玩法', '骰子、抽牌、點名與破冰，一站集齊。'],
-    ],
-  },
-  en: {
-    eyebrow: 'Made for real parties',
-    title: 'Less explaining.\nMore playing.',
-    intro: 'Everything you need to keep the night simple, spontaneous, and moving.',
-    items: [
-      ['01', 'Open and play', 'Rules and props are ready when you are.'],
-      ['02', 'Fully offline', 'Basements, campsites, bad signal—still on.'],
-      ['03', 'Drunk-friendly', 'Larger targets and fewer steps by design.'],
-      ['04', '14 ways to play', 'Dice, cards, picks, and icebreakers in one place.'],
-    ],
-  },
-};
-
-const CTA_COPY = {
-  zh: {
-    lead: '告别复杂的规则解释',
-    badge: '防误触设计',
-    title: '让派对更尽兴',
-  },
-  'zh-Hant': {
-    lead: '告別複雜的規則解釋',
-    badge: '防誤觸設計',
-    title: '讓派對更盡興',
-  },
-  en: {
-    lead: 'No more explaining rules',
-    badge: 'Drunk-proof by design',
-    title: 'Keep the party moving',
-  },
-};
-
-const STORE_BADGE_LEAD = {
-  zh: '前往',
-  'zh-Hant': '前往',
-  en: 'Download on the',
-};
-
 const AppleLogo = ({ size = 30 }) => (
   <span aria-hidden="true" className="apple-mark" style={{ fontSize: size }}>
     {'\uf8ff'}
@@ -117,12 +59,25 @@ const AmbientLights = ({ variant = 'default' }) => (
   </div>
 );
 
+const StoreButton = ({ label, lead, onClick, className = '' }) => (
+  <a
+    href={APP_STORE_URL}
+    className={`store-button ${className}`.trim()}
+    aria-label={label}
+    onClick={onClick}
+  >
+    <AppleLogo />
+    <span>
+      <small>{lead}</small>
+      App Store
+    </span>
+  </a>
+);
+
 const App = () => {
   const [lang] = useState(getInitialLang);
   const [flippedIds, setFlippedIds] = useState(() => new Set());
   const currentText = HOME_COPY[lang] ?? HOME_COPY.en;
-  const highlights = HIGHLIGHTS_COPY[lang] ?? HIGHLIGHTS_COPY.en;
-  const ctaText = CTA_COPY[lang] ?? CTA_COPY.en;
   const isChinese = lang === 'zh' || lang === 'zh-Hant';
   const isTraditional = lang === 'zh-Hant';
   const brand = lang === 'zh' ? '吨吨吨 · ChugChug' : 'ChugChug';
@@ -156,6 +111,12 @@ const App = () => {
     }));
   }, [baseUrl, isChinese]);
 
+  const orderedGames = useMemo(() => {
+    const featured = GAMES.filter((game) => FEATURED_IDS.has(game.id));
+    const rest = GAMES.filter((game) => !FEATURED_IDS.has(game.id));
+    return [...featured, ...rest];
+  }, []);
+
   const marqueeRef = useRef(null);
 
   useEffect(() => {
@@ -163,7 +124,7 @@ const App = () => {
     if (!marquee) return undefined;
 
     const reduceMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
-    const autoSpeed = 34; // px per second
+    const autoSpeed = 34;
     const resumeDelayMs = 1500;
 
     let offset = 0;
@@ -183,7 +144,6 @@ const App = () => {
 
     const step = (time) => {
       if (lastTime === 0) lastTime = time;
-      // Cap dt so returning from a background tab doesn't cause a jump.
       const dt = Math.min((time - lastTime) / 1000, 0.1);
       lastTime = time;
 
@@ -279,7 +239,6 @@ const App = () => {
           onClick={() => track('navbar_download_click', DOWNLOAD_ANCHOR)}
         >
           {currentText.nav_download}
-          <ArrowDown size={15} aria-hidden="true" />
         </a>
       </nav>
 
@@ -287,18 +246,23 @@ const App = () => {
         <section id="top" className="hero-section">
           <AmbientLights />
           <div className="hero-copy">
-            <div className="eyebrow"><Sparkles size={14} /> Party, uninterrupted</div>
             <h1 className="hero-title">
               {lang === 'zh' ? (
                 <span>吨吨吨</span>
               ) : (
-                <><span>Chug</span><span className="hero-title__ghost">Chug</span></>
+                <>
+                  <span>Chug</span>
+                  <span className="hero-title__ghost">Chug</span>
+                </>
               )}
             </h1>
             <p className="hero-subtitle">{currentText.hero_subtitle}</p>
-            <div className="hero-facts" aria-label={currentText.hero_feature}>
-              {currentText.hero_points.map((point) => <span key={point}>{point}</span>)}
-            </div>
+            <StoreButton
+              label={currentText.btn_download}
+              lead={currentText.store_badge_lead}
+              className="store-button--hero"
+              onClick={() => track('app_store_click', APP_STORE_URL)}
+            />
           </div>
 
           <div className="screens-stage" aria-label={isChinese ? 'App 截图' : 'App screenshots'}>
@@ -317,14 +281,26 @@ const App = () => {
                       >
                         <img
                           src={shot.src}
-                          alt={isDuplicate
-                            ? ''
-                            : shot.featured
-                              ? (isTraditional ? '主選單截圖' : isChinese ? '主菜单截图' : 'Main menu screenshot')
-                              : (isTraditional ? '遊戲截圖' : isChinese ? '游戏截图' : 'Game screenshot')}
+                          alt={
+                            isDuplicate
+                              ? ''
+                              : shot.featured
+                                ? isTraditional
+                                  ? '主選單截圖'
+                                  : isChinese
+                                    ? '主菜单截图'
+                                    : 'Main menu screenshot'
+                                : isTraditional
+                                  ? '遊戲截圖'
+                                  : isChinese
+                                    ? '游戏截图'
+                                    : 'Game screenshot'
+                          }
                           loading={isDuplicate || index > 2 ? 'lazy' : 'eager'}
                           draggable={false}
-                          onError={(event) => { event.currentTarget.src = `${baseUrl}placeholder.svg`; }}
+                          onError={(event) => {
+                            event.currentTarget.src = `${baseUrl}placeholder.svg`;
+                          }}
                         />
                       </figure>
                     ))}
@@ -333,26 +309,21 @@ const App = () => {
               </div>
             </div>
           </div>
-
-          <a href="#experience" className="scroll-cue" aria-label="Scroll to explore">
-            <span>Explore</span><ArrowDown size={16} />
-          </a>
         </section>
 
         <section id="experience" className="experience-section">
           <AmbientLights variant="soft" />
-          <div className="section-grid">
+          <div className="section-stack">
             <header className="section-intro">
-              <p className="section-kicker">{highlights.eyebrow}</p>
-              <h2>{highlights.title}</h2>
-              <p>{highlights.intro}</p>
+              <p className="section-kicker">{currentText.highlights_eyebrow}</p>
+              <h2>{currentText.highlights_title}</h2>
+              <p>{currentText.highlights_intro}</p>
             </header>
             <div className="feature-list">
-              {highlights.items.map(([number, title, body]) => (
-                <article className="feature-row" key={number}>
-                  <span>{number}</span>
-                  <div><h3>{title}</h3><p>{body}</p></div>
-                  <ArrowUpRight size={20} aria-hidden="true" />
+              {currentText.highlights.map(([title, body]) => (
+                <article className="feature-row" key={title}>
+                  <h3>{title}</h3>
+                  <p>{body}</p>
                 </article>
               ))}
             </div>
@@ -362,43 +333,60 @@ const App = () => {
         <section className="games-section">
           <AmbientLights variant="games" />
           <header className="games-header">
-            <div>
-              <p className="section-kicker">The collection</p>
-              <h2>{currentText.grid_title_prefix}<br /><em>{currentText.grid_title_suffix}</em></h2>
-            </div>
+            <h2>
+              {currentText.grid_title_prefix}
+              <br />
+              <em>{currentText.grid_title_suffix}</em>
+            </h2>
             <p>{currentText.grid_desc}</p>
           </header>
 
           <div className="games-grid">
-            {GAMES.map((game) => {
+            {orderedGames.map((game) => {
               const [drunkLevel, duration] = GAME_META[game.id] ?? [1, '∞'];
               const isFlipped = flippedIds.has(game.id);
+              const isFeatured = FEATURED_IDS.has(game.id);
               const name = game.name[lang] ?? game.name.zh ?? game.name.en;
+              const accent = GAME_ACCENTS[game.id] ?? '#F2CF79';
+              const cardLabel = (currentText.a11y_game_card || '{name}, drunk level {level}, duration {duration}')
+                .replace('{name}', name)
+                .replace('{level}', String(drunkLevel))
+                .replace('{duration}', String(duration));
+
               return (
                 <button
                   type="button"
                   key={game.id}
-                  className={`game-card ${isFlipped ? 'is-flipped' : ''}`}
-                  style={{ '--accent': GAME_ACCENTS[game.id] }}
-                  aria-label={`${name}，${currentText.rules_title}`}
+                  className={`game-card ${isFeatured ? 'game-card--featured' : ''} ${isFlipped ? 'is-flipped' : ''}`}
+                  style={{ '--accent': accent }}
+                  aria-label={cardLabel}
                   aria-pressed={isFlipped}
+                  data-game-key={game.id}
                   onClick={() => toggleCard(game.id)}
                 >
                   <span className="game-card__inner">
                     <span className="game-card__face game-card__front">
                       <span className="game-card__icon">
-                        {React.cloneElement(game.icon, { size: 28, className: '' })}
+                        {React.cloneElement(game.icon, { size: isFeatured ? 34 : 28, className: '' })}
                       </span>
                       <span className="game-card__spacer" />
                       <strong>{name}</strong>
                       <span className="game-card__meta">
                         <span className="wine-level" aria-label={`drunk level ${drunkLevel} of 5`}>
                           {Array.from({ length: 5 }, (_, index) => (
-                            <Wine key={index} size={10} className={index < drunkLevel ? 'is-full' : ''} />
+                            <Wine
+                              key={index}
+                              size={10}
+                              className={index < drunkLevel ? 'is-full' : ''}
+                            />
                           ))}
                         </span>
-                        <span><Clock3 size={11} />{duration}</span>
+                        <span>
+                          <Clock3 size={11} />
+                          {duration}
+                        </span>
                       </span>
+                      <span className="game-card__hint">{currentText.card_hint_front}</span>
                     </span>
                     <span className="game-card__face game-card__back">
                       <span className="game-card__back-label">{currentText.rules_title}</span>
@@ -418,23 +406,17 @@ const App = () => {
         <section id="download" className="download-section">
           <AmbientLights variant="download" />
           <div className="download-card">
-            <p className="section-kicker">Your next round starts here</p>
             <p className="download-card__lead">
-              {ctaText.lead}
+              {currentText.cta_lead}
               <span aria-hidden="true"> · </span>
-              <strong>{ctaText.badge}</strong>
+              <strong>{currentText.cta_badge}</strong>
             </p>
-            <h2>{ctaText.title}</h2>
-            <a
-              href={APP_STORE_URL}
-              className="store-button"
-              aria-label={currentText.btn_download}
+            <h2>{currentText.cta_title}</h2>
+            <StoreButton
+              label={currentText.btn_download}
+              lead={currentText.store_badge_lead}
               onClick={() => track('app_store_click', APP_STORE_URL)}
-            >
-              <AppleLogo />
-              <span><small>{STORE_BADGE_LEAD[lang] ?? STORE_BADGE_LEAD.en}</small>App Store</span>
-              <ArrowUpRight size={19} aria-hidden="true" />
-            </a>
+            />
             <div className="download-facts">
               <span>{currentText.feat_ios}</span>
               <span>{currentText.feat_ads}</span>

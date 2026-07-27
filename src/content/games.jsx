@@ -71,7 +71,7 @@ export const GAMES = [
     rules: {
       zh: '5 骰=牌型；大小：1（Ace）>6≥5≥4≥3≥2。\n同时按住摇骰比牌，输家可锁定部分骰子重摇未锁定的骰子。\n若翻盘则胜负互换；否则输家出局。\n循环直到有人救场失败，最后留下者获胜！',
       'zh-Hant': '5 骰=牌型；大小：1（Ace）>6≥5≥4≥3≥2。\n同時按住搖骰比牌，輸家可鎖定部分骰子重搖未鎖定的骰子。\n若翻盤則勝負互換；否則輸家出局。\n循環直到有人救場失敗，最後留下者獲勝！',
-      en: '5 dice form a hand; rank: 1 (Ace) > 6 ≥ 5 ≥ 4 ≥ 3 ≥ 2.\nRoll together; compare hands. Loser may lock dice and re-roll the rest.\nIf the new hand beats the winner, swap roles; otherwise the loser is out.\nRepeat until someone can’t save—last player standing wins.',
+      en: '5 dice form a hand; rank: 1 (Ace) > 6 ≥ 5 ≥ 4 ≥ 3 ≥ 2.\nRoll together; compare hands. Loser may lock dice and re-roll the rest.\nIf the new hand beats the winner, swap roles; otherwise the loser is out.\nRepeat until someone can’t save - last player standing wins.',
     },
   },
   {
@@ -167,7 +167,7 @@ export const GAMES = [
     rules: {
       zh: '轮流回答亚瑟·阿伦著名的 36 个问题。\n帮助你们深入了解彼此。\n没有对错，真诚回答就好。',
       'zh-Hant': '輪流回答亞瑟·阿倫著名的 36 個問題。\n幫助你們深入了解彼此。\n沒有對錯，真誠回答就好。',
-      en: "Take turns answering Arthur Aron's famous 36 questions.\nDesigned to help you connect on a deeper level.\nNo right or wrong answers — just be honest.",
+      en: "Take turns answering Arthur Aron's famous 36 questions.\nDesigned to help you connect on a deeper level.\nNo right or wrong answers - just be honest.",
     },
   },
   {
@@ -179,7 +179,7 @@ export const GAMES = [
     rules: {
       zh: '屏幕上会出现一群老头。\n轮流选择，避免戳中会发怒的老头。\n戳中发怒老头的接受惩罚。',
       'zh-Hant': '螢幕上會出現一群老頭。\n輪流選擇，避免戳中會發怒的老頭。\n戳中發怒老頭的接受懲罰。',
-      en: 'A bunch of old men appear on screen.\nTake turns picking one — avoid the angry old man!\nWhoever pokes the angry old man takes a penalty.',
+      en: 'A bunch of old men appear on screen.\nTake turns picking one - avoid the angry old man!\nWhoever pokes the angry old man takes a penalty.',
     },
   },
 ];
