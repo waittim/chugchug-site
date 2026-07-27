@@ -25,18 +25,19 @@ const SiteFooter = ({
 
     <div className="unified-footer__bottom">
       <p>{copyright}</p>
-      <div className="language-switcher glass-pill" aria-label="Language">
+      <nav className="language-switcher glass-pill" aria-label="Language">
         {LANGUAGES.map(([code, label]) => (
           <a
             key={code}
             href={languageHref(code)}
             className={lang === code ? 'is-active' : ''}
             aria-current={lang === code ? 'page' : undefined}
+            lang={code === 'zh' ? 'zh-Hans' : code}
           >
             {label}
           </a>
         ))}
-      </div>
+      </nav>
     </div>
   </footer>
 );

@@ -74,6 +74,33 @@ button {
   font: inherit;
 }
 
+a:focus-visible,
+button:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 3px;
+}
+
+.skip-link {
+  position: absolute;
+  z-index: 200;
+  top: 12px;
+  left: 12px;
+  padding: 12px 16px;
+  border-radius: 999px;
+  color: #171512;
+  background: var(--cta);
+  font-size: 14px;
+  font-weight: 700;
+  transform: translateY(-160%);
+  transition: transform 160ms ease;
+}
+
+.skip-link:focus {
+  outline: 2px solid var(--gold);
+  outline-offset: 3px;
+  transform: translateY(0);
+}
+
 ::selection {
   background: var(--gold);
   color: #09090a;
@@ -284,8 +311,14 @@ button {
 }
 
 .screens-stage {
+  position: relative;
   width: 100%;
   margin-top: clamp(40px, 6vw, 72px);
+}
+
+.screens-stage:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: -2px;
 }
 
 .screens-track {
@@ -301,11 +334,41 @@ button {
   touch-action: pan-y;
   user-select: none;
   -webkit-user-select: none;
-  will-change: transform;
 }
 
 .screens-marquee.is-dragging {
   cursor: grabbing;
+}
+
+.screens-control {
+  position: absolute;
+  z-index: 2;
+  top: 50%;
+  width: var(--touch-circle);
+  height: var(--touch-circle);
+  display: grid;
+  place-items: center;
+  border: 0.75px solid var(--glass-stroke);
+  border-radius: 50%;
+  color: var(--paper);
+  background: rgba(20, 20, 21, 0.72);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 10px 28px rgba(0, 0, 0, 0.28);
+  backdrop-filter: blur(16px) saturate(120%);
+  -webkit-backdrop-filter: blur(16px) saturate(120%);
+  transform: translateY(-50%);
+  transition: background 180ms ease, transform 180ms ease;
+}
+
+.screens-control:hover {
+  background: rgba(242, 207, 121, 0.18);
+}
+
+.screens-control--prev {
+  left: max(8px, calc((100% - min(100%, 1180px)) / 2 + 8px));
+}
+
+.screens-control--next {
+  right: max(8px, calc((100% - min(100%, 1180px)) / 2 + 8px));
 }
 
 .screens-group {
@@ -477,7 +540,6 @@ button {
   color: var(--paper);
   background: transparent;
   cursor: pointer;
-  outline: none;
   perspective: 900px;
 }
 
@@ -571,7 +633,7 @@ button {
 
 .game-card--featured .game-card__meta,
 .game-card--featured .game-card__hint {
-  color: rgba(244, 241, 235, 0.5);
+  color: var(--muted);
 }
 
 .game-card--featured .wine-level svg.is-full {
@@ -588,6 +650,7 @@ button {
 }
 
 .game-card:focus-visible {
+  outline: none;
   box-shadow: 0 0 0 2px var(--canvas), 0 0 0 4px var(--gold);
 }
 
@@ -624,14 +687,14 @@ button {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  color: rgba(244, 241, 235, 0.48);
+  color: var(--muted);
   font-size: 12px;
 }
 
 .game-card__hint {
   margin-top: 10px;
-  color: rgba(244, 241, 235, 0.36);
-  font-size: 11px;
+  color: var(--muted);
+  font-size: 12px;
   font-weight: 600;
   letter-spacing: 0.02em;
 }
@@ -685,7 +748,7 @@ button {
 
 .game-card__return {
   margin-top: 12px;
-  color: rgba(244, 241, 235, 0.34);
+  color: var(--muted);
   letter-spacing: 0.06em;
 }
 
@@ -802,9 +865,9 @@ button {
 
 .store-button small {
   margin-bottom: 3px;
-  font-size: 9px;
-  font-weight: 500;
-  opacity: 0.62;
+  font-size: 11px;
+  font-weight: 600;
+  opacity: 0.78;
 }
 
 .download-facts {
@@ -871,20 +934,28 @@ button {
 
 .unified-footer__bottom > p {
   margin: 0;
-  color: rgba(244, 241, 235, 0.28);
+  color: var(--muted);
 }
 
 .language-switcher {
+  display: inline-flex;
+  align-items: center;
   padding: 4px;
   gap: 2px;
   border-radius: 999px;
 }
 
 .language-switcher a {
-  min-width: 34px;
-  padding: 7px 8px;
+  min-width: var(--touch-min);
+  min-height: var(--touch-min);
+  padding: 0 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   border-radius: 999px;
   text-align: center;
+  font-size: 13px;
+  font-weight: 650;
   transition: color 160ms ease, background 160ms ease;
 }
 
@@ -971,9 +1042,12 @@ button {
 }
 
 .privacy-back {
-  min-height: 40px;
+  position: relative;
+  min-height: var(--touch-min);
   padding: 0 15px;
   gap: 7px;
+  display: inline-flex;
+  align-items: center;
   border-radius: 999px;
   color: var(--paper);
   font-size: 13px;
@@ -1031,7 +1105,6 @@ button {
 .privacy-card h2 {
   margin: 0 0 18px;
   color: var(--paper);
-  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
   font-size: clamp(22px, 2.4vw, 30px);
   font-weight: 590;
   letter-spacing: -0.035em;
@@ -1040,10 +1113,17 @@ button {
 
 .privacy-card p,
 .privacy-card ul {
-  color: rgba(244, 241, 235, 0.62);
+  margin: 0 0 16px;
+  color: rgba(244, 241, 235, 0.72);
   font-size: 14px;
   font-weight: 430;
   line-height: 1.75;
+  white-space: pre-line;
+}
+
+.privacy-card p:last-child,
+.privacy-card ul:last-child {
+  margin-bottom: 0;
 }
 
 .privacy-card ul {
@@ -1111,7 +1191,18 @@ button {
 
   .privacy-back {
     padding-inline: 12px;
-    font-size: 0;
+  }
+
+  .privacy-back__label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
   }
 
   .privacy-back svg {
@@ -1218,11 +1309,11 @@ button {
   }
 
   .game-card__rules {
-    font-size: 10px;
+    font-size: 12px;
   }
 
   .game-card__hint {
-    font-size: 10px;
+    font-size: 11px;
   }
 
   .download-section {
@@ -1242,19 +1333,35 @@ button {
   }
 
   .download-card__lead {
-    max-width: 250px;
+    max-width: 36ch;
     margin: 0 auto 12px;
-    font-size: 13px;
-  }
-
-  html[lang="en"] .download-card__lead {
-    max-width: none;
-    font-size: clamp(9px, 2.9vw, 11px);
-    white-space: nowrap;
+    font-size: clamp(13px, 3.4vw, 15px);
+    white-space: normal;
   }
 
   html[lang^="zh"] .download-card h2 {
     white-space: nowrap;
+  }
+
+  .screens-control--prev {
+    left: 8px;
+  }
+
+  .screens-control--next {
+    right: 8px;
+  }
+
+  .ambient__light {
+    filter: blur(10px);
+    opacity: 0.42;
+  }
+
+  .site-nav,
+  .privacy-nav,
+  .download-card,
+  .game-card__face {
+    backdrop-filter: blur(14px) saturate(120%);
+    -webkit-backdrop-filter: blur(14px) saturate(120%);
   }
 
   .store-button {
@@ -1331,7 +1438,13 @@ button {
   .game-card__inner,
   .phone-frame,
   .store-button,
-  .nav-download {
-    transition-duration: 0.01ms;
+  .nav-download,
+  .screens-control {
+    transition-duration: 120ms;
+    transition-timing-function: ease;
+  }
+
+  .game-card.is-flipped .game-card__inner {
+    transition-duration: 200ms;
   }
 }

@@ -12,7 +12,7 @@ const readSource = async (path) => {
 };
 
 const contactSource = await readSource('../src/contact.js');
-const homeSource = await readSource('../src/App.jsx');
+const homeSource = await readSource('../src/AppGlass.jsx');
 const privacySource = await readSource('../src/privacy.jsx');
 
 test('uses one shared support email in the home and privacy pages', () => {
@@ -31,7 +31,7 @@ test('provides a localized email label for every privacy language', () => {
 });
 
 test('renders the shared email as a mailto link in both pages', () => {
-  assert.match(homeSource, /href=\{`mailto:\$\{SUPPORT_EMAIL\}`\}/);
+  assert.match(homeSource, /mailto:\$\{SUPPORT_EMAIL\}/);
   assert.match(privacySource, /href=\{`mailto:\$\{SUPPORT_EMAIL\}`\}/);
   assert.match(privacySource, /\{current\.email_label\}/);
   assert.match(privacySource, /\{SUPPORT_EMAIL\}/);

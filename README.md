@@ -50,7 +50,7 @@ Both pages support:
 
 ## Project Structure
 
-- `src/App.jsx`: home page layout and interactions
+- `src/AppGlass.jsx`: home page layout and interactions
 - `src/privacy.jsx`: privacy policy page layout
 - `src/i18n.js`: shared language detection and HTML language helpers
 - `src/content/home.js`: home page copy

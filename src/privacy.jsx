@@ -14,15 +14,14 @@ const PrivacyPage = () => {
   const current = PRIVACY_COPY[lang] ?? PRIVACY_COPY.en;
   const brand = lang === 'zh' ? '吨吨吨 · ChugChug' : 'ChugChug';
   const baseUrl = import.meta.env.BASE_URL || '/';
-  const enHomePath = `${baseUrl}?lang=en`;
-  const zhHomePath = `${baseUrl}?lang=zh`;
-  const zhHantHomePath = `${baseUrl}?lang=zh-Hant`;
   const homePathByLang = {
-    zh: zhHomePath,
-    'zh-Hant': zhHantHomePath,
-    en: enHomePath,
+    zh: `${baseUrl}?lang=zh`,
+    'zh-Hant': `${baseUrl}?lang=zh-Hant`,
+    en: `${baseUrl}?lang=en`,
   };
-  const homePath = homePathByLang[lang] ?? enHomePath;
+  const homePath = homePathByLang[lang] ?? homePathByLang.en;
+  const skipLabel =
+    lang === 'zh' ? '跳到主要内容' : lang === 'zh-Hant' ? '跳到主要內容' : 'Skip to main content';
 
   useEffect(() => {
     if (typeof document === 'undefined') return;
@@ -39,27 +38,27 @@ const PrivacyPage = () => {
 
   return (
     <div className="privacy-shell">
+      <a href="#privacy-content" className="skip-link">
+        {skipLabel}
+      </a>
+
       <div className="privacy-ambient" aria-hidden="true">
         <span className="privacy-ambient__light privacy-ambient__light--gold" />
         <span className="privacy-ambient__light privacy-ambient__light--pink" />
       </div>
 
-      <nav className="privacy-nav">
-        <a
-          href={homePath}
-          className="brand-mark"
-          aria-label={current.back}
-        >
+      <nav className="privacy-nav" aria-label="Primary">
+        <a href={homePath} className="brand-mark">
           {brand}
         </a>
 
-        <a href={homePath} className="privacy-back glass-pill">
+        <a href={homePath} className="privacy-back glass-pill" aria-label={current.back}>
           <ArrowLeft size={15} aria-hidden="true" />
-          {current.back}
+          <span className="privacy-back__label">{current.back}</span>
         </a>
       </nav>
 
-      <main className="privacy-main">
+      <main className="privacy-main" id="privacy-content">
         <div className="privacy-layout">
           <header className="privacy-header">
             <p className="section-kicker">Privacy · ChugChug</p>
@@ -69,27 +68,27 @@ const PrivacyPage = () => {
 
           <section className="privacy-content">
             <article className="privacy-card">
-              <h2 className="text-white text-2xl md:text-3xl font-black font-bubble">{current.s1}</h2>
-              <p className="text-neutral-300 font-bold mt-3 whitespace-pre-line">{current.s1b}</p>
-              <ul className="mt-4 space-y-2 text-neutral-300 font-bold list-disc pl-5">
+              <h2>{current.s1}</h2>
+              <p>{current.s1b}</p>
+              <ul>
                 <li>{current.s1l1}</li>
                 <li>{current.s1l2}</li>
                 <li>{current.s1l3}</li>
                 <li>{current.s1l4}</li>
                 <li>{current.s1l5}</li>
               </ul>
-              <p className="text-neutral-300 font-bold mt-4 whitespace-pre-line">{current.s1c}</p>
+              <p>{current.s1c}</p>
             </article>
 
             <article className="privacy-card">
-              <h2 className="text-white text-2xl md:text-3xl font-black font-bubble">{current.s2}</h2>
-              <p className="text-neutral-300 font-bold mt-3 whitespace-pre-line">{current.s2b}</p>
-              <ul className="mt-4 space-y-2 text-neutral-300 font-bold list-disc pl-5">
+              <h2>{current.s2}</h2>
+              <p>{current.s2b}</p>
+              <ul>
                 <li>{current.s2l1}</li>
                 <li>{current.s2l2}</li>
               </ul>
-              <p className="text-neutral-300 font-bold mt-6 whitespace-pre-line">{current.s2c}</p>
-              <ul className="mt-4 space-y-2 text-neutral-300 font-bold list-disc pl-5">
+              <p>{current.s2c}</p>
+              <ul>
                 <li>{current.s2d1}</li>
                 <li>{current.s2d2}</li>
                 <li>{current.s2d3}</li>
@@ -99,46 +98,36 @@ const PrivacyPage = () => {
             </article>
 
             <article className="privacy-card">
-              <h2 className="text-white text-2xl md:text-3xl font-black font-bubble">{current.s3}</h2>
-              <p className="text-neutral-300 font-bold mt-3 whitespace-pre-line">{current.s3b}</p>
+              <h2>{current.s3}</h2>
+              <p>{current.s3b}</p>
             </article>
 
             <article className="privacy-card">
-              <h2 className="text-white text-2xl md:text-3xl font-black font-bubble">{current.s4}</h2>
-              <p className="text-neutral-300 font-bold mt-3 whitespace-pre-line">{current.s4b}</p>
+              <h2>{current.s4}</h2>
+              <p>{current.s4b}</p>
             </article>
 
             <article className="privacy-card">
-              <h2 className="text-white text-2xl md:text-3xl font-black font-bubble">{current.s5}</h2>
-              <p className="text-neutral-300 font-bold mt-3 whitespace-pre-line">{current.s5b}</p>
+              <h2>{current.s5}</h2>
+              <p>{current.s5b}</p>
             </article>
 
             <article className="privacy-card">
-              <h2 className="text-white text-2xl md:text-3xl font-black font-bubble">{current.s6}</h2>
-              <p className="text-neutral-300 font-bold mt-3 whitespace-pre-line">{current.s6b}</p>
+              <h2>{current.s6}</h2>
+              <p>{current.s6b}</p>
             </article>
 
             <article className="privacy-card privacy-card--contact">
-              <h2 className="text-white text-2xl md:text-3xl font-black font-bubble">{current.s7}</h2>
-              <p className="text-neutral-300 font-bold mt-3 whitespace-pre-line">{current.s7b}</p>
-              <ul className="mt-4 space-y-2 text-neutral-300 font-bold list-disc pl-5">
+              <h2>{current.s7}</h2>
+              <p>{current.s7b}</p>
+              <ul>
                 <li>
                   {current.email_label}:{' '}
-                  <a
-                    className="text-[#FFE85F] hover:underline"
-                    href={`mailto:${SUPPORT_EMAIL}`}
-                  >
-                    {SUPPORT_EMAIL}
-                  </a>
+                  <a href={`mailto:${SUPPORT_EMAIL}`}>{SUPPORT_EMAIL}</a>
                 </li>
                 <li>
                   {current.website_label}:{' '}
-                  <a
-                    className="text-[#FFE85F] hover:underline"
-                    href={current.website}
-                    target="_blank"
-                    rel="noreferrer"
-                  >
+                  <a href={current.website} target="_blank" rel="noreferrer">
                     {current.website}
                   </a>
                 </li>

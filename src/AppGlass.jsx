@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { Clock3, Wine } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Clock3, Wine } from 'lucide-react';
 import SiteFooter from './components/SiteFooter.jsx';
 import { SUPPORT_EMAIL } from './contact.js';
 import { GAMES } from './content/games.jsx';
@@ -8,8 +8,26 @@ import { getInitialLang } from './i18n.js';
 
 const APP_STORE_URL = 'https://apps.apple.com/us/app/chugchug-party-game/id6758532049';
 const DOWNLOAD_ANCHOR = '#download';
+const SCREEN_WIDTH = 750;
+const SCREEN_HEIGHT = 1630;
 
 const FEATURED_IDS = new Set(['undercover', 'dice']);
+
+/** Homepage marquee: menu + every available game screenshot */
+const SCREENSHOT_REEL = [
+  { file: 'menu', gameId: null, featured: true },
+  { file: 'dice', gameId: 'dice' },
+  { file: 'undercover', gameId: 'undercover' },
+  { file: 'truthordare', gameId: 'truth' },
+  { file: 'buzzcards', gameId: 'buzzcards' },
+  { file: 'poker', gameId: 'poker' },
+  { file: 'lucky', gameId: 'lucky' },
+  { file: 'kingsgame', gameId: 'king' },
+  { file: 'mostlikelyto', gameId: 'execution' },
+  { file: 'wavelength', gameId: 'wavelength' },
+  { file: 'headsupcategory', gameId: 'charades' },
+  { file: 'sixone', gameId: 'six' },
+];
 
 const GAME_META = {
   dice: [3, '∞'],
@@ -79,7 +97,6 @@ const App = () => {
   const [flippedIds, setFlippedIds] = useState(() => new Set());
   const currentText = HOME_COPY[lang] ?? HOME_COPY.en;
   const isChinese = lang === 'zh' || lang === 'zh-Hant';
-  const isTraditional = lang === 'zh-Hant';
   const brand = lang === 'zh' ? '吨吨吨 · ChugChug' : 'ChugChug';
   const baseUrl = import.meta.env.BASE_URL || '/';
 
@@ -94,22 +111,29 @@ const App = () => {
 
   const screenshots = useMemo(() => {
     const folder = `${baseUrl}screenshot/${isChinese ? 'zh' : 'en'}/`;
-    const menu = isChinese ? 'menu-zh.jpeg' : 'menu.jpeg';
-    const files = [
-      menu,
-      'dice.jpeg',
-      'truthordare.jpeg',
-      'lucky.jpeg',
-      'mostlikelyto.jpeg',
-      'wavelength.jpeg',
-      'undercover.jpeg',
-    ];
-    return files.map((file) => ({
-      id: file.replace('.jpeg', ''),
-      src: `${folder}${file}`,
-      featured: file === menu,
-    }));
-  }, [baseUrl, isChinese]);
+    const gameById = Object.fromEntries(GAMES.map((game) => [game.id, game]));
+
+    return SCREENSHOT_REEL.map((entry) => {
+      const file =
+        entry.featured && isChinese ? 'menu-zh.jpeg' : `${entry.file}.jpeg`;
+      const game = entry.gameId ? gameById[entry.gameId] : null;
+      const gameName = game
+        ? game.name[lang] ?? game.name.zh ?? game.name.en
+        : null;
+
+      return {
+        id: entry.file,
+        src: `${folder}${file}`,
+        featured: Boolean(entry.featured),
+        alt: entry.featured
+          ? currentText.a11y_screen_menu
+          : (currentText.a11y_screen_game || '{name}').replace(
+              '{name}',
+              gameName || entry.file,
+            ),
+      };
+    });
+  }, [baseUrl, currentText, isChinese, lang]);
 
   const orderedGames = useMemo(() => {
     const featured = GAMES.filter((game) => FEATURED_IDS.has(game.id));
@@ -118,6 +142,7 @@ const App = () => {
   }, []);
 
   const marqueeRef = useRef(null);
+  const marqueeApiRef = useRef({ nudge: () => {} });
 
   useEffect(() => {
     const marquee = marqueeRef.current;
@@ -136,6 +161,10 @@ const App = () => {
     let dragMoved = false;
     let resumeAt = 0;
 
+    const setWillChange = (enabled) => {
+      marquee.style.willChange = enabled ? 'transform' : 'auto';
+    };
+
     const applyOffset = () => {
       const loopWidth = marquee.scrollWidth / 2;
       if (loopWidth > 0) offset = ((offset % loopWidth) + loopWidth) % loopWidth;
@@ -148,6 +177,7 @@ const App = () => {
       lastTime = time;
 
       if (activePointerId === null && time >= resumeAt && !reduceMotionQuery.matches) {
+        setWillChange(true);
         offset += autoSpeed * dt;
         applyOffset();
       }
@@ -160,6 +190,7 @@ const App = () => {
       dragStartX = event.clientX;
       dragStartOffset = offset;
       dragMoved = false;
+      setWillChange(true);
       marquee.classList.add('is-dragging');
       try {
         marquee.setPointerCapture(event.pointerId);
@@ -181,6 +212,7 @@ const App = () => {
       activePointerId = null;
       marquee.classList.remove('is-dragging');
       resumeAt = performance.now() + resumeDelayMs;
+      if (reduceMotionQuery.matches) setWillChange(false);
     };
 
     const onClickCapture = (event) => {
@@ -191,11 +223,30 @@ const App = () => {
       }
     };
 
+    const onReduceMotionChange = () => {
+      if (reduceMotionQuery.matches) setWillChange(false);
+    };
+
+    marqueeApiRef.current = {
+      nudge: (delta) => {
+        setWillChange(true);
+        offset += delta;
+        applyOffset();
+        resumeAt = performance.now() + resumeDelayMs;
+        if (reduceMotionQuery.matches) {
+          window.setTimeout(() => setWillChange(false), 320);
+        }
+      },
+    };
+
+    if (!reduceMotionQuery.matches) setWillChange(true);
+
     marquee.addEventListener('pointerdown', onPointerDown);
     marquee.addEventListener('pointermove', onPointerMove);
     marquee.addEventListener('pointerup', endDrag);
     marquee.addEventListener('pointercancel', endDrag);
     marquee.addEventListener('click', onClickCapture, true);
+    reduceMotionQuery.addEventListener('change', onReduceMotionChange);
     rafId = requestAnimationFrame(step);
 
     return () => {
@@ -205,9 +256,27 @@ const App = () => {
       marquee.removeEventListener('pointerup', endDrag);
       marquee.removeEventListener('pointercancel', endDrag);
       marquee.removeEventListener('click', onClickCapture, true);
+      reduceMotionQuery.removeEventListener('change', onReduceMotionChange);
       marquee.style.transform = '';
+      marquee.style.willChange = 'auto';
+      marqueeApiRef.current = { nudge: () => {} };
     };
   }, [screenshots]);
+
+  const nudgeMarquee = (direction) => {
+    const amount = Math.min(window.innerWidth * 0.42, 300);
+    marqueeApiRef.current.nudge(direction * amount);
+  };
+
+  const onScreensKeyDown = (event) => {
+    if (event.key === 'ArrowLeft') {
+      event.preventDefault();
+      nudgeMarquee(-1);
+    } else if (event.key === 'ArrowRight') {
+      event.preventDefault();
+      nudgeMarquee(1);
+    }
+  };
 
   const track = (event, url) => {
     if (typeof window.gtag !== 'function') return;
@@ -231,6 +300,10 @@ const App = () => {
 
   return (
     <div className="site-shell">
+      <a href="#main-content" className="skip-link">
+        {currentText.a11y_skip}
+      </a>
+
       <nav className="site-nav" aria-label="Primary">
         <a href="#top" className="brand-mark">{brand}</a>
         <a
@@ -242,7 +315,7 @@ const App = () => {
         </a>
       </nav>
 
-      <main>
+      <main id="main-content">
         <section id="top" className="hero-section">
           <AmbientLights />
           <div className="hero-copy">
@@ -265,7 +338,21 @@ const App = () => {
             />
           </div>
 
-          <div className="screens-stage" aria-label={isChinese ? 'App 截图' : 'App screenshots'}>
+          <div
+            className="screens-stage"
+            role="region"
+            aria-label={currentText.a11y_screens}
+            tabIndex={0}
+            onKeyDown={onScreensKeyDown}
+          >
+            <button
+              type="button"
+              className="screens-control screens-control--prev"
+              aria-label={currentText.a11y_screens_prev}
+              onClick={() => nudgeMarquee(-1)}
+            >
+              <ChevronLeft size={20} aria-hidden="true" />
+            </button>
             <div className="screens-track no-scrollbar">
               <div className="screens-marquee" ref={marqueeRef}>
                 {[false, true].map((isDuplicate) => (
@@ -281,22 +368,12 @@ const App = () => {
                       >
                         <img
                           src={shot.src}
-                          alt={
-                            isDuplicate
-                              ? ''
-                              : shot.featured
-                                ? isTraditional
-                                  ? '主選單截圖'
-                                  : isChinese
-                                    ? '主菜单截图'
-                                    : 'Main menu screenshot'
-                                : isTraditional
-                                  ? '遊戲截圖'
-                                  : isChinese
-                                    ? '游戏截图'
-                                    : 'Game screenshot'
-                          }
+                          width={SCREEN_WIDTH}
+                          height={SCREEN_HEIGHT}
+                          alt={isDuplicate ? '' : shot.alt}
                           loading={isDuplicate || index > 2 ? 'lazy' : 'eager'}
+                          decoding="async"
+                          fetchPriority={isDuplicate || index > 0 ? 'low' : 'high'}
                           draggable={false}
                           onError={(event) => {
                             event.currentTarget.src = `${baseUrl}placeholder.svg`;
@@ -308,6 +385,14 @@ const App = () => {
                 ))}
               </div>
             </div>
+            <button
+              type="button"
+              className="screens-control screens-control--next"
+              aria-label={currentText.a11y_screens_next}
+              onClick={() => nudgeMarquee(1)}
+            >
+              <ChevronRight size={20} aria-hidden="true" />
+            </button>
           </div>
         </section>
 
@@ -352,6 +437,10 @@ const App = () => {
                 .replace('{name}', name)
                 .replace('{level}', String(drunkLevel))
                 .replace('{duration}', String(duration));
+              const drunkLabel = (currentText.a11y_drunk_level || 'Drunk level {level} of 5').replace(
+                '{level}',
+                String(drunkLevel),
+              );
 
               return (
                 <button
@@ -372,7 +461,7 @@ const App = () => {
                       <span className="game-card__spacer" />
                       <strong>{name}</strong>
                       <span className="game-card__meta">
-                        <span className="wine-level" aria-label={`drunk level ${drunkLevel} of 5`}>
+                        <span className="wine-level" aria-label={drunkLabel}>
                           {Array.from({ length: 5 }, (_, index) => (
                             <Wine
                               key={index}
@@ -382,7 +471,7 @@ const App = () => {
                           ))}
                         </span>
                         <span>
-                          <Clock3 size={11} />
+                          <Clock3 size={11} aria-hidden="true" />
                           {duration}
                         </span>
                       </span>
