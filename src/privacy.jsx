@@ -143,7 +143,7 @@ const PrivacyPage = () => {
         languageHref={(code) => `${baseUrl}privacy.html?lang=${code}`}
         links={[
           { href: homePath, label: current.back },
-          { href: `mailto:${SUPPORT_EMAIL}`, label: current.email_label },
+          { href: `mailto:${SUPPORT_EMAIL}`, label: current.footer_contact },
         ]}
       />
     </div>

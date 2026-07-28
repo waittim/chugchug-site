@@ -1,6 +1,6 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { animate } from 'motion';
-import { motion, useReducedMotion } from 'motion/react';
+import { useReducedMotion } from 'motion/react';
 import { ChevronLeft, ChevronRight, Clock3, Wine } from 'lucide-react';
 import SiteFooter from './components/SiteFooter.jsx';
 import { SUPPORT_EMAIL } from './contact.js';
@@ -10,10 +10,25 @@ import { getInitialLang } from './i18n.js';
 
 const DRAG_THRESHOLD = 10;
 const VELOCITY_SAMPLE_LIMIT = 5;
+const FLICK_VELOCITY = 220; // px/s — bounce only for real flicks
+const COAST_MIN_VELOCITY = 8; // px/s — keep residual motion until drag commits
+const CARD_FLICK_VELOCITY = 480; // deg/s
+const CARD_DRAG_SCALE = 0.42; // deg per px
 
 /** Apple Designing Fluid Interfaces projection (px/s → px delta) */
 function projectMomentum(initialVelocity, decelerationRate = 0.998) {
   return (initialVelocity / 1000) * decelerationRate / (1 - decelerationRate);
+}
+
+/** Progressive resistance past a bound (Apple rubber-band) */
+function rubberband(overshoot, dimension, constant = 0.55) {
+  return (overshoot * dimension * constant) / (dimension + constant * Math.abs(overshoot));
+}
+
+function clampRubber(value, min, max, dimension) {
+  if (value < min) return min - rubberband(min - value, dimension);
+  if (value > max) return max + rubberband(value - max, dimension);
+  return value;
 }
 
 const APP_STORE_URL = 'https://apps.apple.com/us/app/chugchug-party-game/id6758532049';
@@ -70,20 +85,56 @@ const AmbientLights = ({ variant = 'default' }) => (
   </div>
 );
 
-const StoreButton = ({ label, lead, onClick, className = '' }) => (
-  <a
-    href={APP_STORE_URL}
-    className={`store-button ${className}`.trim()}
-    aria-label={label}
-    onClick={onClick}
-  >
-    <AppleLogo />
-    <span>
-      <small>{lead}</small>
-      App Store
-    </span>
-  </a>
-);
+const usePressHandlers = () => {
+  const [isPressed, setIsPressed] = useState(false);
+  return {
+    isPressed,
+    pressProps: {
+      onPointerDown: (event) => {
+        if (!event.isPrimary) return;
+        setIsPressed(true);
+      },
+      onPointerUp: () => setIsPressed(false),
+      onPointerCancel: () => setIsPressed(false),
+      onPointerLeave: () => setIsPressed(false),
+    },
+  };
+};
+
+const StoreButton = ({ label, lead, onClick, className = '' }) => {
+  const { isPressed, pressProps } = usePressHandlers();
+  return (
+    <a
+      href={APP_STORE_URL}
+      className={`store-button ${isPressed ? 'is-pressed' : ''} ${className}`.trim()}
+      aria-label={label}
+      onClick={onClick}
+      {...pressProps}
+    >
+      <AppleLogo />
+      <span>
+        <small>{lead}</small>
+        App Store
+      </span>
+    </a>
+  );
+};
+
+const ScreensControl = ({ direction, label, onNudge }) => {
+  const { isPressed, pressProps } = usePressHandlers();
+  const Icon = direction < 0 ? ChevronLeft : ChevronRight;
+  return (
+    <button
+      type="button"
+      className={`screens-control screens-control--${direction < 0 ? 'prev' : 'next'}${isPressed ? ' is-pressed' : ''}`}
+      aria-label={label}
+      onClick={() => onNudge(direction)}
+      {...pressProps}
+    >
+      <Icon size={20} aria-hidden="true" />
+    </button>
+  );
+};
 
 const GameCardFace = ({
   side,
@@ -147,20 +198,133 @@ const GameCard = ({
   drunkLevel,
   duration,
   name,
-  onToggle,
+  onFlipChange,
   reduceMotion,
 }) => {
   const [isPressed, setIsPressed] = useState(false);
-  const pointerRef = useRef({ active: false, startX: 0, startY: 0, moved: false });
+  const [isDragging, setIsDragging] = useState(false);
+  const innerRef = useRef(null);
+  const rotateRef = useRef(isFlipped ? 180 : 0);
+  const springRef = useRef(null);
+  const springVelocityRef = useRef(0);
+  const settlingRef = useRef(false);
+  const pointerRef = useRef({
+    active: false,
+    pointerId: null,
+    startX: 0,
+    startY: 0,
+    startRotate: 0,
+    committed: false,
+    samples: [],
+  });
+
+  const applyRotate = (value, stretch = 0) => {
+    rotateRef.current = value;
+    const el = innerRef.current;
+    if (!el) return;
+    const sx = 1 + stretch;
+    el.style.transform = stretch
+      ? `rotateY(${value}deg) scaleX(${sx})`
+      : `rotateY(${value}deg)`;
+  };
+
+  const cancelSpring = () => {
+    if (springRef.current) {
+      springRef.current.stop();
+      springRef.current = null;
+    }
+  };
+
+  const springTo = (target, velocity = 0, onComplete) => {
+    cancelSpring();
+    const from = rotateRef.current;
+
+    if (reduceMotion) {
+      applyRotate(target, 0);
+      settlingRef.current = false;
+      onComplete?.();
+      return;
+    }
+
+    let prev = from;
+    let prevT = performance.now();
+    springVelocityRef.current = velocity;
+    settlingRef.current = true;
+
+    springRef.current = animate(from, target, {
+      type: 'spring',
+      bounce: Math.abs(velocity) > CARD_FLICK_VELOCITY ? 0.18 : 0,
+      duration: 0.38,
+      velocity,
+      onUpdate: (value) => {
+        const now = performance.now();
+        const dt = (now - prevT) / 1000;
+        if (dt > 0.001) springVelocityRef.current = (value - prev) / dt;
+        prev = value;
+        prevT = now;
+        applyRotate(value, 0);
+      },
+      onComplete: () => {
+        springRef.current = null;
+        springVelocityRef.current = 0;
+        settlingRef.current = false;
+        applyRotate(target, 0);
+        onComplete?.();
+      },
+    });
+  };
+
+  // Sync when flipped state changes without an in-flight settle (e.g. rare external)
+  useEffect(() => {
+    if (pointerRef.current.active || settlingRef.current) return undefined;
+    const target = isFlipped ? 180 : 0;
+    if (Math.abs(rotateRef.current - target) < 0.5) {
+      applyRotate(target, 0);
+      return undefined;
+    }
+    springTo(target, 0);
+    return undefined;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isFlipped, reduceMotion]);
+
+  useEffect(() => () => cancelSpring(), []);
+
+  // Initial presentation value (avoid React style fighting the spring)
+  useLayoutEffect(() => {
+    applyRotate(rotateRef.current, 0);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const addSample = (x) => {
+    const samples = pointerRef.current.samples;
+    samples.push({ x, t: performance.now() });
+    if (samples.length > VELOCITY_SAMPLE_LIMIT) samples.shift();
+  };
+
+  const getPointerVelocity = () => {
+    const samples = pointerRef.current.samples;
+    if (samples.length < 2) return 0;
+    const first = samples[0];
+    const last = samples[samples.length - 1];
+    const dt = (last.t - first.t) / 1000;
+    if (dt <= 0) return 0;
+    return (last.x - first.x) / dt;
+  };
 
   const handlePointerDown = (event) => {
     if (!event.isPrimary) return;
+    cancelSpring();
+    settlingRef.current = false;
     pointerRef.current = {
       active: true,
+      pointerId: event.pointerId,
       startX: event.clientX,
       startY: event.clientY,
-      moved: false,
+      startRotate: rotateRef.current,
+      committed: false,
+      samples: [],
     };
+    addSample(event.clientX);
     setIsPressed(true);
     try {
       event.currentTarget.setPointerCapture(event.pointerId);
@@ -170,18 +334,69 @@ const GameCard = ({
   };
 
   const handlePointerMove = (event) => {
-    if (!pointerRef.current.active) return;
-    const dx = event.clientX - pointerRef.current.startX;
-    const dy = event.clientY - pointerRef.current.startY;
-    if (Math.hypot(dx, dy) > DRAG_THRESHOLD) pointerRef.current.moved = true;
+    const state = pointerRef.current;
+    if (!state.active || event.pointerId !== state.pointerId) return;
+
+    const dx = event.clientX - state.startX;
+    const dy = event.clientY - state.startY;
+
+    if (!state.committed) {
+      if (Math.hypot(dx, dy) < DRAG_THRESHOLD) return;
+      // Prefer horizontal for flip; abandon if clearly vertical scroll intent
+      if (Math.abs(dy) > Math.abs(dx) * 1.35) {
+        state.active = false;
+        setIsPressed(false);
+        setIsDragging(false);
+        return;
+      }
+      state.committed = true;
+      state.startX = event.clientX;
+      state.startRotate = rotateRef.current;
+      setIsDragging(true);
+      setIsPressed(false);
+    }
+
+    addSample(event.clientX);
+    const raw = state.startRotate + (event.clientX - state.startX) * CARD_DRAG_SCALE;
+    const next = clampRubber(raw, 0, 180, 180);
+    const stretch = Math.min(0.035, Math.abs(event.clientX - state.startX) * 0.00012);
+    applyRotate(next, stretch);
   };
 
-  const handlePointerEnd = () => {
-    if (!pointerRef.current.active) return;
-    const { moved } = pointerRef.current;
-    pointerRef.current.active = false;
+  const settleTo = (target, velocity) => {
+    const flipped = target >= 90;
+    springTo(target, velocity);
+    if (flipped !== isFlipped) onFlipChange(game.id, flipped);
+  };
+
+  const handlePointerEnd = (event) => {
+    const state = pointerRef.current;
+    if (!state.active || (event.pointerId != null && event.pointerId !== state.pointerId)) return;
+    state.active = false;
     setIsPressed(false);
-    if (!moved) onToggle(game.id);
+    setIsDragging(false);
+
+    if (reduceMotion) {
+      if (!state.committed) onFlipChange(game.id, !isFlipped);
+      return;
+    }
+
+    if (!state.committed) {
+      settleTo(isFlipped ? 0 : 180, 0);
+      return;
+    }
+
+    const pointerVx = getPointerVelocity();
+    const angularVelocity = pointerVx * CARD_DRAG_SCALE;
+    const projected = rotateRef.current + projectMomentum(angularVelocity);
+    // Prefer velocity sign when flicking; otherwise nearest resting face
+    let target;
+    if (Math.abs(angularVelocity) > CARD_FLICK_VELOCITY) {
+      target = angularVelocity > 0 ? 180 : 0;
+    } else {
+      target = projected >= 90 ? 180 : 0;
+    }
+    settleTo(target, angularVelocity);
   };
 
   const cardClass = [
@@ -189,6 +404,7 @@ const GameCard = ({
     isFeatured ? 'game-card--featured' : '',
     isFlipped ? 'is-flipped' : '',
     isPressed ? 'is-pressed' : '',
+    isDragging ? 'is-dragging' : '',
     reduceMotion ? 'game-card--reduced-motion' : '',
   ]
     .filter(Boolean)
@@ -232,11 +448,9 @@ const GameCard = ({
           />
         </span>
       ) : (
-        <motion.span
+        <span
+          ref={innerRef}
           className="game-card__inner"
-          initial={false}
-          animate={{ rotateY: isFlipped ? 180 : 0 }}
-          transition={{ type: 'spring', bounce: 0, duration: 0.52 }}
           style={{ transformStyle: 'preserve-3d' }}
         >
           <GameCardFace
@@ -259,7 +473,7 @@ const GameCard = ({
             currentText={currentText}
             isFeatured={isFeatured}
           />
-        </motion.span>
+        </span>
       )}
     </button>
   );
@@ -330,8 +544,10 @@ const App = () => {
 
     let offset = 0;
     let rafId = 0;
+    let coastRafId = 0;
     let resumeTimeoutId = 0;
     let lastTime = 0;
+    let coastLastTime = 0;
     let activePointerId = null;
     let dragStartX = 0;
     let dragStartOffset = 0;
@@ -339,15 +555,35 @@ const App = () => {
     let dragCommitted = false;
     let resumeAt = 0;
     let springControl = null;
+    let springVelocity = 0;
+    let coastVelocity = 0;
     const velocitySamples = [];
 
     const setWillChange = (enabled) => {
       marquee.style.willChange = enabled ? 'transform' : 'auto';
     };
 
+    const setStretch = (value) => {
+      marquee.style.setProperty('--marquee-stretch', String(value));
+    };
+
     const getLoopWidth = () => {
       const primary = marquee.querySelector('.screens-group:not(.screens-group--clone)');
       return primary?.offsetWidth || marquee.scrollWidth / 2 || 0;
+    };
+
+    const getSnapInterval = () => {
+      const group = marquee.querySelector('.screens-group:not(.screens-group--clone)');
+      const frame = group?.querySelector('.phone-frame');
+      if (!group || !frame) return 0;
+      const gap = parseFloat(getComputedStyle(group).columnGap || getComputedStyle(group).gap) || 0;
+      return frame.getBoundingClientRect().width + gap;
+    };
+
+    const nearestSnapPoint = (position) => {
+      const interval = getSnapInterval();
+      if (interval <= 0) return position;
+      return Math.round(position / interval) * interval;
     };
 
     const applyOffset = () => {
@@ -356,11 +592,21 @@ const App = () => {
       marquee.style.transform = `translate3d(${-offset}px, 0, 0)`;
     };
 
+    const stopCoast = () => {
+      if (coastRafId) cancelAnimationFrame(coastRafId);
+      coastRafId = 0;
+      coastLastTime = 0;
+      coastVelocity = 0;
+    };
+
     const cancelSpring = () => {
+      const retained = springVelocity;
       if (springControl) {
         springControl.stop();
         springControl = null;
       }
+      springVelocity = 0;
+      return retained;
     };
 
     const addVelocitySample = (x, t = performance.now()) => {
@@ -379,31 +625,79 @@ const App = () => {
 
     const springTo = (target, velocity = 0, onComplete) => {
       cancelSpring();
+      stopCoast();
       const from = offset;
 
       if (reduceMotionQuery.matches) {
         offset = target;
         applyOffset();
+        setStretch(0);
         onComplete?.();
         return;
       }
 
       setWillChange(true);
+      let prev = from;
+      let prevT = performance.now();
+      springVelocity = velocity;
+
       springControl = animate(from, target, {
         type: 'spring',
-        bounce: velocity !== 0 ? 0.2 : 0,
+        bounce: Math.abs(velocity) > FLICK_VELOCITY ? 0.2 : 0,
         duration: 0.4,
         velocity,
         onUpdate: (value) => {
+          const now = performance.now();
+          const dt = (now - prevT) / 1000;
+          if (dt > 0.001) springVelocity = (value - prev) / dt;
+          prev = value;
+          prevT = now;
           offset = value;
           applyOffset();
         },
         onComplete: () => {
           springControl = null;
+          springVelocity = 0;
           setWillChange(false);
+          setStretch(0);
           onComplete?.();
         },
       });
+    };
+
+    const snapFromRelease = (offsetVelocity) => {
+      const projected = offset + projectMomentum(offsetVelocity);
+      const target = nearestSnapPoint(projected);
+      springTo(target, offsetVelocity, finishInteraction);
+    };
+
+    const startCoast = (velocity) => {
+      stopCoast();
+      if (Math.abs(velocity) < COAST_MIN_VELOCITY || reduceMotionQuery.matches) return;
+      coastVelocity = velocity;
+      setWillChange(true);
+
+      const step = (time) => {
+        if (activePointerId === null || dragCommitted) {
+          coastRafId = 0;
+          return;
+        }
+        if (coastLastTime === 0) coastLastTime = time;
+        const dt = Math.min((time - coastLastTime) / 1000, 0.1);
+        coastLastTime = time;
+        offset += coastVelocity * dt;
+        // Friction while waiting for drag commit — no hard stop
+        coastVelocity *= Math.exp(-3.2 * dt);
+        applyOffset();
+        if (Math.abs(coastVelocity) < COAST_MIN_VELOCITY) {
+          coastRafId = 0;
+          coastVelocity = 0;
+          return;
+        }
+        coastRafId = requestAnimationFrame(step);
+      };
+
+      coastRafId = requestAnimationFrame(step);
     };
 
     const stopAuto = () => {
@@ -461,7 +755,8 @@ const App = () => {
 
     const onPointerDown = (event) => {
       if (!event.isPrimary) return;
-      cancelSpring();
+      const inheritedSpring = cancelSpring();
+      const wasAuto = rafId !== 0;
       stopAuto();
       activePointerId = event.pointerId;
       dragStartX = event.clientX;
@@ -471,7 +766,10 @@ const App = () => {
       velocitySamples.length = 0;
       addVelocitySample(event.clientX);
       setWillChange(true);
+      setStretch(0);
       marquee.classList.add('is-dragging');
+      // Carry spring / auto velocity through the hysteresis window — no brick-wall stop
+      startCoast(inheritedSpring || (wasAuto ? autoSpeed : 0));
       try {
         marquee.setPointerCapture(event.pointerId);
       } catch {
@@ -485,6 +783,7 @@ const App = () => {
 
       if (!dragCommitted) {
         if (Math.abs(delta) < DRAG_THRESHOLD) return;
+        stopCoast();
         dragCommitted = true;
         dragStartX = event.clientX;
         dragStartOffset = offset;
@@ -492,23 +791,32 @@ const App = () => {
 
       dragMoved = true;
       addVelocitySample(event.clientX);
-      offset = dragStartOffset - (event.clientX - dragStartX);
+      const fingerDelta = event.clientX - dragStartX;
+      offset = dragStartOffset - fingerDelta;
+      // Hint stretch in the direction of travel (content follows finger left → positive offset)
+      const stretch = Math.min(0.045, Math.abs(fingerDelta) * 0.00014);
+      setStretch(stretch);
       applyOffset();
     };
 
     const onPointerUp = (event) => {
       if (event.pointerId !== activePointerId) return;
+      const leftoverCoast = coastVelocity;
+      stopCoast();
       activePointerId = null;
       marquee.classList.remove('is-dragging');
+      setStretch(0);
 
       if (dragCommitted) {
         const pointerVelocity = getReleaseVelocity();
         const offsetVelocity = -pointerVelocity;
-        const projectedTarget = offset + projectMomentum(offsetVelocity);
-        springTo(projectedTarget, offsetVelocity, finishInteraction);
+        snapFromRelease(offsetVelocity);
+      } else if (Math.abs(leftoverCoast) > COAST_MIN_VELOCITY) {
+        // Released during hysteresis — project from inherited coast
+        snapFromRelease(leftoverCoast);
       } else {
-        setWillChange(false);
-        finishInteraction();
+        // Tap without motion — settle to nearest snap
+        springTo(nearestSnapPoint(offset), 0, finishInteraction);
       }
     };
 
@@ -522,15 +830,19 @@ const App = () => {
 
     const onReduceMotionChange = () => {
       cancelSpring();
+      stopCoast();
       stopAuto();
       if (!reduceMotionQuery.matches) scheduleAutoResume();
     };
 
     marqueeApiRef.current = {
-      nudge: (delta) => {
+      nudge: (direction) => {
         cancelSpring();
+        stopCoast();
         stopAuto();
-        springTo(offset + delta, 0, finishInteraction);
+        const interval = getSnapInterval() || Math.min(window.innerWidth * 0.42, 300);
+        const origin = nearestSnapPoint(offset);
+        springTo(origin + direction * interval, 0, finishInteraction);
       },
     };
 
@@ -545,6 +857,7 @@ const App = () => {
 
     return () => {
       cancelSpring();
+      stopCoast();
       stopAuto();
       marquee.removeEventListener('pointerdown', onPointerDown);
       marquee.removeEventListener('pointermove', onPointerMove);
@@ -554,13 +867,13 @@ const App = () => {
       reduceMotionQuery.removeEventListener('change', onReduceMotionChange);
       marquee.style.transform = '';
       marquee.style.willChange = 'auto';
+      marquee.style.removeProperty('--marquee-stretch');
       marqueeApiRef.current = { nudge: () => {} };
     };
   }, [screenshots]);
 
   const nudgeMarquee = (direction) => {
-    const amount = Math.min(window.innerWidth * 0.42, 300);
-    marqueeApiRef.current.nudge(direction * amount);
+    marqueeApiRef.current.nudge(direction);
   };
 
   const onScreensKeyDown = (event) => {
@@ -584,11 +897,11 @@ const App = () => {
     });
   };
 
-  const toggleCard = (id) => {
+  const setCardFlipped = (id, flipped) => {
     setFlippedIds((previous) => {
       const next = new Set(previous);
-      if (next.has(id)) next.delete(id);
-      else next.add(id);
+      if (flipped) next.add(id);
+      else next.delete(id);
       return next;
     });
   };
@@ -603,7 +916,7 @@ const App = () => {
         <a href="#top" className="brand-mark">{brand}</a>
         <a
           href={DOWNLOAD_ANCHOR}
-          className="glass-pill nav-download"
+          className="nav-download"
           onClick={() => track('navbar_download_click', DOWNLOAD_ANCHOR)}
         >
           {currentText.nav_download}
@@ -640,14 +953,11 @@ const App = () => {
             tabIndex={0}
             onKeyDown={onScreensKeyDown}
           >
-            <button
-              type="button"
-              className="screens-control screens-control--prev"
-              aria-label={currentText.a11y_screens_prev}
-              onClick={() => nudgeMarquee(-1)}
-            >
-              <ChevronLeft size={20} aria-hidden="true" />
-            </button>
+            <ScreensControl
+              direction={-1}
+              label={currentText.a11y_screens_prev}
+              onNudge={nudgeMarquee}
+            />
             <div className="screens-track no-scrollbar">
               <div className="screens-marquee" ref={marqueeRef}>
                 {[false, true].map((isDuplicate) => (
@@ -683,14 +993,11 @@ const App = () => {
                 ))}
               </div>
             </div>
-            <button
-              type="button"
-              className="screens-control screens-control--next"
-              aria-label={currentText.a11y_screens_next}
-              onClick={() => nudgeMarquee(1)}
-            >
-              <ChevronRight size={20} aria-hidden="true" />
-            </button>
+            <ScreensControl
+              direction={1}
+              label={currentText.a11y_screens_next}
+              onNudge={nudgeMarquee}
+            />
           </div>
         </section>
 
@@ -746,7 +1053,7 @@ const App = () => {
                   drunkLevel={drunkLevel}
                   duration={duration}
                   name={name}
-                  onToggle={toggleCard}
+                  onFlipChange={setCardFlipped}
                   reduceMotion={reduceMotion}
                 />
               );

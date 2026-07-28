@@ -35,7 +35,8 @@ body {
   --canvas: #09090a;
   --canvas-deep: #080809;
   --paper: #f4f1eb;
-  --muted: rgba(244, 241, 235, 0.56);
+  --muted: rgba(244, 241, 235, 0.68);
+  --muted-strong: rgba(244, 241, 235, 0.82);
   --gold: #f2cf79;
   --ambient-warm: #eeb64d;
   --ambient-warm-deep: #e6aa4b;
@@ -167,19 +168,35 @@ button:focus-visible {
   -webkit-backdrop-filter: blur(14px);
 }
 
+/* Solid control on translucent nav — never stack light glass on glass */
+.site-nav .nav-download,
+.privacy-nav .glass-pill,
+.privacy-nav .privacy-back {
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  background: rgba(255, 255, 255, 0.16);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.14);
+}
+
 .nav-download {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   min-height: var(--touch-min);
   padding: 0 16px;
   gap: 7px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
   border-radius: 999px;
-  color: var(--paper);
+  color: var(--muted-strong);
   font-size: 14px;
-  font-weight: 650;
-  transition: background 180ms ease, transform 100ms ease-out;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  transition: background 100ms ease-out, color 100ms ease-out, transform 100ms ease-out;
 }
 
 .nav-download:hover {
-  background: rgba(242, 207, 121, 0.16);
+  color: var(--paper);
+  background: rgba(242, 207, 121, 0.22);
   transform: translateY(-1px);
 }
 
@@ -337,6 +354,7 @@ button:focus-visible {
 }
 
 .screens-marquee {
+  --marquee-stretch: 0;
   width: max-content;
   display: flex;
   align-items: center;
@@ -348,6 +366,11 @@ button:focus-visible {
 
 .screens-marquee.is-dragging {
   cursor: grabbing;
+}
+
+.screens-marquee.is-dragging .phone-frame {
+  transform: scaleX(calc(1 + var(--marquee-stretch, 0)));
+  transition: none;
 }
 
 .screens-control {
@@ -366,14 +389,15 @@ button:focus-visible {
   backdrop-filter: blur(14px) saturate(120%);
   -webkit-backdrop-filter: blur(14px) saturate(120%);
   transform: translateY(-50%);
-  transition: background 180ms ease, transform 100ms ease-out, opacity 180ms ease;
+  transition: background 100ms ease-out, transform 100ms ease-out, opacity 100ms ease-out;
 }
 
 .screens-control:hover {
   background: rgba(242, 207, 121, 0.18);
 }
 
-.screens-control:active {
+.screens-control:active,
+.screens-control.is-pressed {
   transform: translateY(-50%) scale(0.97);
 }
 
@@ -416,11 +440,12 @@ button:focus-visible {
   border-radius: var(--rounded-phone);
   background: #111;
   box-shadow: 0 32px 80px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(255, 255, 255, 0.12);
-  transition: opacity 300ms ease;
+  transform-origin: center center;
+  transition: opacity 100ms ease-out, transform 100ms ease-out;
 }
 
 .phone-frame:hover {
-  opacity: 0.9;
+  opacity: 0.92;
 }
 
 .phone-frame picture,
@@ -575,17 +600,23 @@ button:focus-visible {
   background: transparent;
   cursor: pointer;
   perspective: 900px;
-  transition: transform 180ms ease;
+  touch-action: pan-y;
+  transition: transform 100ms ease-out;
 }
 
 @media (hover: hover) and (pointer: fine) {
-  .game-card:hover:not(.is-pressed) {
+  .game-card:hover:not(.is-pressed):not(.is-dragging) {
     transform: translateY(-2px);
   }
 }
 
 .game-card.is-pressed {
-  transform: scale(0.98);
+  transform: scale(0.97);
+}
+
+.game-card.is-dragging {
+  cursor: grabbing;
+  transition: none;
 }
 
 .game-card[data-game-key='dice'],
@@ -633,7 +664,9 @@ button:focus-visible {
   position: absolute;
   inset: 0;
   display: block;
+  transform: rotateY(0deg);
   transform-style: preserve-3d;
+  will-change: transform;
 }
 
 .game-card__inner--flat {
@@ -739,7 +772,8 @@ button:focus-visible {
 
 .game-card--featured .game-card__meta,
 .game-card--featured .game-card__hint {
-  color: var(--muted);
+  color: var(--muted-strong);
+  font-weight: 600;
 }
 
 .game-card--featured .wine-level svg.is-full {
@@ -785,15 +819,17 @@ button:focus-visible {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  color: var(--muted);
+  color: var(--muted-strong);
   font-size: 12px;
+  font-weight: 550;
+  letter-spacing: 0.01em;
 }
 
 .game-card__hint {
   margin-top: 10px;
-  color: var(--muted);
+  color: var(--muted-strong);
   font-size: 12px;
-  font-weight: 600;
+  font-weight: 650;
   letter-spacing: 0.02em;
 }
 
@@ -845,7 +881,7 @@ button:focus-visible {
 
 .game-card__return {
   margin-top: 12px;
-  color: var(--muted);
+  color: var(--muted-strong);
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.06em;
@@ -941,7 +977,7 @@ button:focus-visible {
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.35),
     0 7px 12px rgba(0, 0, 0, 0.16);
-  transition: transform 100ms ease-out, box-shadow 180ms ease, background 180ms ease;
+  transition: transform 100ms ease-out, box-shadow 100ms ease-out, background 100ms ease-out;
 }
 
 .store-button:hover {
@@ -952,8 +988,9 @@ button:focus-visible {
   transform: translateY(-2px);
 }
 
-.store-button:active {
-  transform: translateY(1px) scale(0.98);
+.store-button:active,
+.store-button.is-pressed {
+  transform: translateY(1px) scale(0.97);
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.28),
     0 8px 20px rgba(0, 0, 0, 0.24);
@@ -1036,7 +1073,7 @@ button:focus-visible {
 }
 
 .unified-footer__links a {
-  transition: color 160ms ease, transform 100ms ease-out;
+  transition: color 100ms ease-out, transform 100ms ease-out;
 }
 
 .unified-footer__links a:hover {
@@ -1075,7 +1112,8 @@ button:focus-visible {
   text-align: center;
   font-size: 12px;
   font-weight: 650;
-  transition: color 160ms ease, background 160ms ease, transform 100ms ease-out;
+  letter-spacing: 0.02em;
+  transition: color 100ms ease-out, background 100ms ease-out, transform 100ms ease-out;
 }
 
 .language-switcher a:active {
@@ -1189,14 +1227,16 @@ button:focus-visible {
   display: inline-flex;
   align-items: center;
   border-radius: 999px;
-  color: var(--paper);
+  color: var(--muted-strong);
   font-size: 13px;
-  font-weight: 620;
-  transition: background 180ms ease, transform 100ms ease-out;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  transition: background 100ms ease-out, color 100ms ease-out, transform 100ms ease-out;
 }
 
 .privacy-back:hover {
-  background: rgba(242, 207, 121, 0.14);
+  color: var(--paper);
+  background: rgba(242, 207, 121, 0.18);
 }
 
 .privacy-back:active {
@@ -1582,15 +1622,15 @@ button:focus-visible {
 }
 
 @keyframes ambient-primary {
-  to { transform: translate3d(-3%, 5%, 0) rotate(-8deg) scale(1.04); }
+  to { transform: translate3d(-2%, 3%, 0) rotate(-10deg) scale(1.02); }
 }
 
 @keyframes ambient-support {
-  to { transform: translate3d(6%, -4%, 0) rotate(12deg) scale(0.98); }
+  to { transform: translate3d(3%, -2%, 0) rotate(14deg) scale(0.99); }
 }
 
 @keyframes ambient-accent {
-  to { transform: translate3d(-5%, -3%, 0) scale(1.03); opacity: 0.48; }
+  to { transform: translate3d(-3%, -2%, 0) scale(1.015); opacity: 0.52; }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -1625,6 +1665,7 @@ button:focus-visible {
   .privacy-nav,
   .screens-control,
   .glass-pill,
+  .nav-download,
   .download-card,
   .game-card__face {
     background: rgba(20, 20, 21, 0.96);
