@@ -27,7 +27,7 @@ const SiteFooter = ({
       ))}
     </nav>
 
-    <nav className="language-switcher glass-pill" aria-label={languageLabel}>
+    <nav className="language-switcher" aria-label={languageLabel}>
       {LANGUAGES.map(([code, label]) => (
         <a
           key={code}

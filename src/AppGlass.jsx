@@ -1,10 +1,20 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { animate } from 'motion';
+import { motion, useReducedMotion } from 'motion/react';
 import { ChevronLeft, ChevronRight, Clock3, Wine } from 'lucide-react';
 import SiteFooter from './components/SiteFooter.jsx';
 import { SUPPORT_EMAIL } from './contact.js';
 import { GAMES } from './content/games.jsx';
 import { HOME_COPY } from './content/home.js';
 import { getInitialLang } from './i18n.js';
+
+const DRAG_THRESHOLD = 10;
+const VELOCITY_SAMPLE_LIMIT = 5;
+
+/** Apple Designing Fluid Interfaces projection (px/s → px delta) */
+function projectMomentum(initialVelocity, decelerationRate = 0.998) {
+  return (initialVelocity / 1000) * decelerationRate / (1 - decelerationRate);
+}
 
 const APP_STORE_URL = 'https://apps.apple.com/us/app/chugchug-party-game/id6758532049';
 const DOWNLOAD_ANCHOR = '#download';
@@ -75,9 +85,190 @@ const StoreButton = ({ label, lead, onClick, className = '' }) => (
   </a>
 );
 
+const GameCardFace = ({
+  side,
+  game,
+  lang,
+  drunkLevel,
+  duration,
+  name,
+  currentText,
+  isFeatured,
+  hidden = false,
+}) => (
+  <span
+    className={`game-card__face game-card__${side}${hidden ? ' game-card__face--hidden' : ''}`}
+  >
+    {side === 'front' ? (
+      <>
+        <span className="game-card__icon">
+          {React.cloneElement(game.icon, { size: isFeatured ? 34 : 28, className: '' })}
+        </span>
+        <span className="game-card__spacer" />
+        <strong>{name}</strong>
+        <span className="game-card__meta">
+          <span className="wine-level" aria-hidden="true">
+            {Array.from({ length: 5 }, (_, index) => (
+              <Wine
+                key={index}
+                size={10}
+                aria-hidden="true"
+                className={index < drunkLevel ? 'is-full' : ''}
+              />
+            ))}
+          </span>
+          <span>
+            <Clock3 size={11} aria-hidden="true" />
+            {duration}
+          </span>
+        </span>
+        <span className="game-card__hint">{currentText.card_hint_front}</span>
+      </>
+    ) : (
+      <>
+        <span className="game-card__back-label">{currentText.rules_title}</span>
+        <strong>{name}</strong>
+        <span className="game-card__rules">
+          {game.rules?.[lang] ?? game.rules?.zh ?? game.rules?.en ?? ''}
+        </span>
+        <span className="game-card__return">{currentText.card_hint_back}</span>
+      </>
+    )}
+  </span>
+);
+
+const GameCard = ({
+  game,
+  lang,
+  isFlipped,
+  isFeatured,
+  cardLabel,
+  currentText,
+  drunkLevel,
+  duration,
+  name,
+  onToggle,
+  reduceMotion,
+}) => {
+  const [isPressed, setIsPressed] = useState(false);
+  const pointerRef = useRef({ active: false, startX: 0, startY: 0, moved: false });
+
+  const handlePointerDown = (event) => {
+    if (!event.isPrimary) return;
+    pointerRef.current = {
+      active: true,
+      startX: event.clientX,
+      startY: event.clientY,
+      moved: false,
+    };
+    setIsPressed(true);
+    try {
+      event.currentTarget.setPointerCapture(event.pointerId);
+    } catch {
+      // capture is best-effort
+    }
+  };
+
+  const handlePointerMove = (event) => {
+    if (!pointerRef.current.active) return;
+    const dx = event.clientX - pointerRef.current.startX;
+    const dy = event.clientY - pointerRef.current.startY;
+    if (Math.hypot(dx, dy) > DRAG_THRESHOLD) pointerRef.current.moved = true;
+  };
+
+  const handlePointerEnd = () => {
+    if (!pointerRef.current.active) return;
+    const { moved } = pointerRef.current;
+    pointerRef.current.active = false;
+    setIsPressed(false);
+    if (!moved) onToggle(game.id);
+  };
+
+  const cardClass = [
+    'game-card',
+    isFeatured ? 'game-card--featured' : '',
+    isFlipped ? 'is-flipped' : '',
+    isPressed ? 'is-pressed' : '',
+    reduceMotion ? 'game-card--reduced-motion' : '',
+  ]
+    .filter(Boolean)
+    .join(' ');
+
+  return (
+    <button
+      type="button"
+      className={cardClass}
+      aria-label={cardLabel}
+      aria-pressed={isFlipped}
+      data-game-key={game.id}
+      onPointerDown={handlePointerDown}
+      onPointerMove={handlePointerMove}
+      onPointerUp={handlePointerEnd}
+      onPointerCancel={handlePointerEnd}
+    >
+      {reduceMotion ? (
+        <span className="game-card__inner game-card__inner--flat">
+          <GameCardFace
+            side="front"
+            hidden={isFlipped}
+            game={game}
+            lang={lang}
+            drunkLevel={drunkLevel}
+            duration={duration}
+            name={name}
+            currentText={currentText}
+            isFeatured={isFeatured}
+          />
+          <GameCardFace
+            side="back"
+            hidden={!isFlipped}
+            game={game}
+            lang={lang}
+            drunkLevel={drunkLevel}
+            duration={duration}
+            name={name}
+            currentText={currentText}
+            isFeatured={isFeatured}
+          />
+        </span>
+      ) : (
+        <motion.span
+          className="game-card__inner"
+          initial={false}
+          animate={{ rotateY: isFlipped ? 180 : 0 }}
+          transition={{ type: 'spring', bounce: 0, duration: 0.52 }}
+          style={{ transformStyle: 'preserve-3d' }}
+        >
+          <GameCardFace
+            side="front"
+            game={game}
+            lang={lang}
+            drunkLevel={drunkLevel}
+            duration={duration}
+            name={name}
+            currentText={currentText}
+            isFeatured={isFeatured}
+          />
+          <GameCardFace
+            side="back"
+            game={game}
+            lang={lang}
+            drunkLevel={drunkLevel}
+            duration={duration}
+            name={name}
+            currentText={currentText}
+            isFeatured={isFeatured}
+          />
+        </motion.span>
+      )}
+    </button>
+  );
+};
+
 const App = () => {
   const [lang] = useState(getInitialLang);
   const [flippedIds, setFlippedIds] = useState(() => new Set());
+  const reduceMotion = useReducedMotion();
   const currentText = HOME_COPY[lang] ?? HOME_COPY.en;
   const isChinese = lang === 'zh' || lang === 'zh-Hant';
   const brand = lang === 'zh' ? '吨吨吨 · ChugChug' : 'ChugChug';
@@ -145,7 +336,10 @@ const App = () => {
     let dragStartX = 0;
     let dragStartOffset = 0;
     let dragMoved = false;
+    let dragCommitted = false;
     let resumeAt = 0;
+    let springControl = null;
+    const velocitySamples = [];
 
     const setWillChange = (enabled) => {
       marquee.style.willChange = enabled ? 'transform' : 'auto';
@@ -157,13 +351,62 @@ const App = () => {
       marquee.style.transform = `translate3d(${-offset}px, 0, 0)`;
     };
 
+    const cancelSpring = () => {
+      if (springControl) {
+        springControl.stop();
+        springControl = null;
+      }
+    };
+
+    const addVelocitySample = (x, t = performance.now()) => {
+      velocitySamples.push({ x, t });
+      if (velocitySamples.length > VELOCITY_SAMPLE_LIMIT) velocitySamples.shift();
+    };
+
+    const getReleaseVelocity = () => {
+      if (velocitySamples.length < 2) return 0;
+      const first = velocitySamples[0];
+      const last = velocitySamples[velocitySamples.length - 1];
+      const dt = (last.t - first.t) / 1000;
+      if (dt <= 0) return 0;
+      return (last.x - first.x) / dt;
+    };
+
+    const springTo = (target, velocity = 0, onComplete) => {
+      cancelSpring();
+      const from = offset;
+
+      if (reduceMotionQuery.matches) {
+        offset = target;
+        applyOffset();
+        onComplete?.();
+        return;
+      }
+
+      setWillChange(true);
+      springControl = animate(from, target, {
+        type: 'spring',
+        bounce: velocity !== 0 ? 0.2 : 0,
+        duration: 0.4,
+        velocity,
+        onUpdate: (value) => {
+          offset = value;
+          applyOffset();
+        },
+        onComplete: () => {
+          springControl = null;
+          setWillChange(false);
+          onComplete?.();
+        },
+      });
+    };
+
     const stopAuto = () => {
       if (rafId) cancelAnimationFrame(rafId);
       rafId = 0;
       if (resumeTimeoutId) window.clearTimeout(resumeTimeoutId);
       resumeTimeoutId = 0;
       lastTime = 0;
-      setWillChange(false);
     };
 
     const scheduleAutoResume = () => {
@@ -206,13 +449,22 @@ const App = () => {
       rafId = requestAnimationFrame(step);
     };
 
+    const finishInteraction = () => {
+      resumeAt = performance.now() + resumeDelayMs;
+      scheduleAutoResume();
+    };
+
     const onPointerDown = (event) => {
       if (!event.isPrimary) return;
+      cancelSpring();
       stopAuto();
       activePointerId = event.pointerId;
       dragStartX = event.clientX;
       dragStartOffset = offset;
       dragMoved = false;
+      dragCommitted = false;
+      velocitySamples.length = 0;
+      addVelocitySample(event.clientX);
       setWillChange(true);
       marquee.classList.add('is-dragging');
       try {
@@ -225,18 +477,34 @@ const App = () => {
     const onPointerMove = (event) => {
       if (event.pointerId !== activePointerId) return;
       const delta = event.clientX - dragStartX;
-      if (Math.abs(delta) > 3) dragMoved = true;
-      offset = dragStartOffset - delta;
+
+      if (!dragCommitted) {
+        if (Math.abs(delta) < DRAG_THRESHOLD) return;
+        dragCommitted = true;
+        dragStartX = event.clientX;
+        dragStartOffset = offset;
+      }
+
+      dragMoved = true;
+      addVelocitySample(event.clientX);
+      offset = dragStartOffset - (event.clientX - dragStartX);
       applyOffset();
     };
 
-    const endDrag = (event) => {
+    const onPointerUp = (event) => {
       if (event.pointerId !== activePointerId) return;
       activePointerId = null;
       marquee.classList.remove('is-dragging');
-      resumeAt = performance.now() + resumeDelayMs;
-      setWillChange(false);
-      scheduleAutoResume();
+
+      if (dragCommitted) {
+        const pointerVelocity = getReleaseVelocity();
+        const offsetVelocity = -pointerVelocity;
+        const projectedTarget = offset + projectMomentum(offsetVelocity);
+        springTo(projectedTarget, offsetVelocity, finishInteraction);
+      } else {
+        setWillChange(false);
+        finishInteraction();
+      }
     };
 
     const onClickCapture = (event) => {
@@ -248,19 +516,16 @@ const App = () => {
     };
 
     const onReduceMotionChange = () => {
+      cancelSpring();
       stopAuto();
       if (!reduceMotionQuery.matches) scheduleAutoResume();
     };
 
     marqueeApiRef.current = {
       nudge: (delta) => {
+        cancelSpring();
         stopAuto();
-        setWillChange(true);
-        offset += delta;
-        applyOffset();
-        resumeAt = performance.now() + resumeDelayMs;
-        window.setTimeout(() => setWillChange(false), 320);
-        scheduleAutoResume();
+        springTo(offset + delta, 0, finishInteraction);
       },
     };
 
@@ -268,17 +533,18 @@ const App = () => {
 
     marquee.addEventListener('pointerdown', onPointerDown);
     marquee.addEventListener('pointermove', onPointerMove);
-    marquee.addEventListener('pointerup', endDrag);
-    marquee.addEventListener('pointercancel', endDrag);
+    marquee.addEventListener('pointerup', onPointerUp);
+    marquee.addEventListener('pointercancel', onPointerUp);
     marquee.addEventListener('click', onClickCapture, true);
     reduceMotionQuery.addEventListener('change', onReduceMotionChange);
 
     return () => {
+      cancelSpring();
       stopAuto();
       marquee.removeEventListener('pointerdown', onPointerDown);
       marquee.removeEventListener('pointermove', onPointerMove);
-      marquee.removeEventListener('pointerup', endDrag);
-      marquee.removeEventListener('pointercancel', endDrag);
+      marquee.removeEventListener('pointerup', onPointerUp);
+      marquee.removeEventListener('pointercancel', onPointerUp);
       marquee.removeEventListener('click', onClickCapture, true);
       reduceMotionQuery.removeEventListener('change', onReduceMotionChange);
       marquee.style.transform = '';
@@ -464,50 +730,20 @@ const App = () => {
                 .replace('{level}', String(drunkLevel))
                 .replace('{duration}', String(duration));
               return (
-                <button
-                  type="button"
+                <GameCard
                   key={game.id}
-                  className={`game-card ${isFeatured ? 'game-card--featured' : ''} ${isFlipped ? 'is-flipped' : ''}`}
-                  aria-label={cardLabel}
-                  aria-pressed={isFlipped}
-                  data-game-key={game.id}
-                  onClick={() => toggleCard(game.id)}
-                >
-                  <span className="game-card__inner">
-                    <span className="game-card__face game-card__front">
-                      <span className="game-card__icon">
-                        {React.cloneElement(game.icon, { size: isFeatured ? 34 : 28, className: '' })}
-                      </span>
-                      <span className="game-card__spacer" />
-                      <strong>{name}</strong>
-                      <span className="game-card__meta">
-                        <span className="wine-level" aria-hidden="true">
-                          {Array.from({ length: 5 }, (_, index) => (
-                            <Wine
-                              key={index}
-                              size={10}
-                              aria-hidden="true"
-                              className={index < drunkLevel ? 'is-full' : ''}
-                            />
-                          ))}
-                        </span>
-                        <span>
-                          <Clock3 size={11} aria-hidden="true" />
-                          {duration}
-                        </span>
-                      </span>
-                      <span className="game-card__hint">{currentText.card_hint_front}</span>
-                    </span>
-                    <span className="game-card__face game-card__back">
-                      <span className="game-card__back-label">{currentText.rules_title}</span>
-                      <strong>{name}</strong>
-                      <span className="game-card__rules">
-                        {game.rules?.[lang] ?? game.rules?.zh ?? game.rules?.en ?? ''}
-                      </span>
-                      <span className="game-card__return">{currentText.card_hint_back}</span>
-                    </span>
-                  </span>
-                </button>
+                  game={game}
+                  lang={lang}
+                  isFlipped={isFlipped}
+                  isFeatured={isFeatured}
+                  cardLabel={cardLabel}
+                  currentText={currentText}
+                  drunkLevel={drunkLevel}
+                  duration={duration}
+                  name={name}
+                  onToggle={toggleCard}
+                  reduceMotion={reduceMotion}
+                />
               );
             })}
           </div>

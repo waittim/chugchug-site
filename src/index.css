@@ -30,6 +30,7 @@ body {
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue",
     Arial, sans-serif;
   font-synthesis: none;
+  font-optical-sizing: auto;
   /* ChugChug glass_ui_migration_guide.md §1.2 */
   --canvas: #09090a;
   --canvas-deep: #080809;
@@ -108,7 +109,7 @@ button:focus-visible {
 .site-nav {
   position: fixed;
   z-index: 100;
-  top: 16px;
+  top: 1rem;
   left: 50%;
   width: min(calc(100% - 28px), 1180px);
   min-height: 54px;
@@ -130,6 +131,17 @@ button:focus-visible {
   backdrop-filter: blur(16px) saturate(125%);
   -webkit-backdrop-filter: blur(16px) saturate(125%);
   transform: translateX(-50%);
+}
+
+.site-nav::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 5%;
+  right: 5%;
+  height: 1.5rem;
+  background: linear-gradient(to bottom, rgba(9, 9, 10, 0.55), transparent);
+  pointer-events: none;
 }
 
 .brand-mark {
@@ -163,12 +175,16 @@ button:focus-visible {
   color: var(--paper);
   font-size: 14px;
   font-weight: 650;
-  transition: background 180ms ease, transform 180ms ease;
+  transition: background 180ms ease, transform 100ms ease-out;
 }
 
 .nav-download:hover {
   background: rgba(242, 207, 121, 0.16);
   transform: translateY(-1px);
+}
+
+.nav-download:active {
+  transform: scale(0.97);
 }
 
 .hero-section,
@@ -252,7 +268,7 @@ button:focus-visible {
 .hero-section {
   min-height: 100dvh;
   /* Clears fixed nav (~70px) with ~86–102px open air below it */
-  padding: 172px 0 64px;
+  padding: clamp(9rem, 14vw, 10.75rem) 0 4rem;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -350,11 +366,15 @@ button:focus-visible {
   backdrop-filter: blur(14px) saturate(120%);
   -webkit-backdrop-filter: blur(14px) saturate(120%);
   transform: translateY(-50%);
-  transition: background 180ms ease, transform 180ms ease, opacity 180ms ease;
+  transition: background 180ms ease, transform 100ms ease-out, opacity 180ms ease;
 }
 
 .screens-control:hover {
   background: rgba(242, 207, 121, 0.18);
+}
+
+.screens-control:active {
+  transform: translateY(-50%) scale(0.97);
 }
 
 .screens-control--prev {
@@ -428,7 +448,7 @@ button:focus-visible {
 }
 
 .experience-section {
-  padding: clamp(96px, 12vw, 160px) 20px;
+  padding: clamp(6rem, 12vw, 10rem) 1.25rem;
 }
 
 .ambient--soft .ambient__light--primary {
@@ -468,12 +488,16 @@ button:focus-visible {
 }
 
 .feature-list {
-  border-top: 1px solid var(--line);
+  margin-top: 0.5rem;
 }
 
 .feature-row {
-  padding: 26px 0;
-  border-bottom: 1px solid var(--line);
+  padding: 1.625rem 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.feature-row:first-child {
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .feature-row h3 {
@@ -493,7 +517,7 @@ button:focus-visible {
 }
 
 .games-section {
-  padding: clamp(96px, 12vw, 160px) 20px;
+  padding: clamp(6rem, 12vw, 10rem) 1.25rem;
 }
 
 .ambient--games .ambient__light--primary {
@@ -556,6 +580,17 @@ button:focus-visible {
   background: transparent;
   cursor: pointer;
   perspective: 900px;
+  transition: transform 180ms ease;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .game-card:hover:not(.is-pressed) {
+    transform: translateY(-2px);
+  }
+}
+
+.game-card.is-pressed {
+  transform: scale(0.98);
 }
 
 .game-card[data-game-key='dice'],
@@ -604,11 +639,23 @@ button:focus-visible {
   inset: 0;
   display: block;
   transform-style: preserve-3d;
-  transition: transform 520ms cubic-bezier(0.2, 0.72, 0.2, 1);
 }
 
-.game-card.is-flipped .game-card__inner {
-  transform: rotateY(180deg);
+.game-card__inner--flat {
+  transform-style: flat;
+}
+
+.game-card__inner--flat .game-card__back {
+  transform: none;
+}
+
+.game-card__face--hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.game-card--reduced-motion .game-card__face {
+  transition: opacity 200ms ease;
 }
 
 .game-card__face {
@@ -703,14 +750,6 @@ button:focus-visible {
 .game-card--featured .wine-level svg.is-full {
   color: var(--accent);
   fill: color-mix(in srgb, var(--accent) 45%, transparent);
-}
-
-.game-card:hover .game-card__inner {
-  transform: translateY(-2px);
-}
-
-.game-card.is-flipped:hover .game-card__inner {
-  transform: rotateY(180deg) translateY(-2px);
 }
 
 .game-card:focus-visible {
@@ -907,7 +946,7 @@ button:focus-visible {
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.35),
     0 7px 12px rgba(0, 0, 0, 0.16);
-  transition: transform 180ms ease, box-shadow 180ms ease, background 180ms ease;
+  transition: transform 100ms ease-out, box-shadow 180ms ease, background 180ms ease;
 }
 
 .store-button:hover {
@@ -1002,11 +1041,15 @@ button:focus-visible {
 }
 
 .unified-footer__links a {
-  transition: color 160ms ease;
+  transition: color 160ms ease, transform 100ms ease-out;
 }
 
 .unified-footer__links a:hover {
   color: var(--paper);
+}
+
+.unified-footer__links a:active {
+  transform: scale(0.97);
 }
 
 .unified-footer__copy {
@@ -1021,6 +1064,9 @@ button:focus-visible {
   padding: 2px;
   gap: 1px;
   border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.1);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
 }
 
 .language-switcher a {
@@ -1034,7 +1080,11 @@ button:focus-visible {
   text-align: center;
   font-size: 12px;
   font-weight: 650;
-  transition: color 160ms ease, background 160ms ease;
+  transition: color 160ms ease, background 160ms ease, transform 100ms ease-out;
+}
+
+.language-switcher a:active {
+  transform: scale(0.97);
 }
 
 @media (pointer: coarse) {
@@ -1104,7 +1154,7 @@ button:focus-visible {
 .privacy-nav {
   position: fixed;
   z-index: 100;
-  top: 16px;
+  top: 1rem;
   left: 50%;
   width: min(calc(100% - 28px), 1180px);
   min-height: 54px;
@@ -1119,6 +1169,17 @@ button:focus-visible {
   backdrop-filter: blur(16px) saturate(125%);
   -webkit-backdrop-filter: blur(16px) saturate(125%);
   transform: translateX(-50%);
+}
+
+.privacy-nav::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 5%;
+  right: 5%;
+  height: 1.5rem;
+  background: linear-gradient(to bottom, rgba(9, 9, 10, 0.55), transparent);
+  pointer-events: none;
 }
 
 .privacy-nav .brand-mark {
@@ -1136,11 +1197,15 @@ button:focus-visible {
   color: var(--paper);
   font-size: 13px;
   font-weight: 620;
-  transition: background 180ms ease;
+  transition: background 180ms ease, transform 100ms ease-out;
 }
 
 .privacy-back:hover {
   background: rgba(242, 207, 121, 0.14);
+}
+
+.privacy-back:active {
+  transform: scale(0.97);
 }
 
 .privacy-main {
@@ -1178,12 +1243,12 @@ button:focus-visible {
 }
 
 .privacy-content {
-  border-top: 1px solid var(--line);
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .privacy-card {
   padding: 42px 0;
-  border-bottom: 1px solid var(--line);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .privacy-card h2 {
@@ -1328,7 +1393,7 @@ button:focus-visible {
   }
 
   .hero-section {
-    padding: 148px 0 44px;
+    padding: 9.25rem 0 2.75rem;
     min-height: auto;
   }
 
@@ -1449,8 +1514,28 @@ button:focus-visible {
 
   .download-card,
   .game-card__face {
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
+    backdrop-filter: blur(12px) saturate(120%);
+    -webkit-backdrop-filter: blur(12px) saturate(120%);
+  }
+
+  .game-card__face {
+    background:
+      linear-gradient(
+        145deg,
+        rgba(255, 255, 255, 0.045),
+        rgba(255, 255, 255, 0.01)
+      ),
+      linear-gradient(
+        145deg,
+        var(--glass-tint),
+        rgba(255, 255, 255, 0.035)
+      );
+  }
+
+  .download-card {
+    background:
+      linear-gradient(145deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0.01)),
+      linear-gradient(145deg, var(--glass-tint), rgba(255, 255, 255, 0.035));
   }
 
   .store-button {
@@ -1518,16 +1603,62 @@ button:focus-visible {
     scroll-behavior: auto;
   }
 
-  .game-card__inner,
+  .ambient__light--primary,
+  .ambient__light--support,
+  .ambient__light--accent {
+    animation: none !important;
+  }
+
   .phone-frame,
   .store-button,
   .nav-download,
-  .screens-control {
+  .screens-control,
+  .game-card,
+  .privacy-back,
+  .language-switcher a {
     transition-duration: 120ms;
     transition-timing-function: ease;
   }
 
-  .game-card.is-flipped .game-card__inner {
-    transition-duration: 200ms;
+  .game-card--reduced-motion .game-card__face {
+    transition: opacity 200ms ease;
+  }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .site-nav,
+  .privacy-nav,
+  .screens-control,
+  .glass-pill,
+  .download-card,
+  .game-card__face {
+    background: rgba(20, 20, 21, 0.96);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+
+  .language-switcher {
+    background: rgba(30, 30, 31, 0.96);
+  }
+}
+
+@media (prefers-contrast: more) {
+  .site-nav,
+  .privacy-nav {
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    background: rgba(12, 12, 13, 0.98);
+  }
+
+  .download-card,
+  .game-card__face {
+    border: 1px solid rgba(255, 255, 255, 0.28);
+    background: rgba(12, 12, 13, 0.98);
+  }
+
+  .feature-row,
+  .feature-row:first-child,
+  .privacy-content,
+  .privacy-card {
+    border-color: rgba(255, 255, 255, 0.22);
   }
 }
