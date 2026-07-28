@@ -345,8 +345,13 @@ const App = () => {
       marquee.style.willChange = enabled ? 'transform' : 'auto';
     };
 
+    const getLoopWidth = () => {
+      const primary = marquee.querySelector('.screens-group:not(.screens-group--clone)');
+      return primary?.offsetWidth || marquee.scrollWidth / 2 || 0;
+    };
+
     const applyOffset = () => {
-      const loopWidth = marquee.scrollWidth / 2;
+      const loopWidth = getLoopWidth();
       if (loopWidth > 0) offset = ((offset % loopWidth) + loopWidth) % loopWidth;
       marquee.style.transform = `translate3d(${-offset}px, 0, 0)`;
     };

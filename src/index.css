@@ -405,11 +405,6 @@ button:focus-visible {
   gap: var(--screen-gap);
 }
 
-.screens-group--clone {
-  content-visibility: auto;
-  contain-intrinsic-size: 280px 560px;
-}
-
 .phone-frame {
   position: relative;
   width: clamp(184px, 20vw, 250px);

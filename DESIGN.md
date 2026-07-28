@@ -234,7 +234,7 @@ components:
 - **Store button**：香槟底、Apple 标记、双行文案，高度 60px
 - **Glass nav**：固定居中胶囊，品牌金字 + 下载 pill
 - **Game card**：可翻转按钮，`--accent` 按 `data-game-key` 着色；需有 `:focus-visible` 金环
-- **Screenshot marquee**：可拖拽、按钮与方向键；克隆组使用 `content-visibility`
+- **Screenshot marquee**：可拖拽、按钮与方向键；循环宽度取主 `.screens-group` 的 `offsetWidth`（勿对克隆组使用 `content-visibility`，以免 `scrollWidth`/高度跳变）
 - **Language switcher**：≥44px 触控目标
 
 ## Do's and Don'ts
