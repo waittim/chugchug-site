@@ -136,10 +136,11 @@ typography:
     lineHeight: 0.9
     letterSpacing: "-0.04em"
 rounded:
-  card: "22px"
+  card: "clamp(30px, 3vw, 40px)"
+  card-large: "clamp(40px, 4.4vw, 54px)"
+  card-corner-shape: "squircle"
   control: "999px"
-  download: "28px"
-  download-mobile: "20px"
+  download: "{rounded.card-large}"
   phone: "clamp(32px, 4vw, 44px)"
   phone-min: "32px"
 spacing:
@@ -216,6 +217,8 @@ components:
 - 内容最大宽约 920–1120px，左右内边距随断点收紧
 - 游戏区：桌面 4 列，平板 3 列，手机 2 列；精选卡跨列
 - 断点：`900px`、`680px`
+
+卡片采用 Apple 式 continuous rounded rectangle：用 `corner-shape: squircle` 将角部渲染为连续曲率超椭圆。普通卡使用 30–40px 的流体角部范围，精选与下载卡使用 40–54px；移动端沿用同一尺寸体系，不再缩回较小的独立圆角。卡片容器与其共边内容面共享同一 radius/shape token，保持轮廓同心；不支持 `corner-shape` 的旧浏览器回退到相同半径的普通圆角。
 
 ## Elevation & Depth
 
