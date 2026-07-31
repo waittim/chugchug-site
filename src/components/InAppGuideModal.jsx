@@ -67,13 +67,13 @@ const InAppGuideModal = ({ isOpen, onClose, currentText }) => {
           xmlns="http://www.w3.org/2000/svg"
         >
           <path
-            d="M 12 58 C 16 30 32 14 56 10"
+            d="M 12 58 C 16 32 32 14 56 10"
             stroke="var(--gold)"
             strokeWidth="4"
             strokeLinecap="round"
           />
           <path
-            d="M 38 15 L 56 10 L 48 28"
+            d="M 38 7 L 56 10 L 42 22"
             stroke="var(--gold)"
             strokeWidth="4"
             strokeLinecap="round"
