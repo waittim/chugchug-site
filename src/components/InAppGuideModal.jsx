@@ -73,7 +73,7 @@ const InAppGuideModal = ({ isOpen, onClose, currentText }) => {
             strokeLinecap="round"
           />
           <path
-            d="M 46 25 L 56 10 L 61 27"
+            d="M 44 23 L 56 10 L 58 28"
             stroke="var(--gold)"
             strokeWidth="4"
             strokeLinecap="round"
