@@ -60,24 +60,26 @@ const InAppGuideModal = ({ isOpen, onClose, currentText }) => {
     >
       {/* Top right floating guide pointing to Instagram/WebView menu ... */}
       <div className="inapp-arrow-guide" aria-hidden="true">
-        <div className="inapp-arrow-pulse" />
         <svg
           className="inapp-arrow-icon"
-          viewBox="0 0 60 70"
+          viewBox="0 0 70 70"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
         >
           <path
-            d="M52 6C32 8 14 26 12 52M52 6L36 12M52 6L48 24"
+            d="M 12 58 C 16 30 32 14 56 10"
+            stroke="var(--gold)"
+            strokeWidth="4"
+            strokeLinecap="round"
+          />
+          <path
+            d="M 38 15 L 56 10 L 48 28"
             stroke="var(--gold)"
             strokeWidth="4"
             strokeLinecap="round"
             strokeLinejoin="round"
           />
         </svg>
-        <div className="inapp-arrow-chip">
-          <MoreHorizontal size={18} color="var(--gold)" />
-        </div>
       </div>
 
       <div className="inapp-card glass-panel">
