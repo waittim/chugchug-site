@@ -3,10 +3,12 @@ import { animate } from 'motion';
 import { useReducedMotion } from 'motion/react';
 import { ChevronLeft, ChevronRight, Clock3, Wine } from 'lucide-react';
 import SiteFooter from './components/SiteFooter.jsx';
+import InAppGuideModal from './components/InAppGuideModal.jsx';
 import { SUPPORT_EMAIL } from './contact.js';
 import { GAMES } from './content/games.jsx';
 import { HOME_COPY } from './content/home.js';
 import { getInitialLang } from './i18n.js';
+import { APP_STORE_URL, ITMS_APP_STORE_URL, isInAppBrowser } from './utils/inAppBrowser.js';
 
 const DRAG_THRESHOLD = 10;
 const VELOCITY_SAMPLE_LIMIT = 5;
@@ -31,7 +33,6 @@ function clampRubber(value, min, max, dimension) {
   return value;
 }
 
-const APP_STORE_URL = 'https://apps.apple.com/us/app/chugchug-party-game/id6758532049';
 const DOWNLOAD_ANCHOR = '#download';
 const SCREEN_WIDTH = 750;
 const SCREEN_HEIGHT = 1630;
@@ -482,6 +483,7 @@ const GameCard = ({
 const App = () => {
   const [lang] = useState(getInitialLang);
   const [flippedIds, setFlippedIds] = useState(() => new Set());
+  const [showInAppGuide, setShowInAppGuide] = useState(false);
   const reduceMotion = useReducedMotion();
   const currentText = HOME_COPY[lang] ?? HOME_COPY.en;
   const isChinese = lang === 'zh' || lang === 'zh-Hant';
@@ -897,6 +899,19 @@ const App = () => {
     });
   };
 
+  const handleDownloadClick = (event) => {
+    track('app_store_click', APP_STORE_URL);
+    if (isInAppBrowser()) {
+      if (event && event.preventDefault) {
+        event.preventDefault();
+      }
+      setShowInAppGuide(true);
+      try {
+        window.location.href = ITMS_APP_STORE_URL;
+      } catch (_) {}
+    }
+  };
+
   const setCardFlipped = (id, flipped) => {
     setFlippedIds((previous) => {
       const next = new Set(previous);
@@ -942,7 +957,7 @@ const App = () => {
               label={currentText.btn_download}
               lead={currentText.store_badge_lead}
               className="store-button--hero"
-              onClick={() => track('app_store_click', APP_STORE_URL)}
+              onClick={handleDownloadClick}
             />
           </div>
 
@@ -980,7 +995,7 @@ const App = () => {
                             alt={isDuplicate ? '' : shot.alt}
                             loading={isDuplicate || index > 2 ? 'lazy' : 'eager'}
                             decoding="async"
-                            fetchPriority={isDuplicate || index > 0 ? 'low' : 'high'}
+                            fetchpriority={isDuplicate || index > 0 ? 'low' : 'high'}
                             draggable={false}
                             onError={(event) => {
                               event.currentTarget.src = `${baseUrl}placeholder.svg`;
@@ -1073,7 +1088,7 @@ const App = () => {
             <StoreButton
               label={currentText.btn_download}
               lead={currentText.store_badge_lead}
-              onClick={() => track('app_store_click', APP_STORE_URL)}
+              onClick={handleDownloadClick}
             />
             <div className="download-facts">
               <span>{currentText.feat_ios}</span>
@@ -1101,6 +1116,12 @@ const App = () => {
             label: currentText.footer_contact,
           },
         ]}
+      />
+
+      <InAppGuideModal
+        isOpen={showInAppGuide}
+        onClose={() => setShowInAppGuide(false)}
+        currentText={currentText}
       />
     </div>
   );
