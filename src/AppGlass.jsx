@@ -533,8 +533,10 @@ const App = () => {
     return [...featured, ...rest];
   }, []);
 
+  const [activeScreenIndex, setActiveScreenIndex] = useState(0);
+  const activeScreenIndexRef = useRef(0);
   const marqueeRef = useRef(null);
-  const marqueeApiRef = useRef({ nudge: () => {} });
+  const marqueeApiRef = useRef({ nudge: () => {}, goToIndex: () => {} });
 
   useEffect(() => {
     const marquee = marqueeRef.current;
@@ -588,10 +590,24 @@ const App = () => {
       return Math.round(position / interval) * interval;
     };
 
+    const updateActiveIndex = (currentOffset) => {
+      const interval = getSnapInterval();
+      if (interval <= 0) return;
+      const count = screenshots.length;
+      if (count <= 0) return;
+      const rawIdx = Math.round(currentOffset / interval);
+      const normalizedIdx = ((rawIdx % count) + count) % count;
+      if (normalizedIdx !== activeScreenIndexRef.current) {
+        activeScreenIndexRef.current = normalizedIdx;
+        setActiveScreenIndex(normalizedIdx);
+      }
+    };
+
     const applyOffset = () => {
       const loopWidth = getLoopWidth();
       if (loopWidth > 0) offset = ((offset % loopWidth) + loopWidth) % loopWidth;
       marquee.style.transform = `translate3d(${-offset}px, 0, 0)`;
+      updateActiveIndex(offset);
     };
 
     const stopCoast = () => {
@@ -846,6 +862,20 @@ const App = () => {
         const origin = nearestSnapPoint(offset);
         springTo(origin + direction * interval, 0, finishInteraction);
       },
+      goToIndex: (targetIdx) => {
+        cancelSpring();
+        stopCoast();
+        stopAuto();
+        const interval = getSnapInterval() || Math.min(window.innerWidth * 0.42, 300);
+        const count = screenshots.length;
+        if (interval <= 0 || count <= 0) return;
+        const currentIdx = ((Math.round(offset / interval) % count) + count) % count;
+        let diff = targetIdx - currentIdx;
+        if (diff > count / 2) diff -= count;
+        if (diff < -count / 2) diff += count;
+        const targetOffset = offset + diff * interval;
+        springTo(targetOffset, 0, finishInteraction);
+      },
     };
 
     if (!reduceMotionQuery.matches) scheduleAutoResume();
@@ -870,7 +900,7 @@ const App = () => {
       marquee.style.transform = '';
       marquee.style.willChange = 'auto';
       marquee.style.removeProperty('--marquee-stretch');
-      marqueeApiRef.current = { nudge: () => {} };
+      marqueeApiRef.current = { nudge: () => {}, goToIndex: () => {} };
     };
   }, [screenshots]);
 
@@ -1013,6 +1043,21 @@ const App = () => {
               label={currentText.a11y_screens_next}
               onNudge={nudgeMarquee}
             />
+            <div
+              className="screens-pagination"
+              role="group"
+              aria-label={currentText.a11y_screens_pagination}
+            >
+              {screenshots.map((shot, index) => (
+                <button
+                  key={shot.id}
+                  type="button"
+                  className={`screens-dot ${index === activeScreenIndex ? 'is-active' : ''}`}
+                  aria-label={`${shot.alt} (${index + 1}/${screenshots.length})`}
+                  onClick={() => marqueeApiRef.current.goToIndex(index)}
+                />
+              ))}
+            </div>
           </div>
         </section>
 

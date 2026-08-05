@@ -1,6 +1,7 @@
 import React from 'react';
 import { createRoot, hydrateRoot } from 'react-dom/client';
 import App from './AppGlass.jsx';
+import ErrorBoundary from './components/ErrorBoundary.jsx';
 import './nunito-font.css';
 import './index.css';
 
@@ -10,13 +11,17 @@ if (container?.hasChildNodes()) {
   hydrateRoot(
     container,
     <React.StrictMode>
-      <App />
+      <ErrorBoundary>
+        <App />
+      </ErrorBoundary>
     </React.StrictMode>,
   );
 } else {
   createRoot(container).render(
     <React.StrictMode>
-      <App />
+      <ErrorBoundary>
+        <App />
+      </ErrorBoundary>
     </React.StrictMode>,
   );
 }
