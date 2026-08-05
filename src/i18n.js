@@ -54,6 +54,12 @@ export const toHtmlLang = (lang) => {
   return DEFAULT_LANG;
 };
 
+export const getLocalizedPath = (page = '', lang = DEFAULT_LANG) => {
+  const baseUrl = (typeof import.meta !== 'undefined' && import.meta.env?.BASE_URL) || '/';
+  const cleanPage = page.startsWith('/') ? page.slice(1) : page;
+  return `${baseUrl}${cleanPage}?lang=${lang}`;
+};
+
 export const initDocumentLang = () => {
   if (typeof window === 'undefined' || typeof document === 'undefined') {
     return DEFAULT_LANG;

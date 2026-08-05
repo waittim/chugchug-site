@@ -1,6 +1,3 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
 
 html,
 body {
@@ -284,6 +281,30 @@ button:focus-visible {
     rgba(230, 170, 75, 0.05) 50%,
     transparent 85%
   );
+}
+
+.ambient--privacy {
+  position: fixed;
+}
+
+.ambient--privacy .ambient__light--primary {
+  width: min(70vw, 860px);
+  height: min(38vw, 470px);
+  top: -18%;
+  right: -20%;
+  opacity: 0.5;
+  background: radial-gradient(ellipse, rgba(238, 182, 77, 0.28), rgba(238, 182, 77, 0.08) 48%, transparent 76%);
+  transform: rotate(-12deg);
+}
+
+.ambient--privacy .ambient__light--support {
+  width: min(52vw, 640px);
+  height: min(34vw, 420px);
+  top: 48%;
+  left: -24%;
+  opacity: 0.34;
+  background: radial-gradient(ellipse, rgba(214, 136, 194, 0.24), rgba(214, 136, 194, 0.06) 52%, transparent 78%);
+  transform: rotate(14deg);
 }
 
 .hero-section {
@@ -1231,85 +1252,6 @@ button:focus-visible {
   overflow: hidden;
   color: var(--paper);
   background: linear-gradient(180deg, var(--canvas), var(--canvas-deep));
-}
-
-.privacy-ambient {
-  position: fixed;
-  z-index: -1;
-  inset: 0;
-  overflow: hidden;
-  pointer-events: none;
-}
-
-.privacy-ambient::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  opacity: 0.08;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.95' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.18'/%3E%3C/svg%3E");
-  mix-blend-mode: soft-light;
-}
-
-.privacy-ambient__light {
-  position: absolute;
-  display: block;
-  border-radius: 50%;
-  filter: blur(24px);
-}
-
-.privacy-ambient__light--gold {
-  width: min(70vw, 860px);
-  height: min(38vw, 470px);
-  top: -18%;
-  right: -20%;
-  opacity: 0.5;
-  background: radial-gradient(ellipse, rgba(238, 182, 77, 0.28), rgba(238, 182, 77, 0.08) 48%, transparent 76%);
-  transform: rotate(-12deg);
-}
-
-.privacy-ambient__light--pink {
-  width: min(52vw, 640px);
-  height: min(34vw, 420px);
-  top: 48%;
-  left: -24%;
-  opacity: 0.34;
-  background: radial-gradient(ellipse, rgba(214, 136, 194, 0.24), rgba(214, 136, 194, 0.06) 52%, transparent 78%);
-  transform: rotate(14deg);
-}
-
-.privacy-nav {
-  position: fixed;
-  z-index: 100;
-  top: 1rem;
-  left: 50%;
-  width: min(calc(100% - 28px), 1180px);
-  min-height: 54px;
-  padding: 7px 8px 7px 18px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 999px;
-  background: rgba(20, 20, 21, 0.58);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 16px 50px rgba(0, 0, 0, 0.24);
-  backdrop-filter: blur(16px) saturate(125%);
-  -webkit-backdrop-filter: blur(16px) saturate(125%);
-  transform: translateX(-50%);
-}
-
-.privacy-nav::after {
-  content: "";
-  position: absolute;
-  top: 100%;
-  left: 5%;
-  right: 5%;
-  height: 1.5rem;
-  background: linear-gradient(to bottom, rgba(9, 9, 10, 0.55), transparent);
-  pointer-events: none;
-}
-
-.privacy-nav .brand-mark {
-  color: var(--gold);
 }
 
 .privacy-back {

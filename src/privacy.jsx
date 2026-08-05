@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { createRoot, hydrateRoot } from 'react-dom/client';
 import { ArrowLeft } from 'lucide-react';
+import SiteHeader from './components/SiteHeader.jsx';
 import SiteFooter from './components/SiteFooter.jsx';
+import AmbientLights from './components/AmbientLights.jsx';
 import { SUPPORT_EMAIL } from './contact.js';
 import { PRIVACY_COPY } from './content/privacy.js';
-import { getInitialLang } from './i18n.js';
+import { getInitialLang, getLocalizedPath } from './i18n.js';
 import './nunito-font.css';
 import './index.css';
 
@@ -13,13 +15,7 @@ const PrivacyPage = () => {
 
   const current = PRIVACY_COPY[lang] ?? PRIVACY_COPY.en;
   const brand = lang === 'zh' ? '吨吨吨 · ChugChug' : 'ChugChug';
-  const baseUrl = import.meta.env.BASE_URL || '/';
-  const homePathByLang = {
-    zh: `${baseUrl}?lang=zh`,
-    'zh-Hant': `${baseUrl}?lang=zh-Hant`,
-    en: `${baseUrl}?lang=en`,
-  };
-  const homePath = homePathByLang[lang] ?? homePathByLang.en;
+  const homePath = getLocalizedPath('', lang);
 
   useEffect(() => {
     if (typeof document === 'undefined') return;
@@ -40,21 +36,19 @@ const PrivacyPage = () => {
         {current.a11y_skip}
       </a>
 
-      <div className="privacy-ambient" aria-hidden="true">
-        <span className="privacy-ambient__light privacy-ambient__light--gold" />
-        <span className="privacy-ambient__light privacy-ambient__light--pink" />
-      </div>
+      <AmbientLights variant="privacy" />
 
-      <nav className="privacy-nav" aria-label={current.a11y_nav}>
-        <a href={homePath} className="brand-mark">
-          {brand}
-        </a>
-
+      <SiteHeader
+        brand={brand}
+        brandHref={homePath}
+        navLabel={current.a11y_nav}
+        className="privacy-nav"
+      >
         <a href={homePath} className="privacy-back glass-pill" aria-label={current.back}>
           <ArrowLeft size={15} aria-hidden="true" />
           <span className="privacy-back__label">{current.back}</span>
         </a>
-      </nav>
+      </SiteHeader>
 
       <main className="privacy-main" id="privacy-content">
         <div className="privacy-layout">
@@ -140,7 +134,7 @@ const PrivacyPage = () => {
         brand={brand}
         footerLabel={current.a11y_footer}
         languageLabel={current.a11y_language}
-        languageHref={(code) => `${baseUrl}privacy.html?lang=${code}`}
+        languageHref={(code) => getLocalizedPath('privacy.html', code)}
         links={[
           { href: homePath, label: current.back },
           { href: `mailto:${SUPPORT_EMAIL}`, label: current.footer_contact },

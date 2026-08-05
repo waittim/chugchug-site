@@ -1,13 +1,18 @@
 import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { animate } from 'motion';
 import { useReducedMotion } from 'motion/react';
-import { ChevronLeft, ChevronRight, Clock3, Wine } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Clock3 } from 'lucide-react';
+import SiteHeader from './components/SiteHeader.jsx';
 import SiteFooter from './components/SiteFooter.jsx';
 import InAppGuideModal from './components/InAppGuideModal.jsx';
+import AppleLogo from './components/AppleLogo.jsx';
+import AmbientLights from './components/AmbientLights.jsx';
+import WineRating from './components/WineRating.jsx';
+import { usePressHandlers } from './hooks/usePressHandlers.js';
 import { SUPPORT_EMAIL } from './contact.js';
 import { GAMES } from './content/games.jsx';
 import { HOME_COPY } from './content/home.js';
-import { getInitialLang } from './i18n.js';
+import { getInitialLang, getLocalizedPath } from './i18n.js';
 import { APP_STORE_URL, ITMS_APP_STORE_URL, isInAppBrowser } from './utils/inAppBrowser.js';
 
 const DRAG_THRESHOLD = 10;
@@ -55,53 +60,6 @@ const SCREENSHOT_REEL = [
   { file: 'sixone', gameId: 'six' },
 ];
 
-const GAME_META = {
-  dice: [3, '∞'],
-  poker: [3, '∞'],
-  buzzcards: [5, '60m'],
-  six: [4, '5m'],
-  lucky: [4, '2m'],
-  truth: [2, '∞'],
-  roulette: [4, '1m'],
-  king: [1, '2m'],
-  charades: [3, '5m'],
-  execution: [3, '∞'],
-  undercover: [2, '15m'],
-  wavelength: [4, '3m'],
-  aron36: [1, '45m'],
-  angryoldman: [3, '1m'],
-};
-
-const AppleLogo = ({ size = 30 }) => (
-  <span aria-hidden="true" className="apple-mark" style={{ fontSize: size }}>
-    {'\uf8ff'}
-  </span>
-);
-
-const AmbientLights = ({ variant = 'default' }) => (
-  <div className={`ambient ambient--${variant}`} aria-hidden="true">
-    <span className="ambient__light ambient__light--primary" />
-    <span className="ambient__light ambient__light--support" />
-    <span className="ambient__light ambient__light--accent" />
-  </div>
-);
-
-const usePressHandlers = () => {
-  const [isPressed, setIsPressed] = useState(false);
-  return {
-    isPressed,
-    pressProps: {
-      onPointerDown: (event) => {
-        if (!event.isPrimary) return;
-        setIsPressed(true);
-      },
-      onPointerUp: () => setIsPressed(false),
-      onPointerCancel: () => setIsPressed(false),
-      onPointerLeave: () => setIsPressed(false),
-    },
-  };
-};
-
 const StoreButton = ({ label, lead, onClick, className = '' }) => {
   const { isPressed, pressProps } = usePressHandlers();
   return (
@@ -112,7 +70,7 @@ const StoreButton = ({ label, lead, onClick, className = '' }) => {
       onClick={onClick}
       {...pressProps}
     >
-      <AppleLogo />
+      <AppleLogo size={24} />
       <span>
         <small>{lead}</small>
         App Store
@@ -159,16 +117,7 @@ const GameCardFace = ({
         <span className="game-card__spacer" />
         <strong>{name}</strong>
         <span className="game-card__meta">
-          <span className="wine-level" aria-hidden="true">
-            {Array.from({ length: 5 }, (_, index) => (
-              <Wine
-                key={index}
-                size={10}
-                aria-hidden="true"
-                className={index < drunkLevel ? 'is-full' : ''}
-              />
-            ))}
-          </span>
+          <WineRating rating={drunkLevel} />
           <span>
             <Clock3 size={11} aria-hidden="true" />
             {duration}
@@ -275,7 +224,7 @@ const GameCard = ({
     });
   };
 
-  // Sync when flipped state changes without an in-flight settle (e.g. rare external)
+  // Sync when flipped state changes without an in-flight settle
   useEffect(() => {
     if (pointerRef.current.active || settlingRef.current) return undefined;
     const target = isFlipped ? 180 : 0;
@@ -290,7 +239,6 @@ const GameCard = ({
 
   useEffect(() => () => cancelSpring(), []);
 
-  // Initial presentation value (avoid React style fighting the spring)
   useLayoutEffect(() => {
     applyRotate(rotateRef.current, 0);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -343,7 +291,6 @@ const GameCard = ({
 
     if (!state.committed) {
       if (Math.hypot(dx, dy) < DRAG_THRESHOLD) return;
-      // Prefer horizontal for flip; abandon if clearly vertical scroll intent
       if (Math.abs(dy) > Math.abs(dx) * 1.35) {
         state.active = false;
         setIsPressed(false);
@@ -390,7 +337,6 @@ const GameCard = ({
     const pointerVx = getPointerVelocity();
     const angularVelocity = pointerVx * CARD_DRAG_SCALE;
     const projected = rotateRef.current + projectMomentum(angularVelocity);
-    // Prefer velocity sign when flicking; otherwise nearest resting face
     let target;
     if (Math.abs(angularVelocity) > CARD_FLICK_VELOCITY) {
       target = angularVelocity > 0 ? 180 : 0;
@@ -704,7 +650,6 @@ const App = () => {
         const dt = Math.min((time - coastLastTime) / 1000, 0.1);
         coastLastTime = time;
         offset += coastVelocity * dt;
-        // Friction while waiting for drag commit — no hard stop
         coastVelocity *= Math.exp(-3.2 * dt);
         applyOffset();
         if (Math.abs(coastVelocity) < COAST_MIN_VELOCITY) {
@@ -786,7 +731,6 @@ const App = () => {
       setWillChange(true);
       setStretch(0);
       marquee.classList.add('is-dragging');
-      // Carry spring / auto velocity through the hysteresis window — no brick-wall stop
       startCoast(inheritedSpring || (wasAuto ? autoSpeed : 0));
       try {
         marquee.setPointerCapture(event.pointerId);
@@ -811,7 +755,6 @@ const App = () => {
       addVelocitySample(event.clientX);
       const fingerDelta = event.clientX - dragStartX;
       offset = dragStartOffset - fingerDelta;
-      // Hint stretch in the direction of travel (content follows finger left → positive offset)
       const stretch = Math.min(0.045, Math.abs(fingerDelta) * 0.00014);
       setStretch(stretch);
       applyOffset();
@@ -830,10 +773,8 @@ const App = () => {
         const offsetVelocity = -pointerVelocity;
         snapFromRelease(offsetVelocity);
       } else if (Math.abs(leftoverCoast) > COAST_MIN_VELOCITY) {
-        // Released during hysteresis — project from inherited coast
         snapFromRelease(leftoverCoast);
       } else {
-        // Tap without motion — settle to nearest snap
         springTo(nearestSnapPoint(offset), 0, finishInteraction);
       }
     };
@@ -957,8 +898,7 @@ const App = () => {
         {currentText.a11y_skip}
       </a>
 
-      <nav className="site-nav" aria-label={currentText.a11y_nav}>
-        <a href="#top" className="brand-mark">{brand}</a>
+      <SiteHeader brand={brand} brandHref="#top" navLabel={currentText.a11y_nav}>
         <a
           href={DOWNLOAD_ANCHOR}
           className="nav-download"
@@ -966,7 +906,7 @@ const App = () => {
         >
           {currentText.nav_download}
         </a>
-      </nav>
+      </SiteHeader>
 
       <main id="main-content">
         <section id="top" className="hero-section">
@@ -1093,7 +1033,8 @@ const App = () => {
 
           <div className="games-grid">
             {orderedGames.map((game) => {
-              const [drunkLevel, duration] = GAME_META[game.id] ?? [1, '∞'];
+              const drunkLevel = game.drunkLevel ?? 1;
+              const duration = game.duration ?? '∞';
               const isFlipped = flippedIds.has(game.id);
               const isFeatured = FEATURED_IDS.has(game.id);
               const name = game.name[lang] ?? game.name.zh ?? game.name.en;
@@ -1150,10 +1091,10 @@ const App = () => {
         copyright={currentText.footer_rights}
         footerLabel={currentText.a11y_footer}
         languageLabel={currentText.a11y_language}
-        languageHref={(code) => `${baseUrl}?lang=${code}`}
+        languageHref={(code) => getLocalizedPath('', code)}
         links={[
           {
-            href: `${baseUrl}privacy.html?lang=${lang}`,
+            href: getLocalizedPath('privacy.html', lang),
             label: currentText.footer_privacy,
           },
           {

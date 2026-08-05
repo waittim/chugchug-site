@@ -30,13 +30,19 @@ const browserCandidates = [
 const puppeteerExecutablePath = browserCandidates.find(existsSync);
 
 if (!puppeteerExecutablePath) {
-  throw new Error(
-    'Prerendering requires Chrome or Chromium. Install one, or set PUPPETEER_EXECUTABLE_PATH.',
+  console.warn(
+    '[prerender] Warning: Chrome or Chromium not found. Skipping static prerendering. Set PUPPETEER_EXECUTABLE_PATH or install Chrome to enable prerendering.',
   );
+  process.exit(0);
 }
 
-await run({
-  publicPath: '/',
-  ...packageJson.reactSnap,
-  puppeteerExecutablePath,
-});
+try {
+  await run({
+    publicPath: '/',
+    ...packageJson.reactSnap,
+    puppeteerExecutablePath,
+  });
+} catch (err) {
+  console.warn('[prerender] Prerendering skipped due to error:', err?.message || err);
+  process.exit(0);
+}
