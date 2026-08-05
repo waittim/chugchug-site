@@ -1,0 +1,219 @@
+.site-nav {
+  position: fixed;
+  z-index: 100;
+  top: 1rem;
+  left: 50%;
+  width: min(calc(100% - 28px), 1180px);
+  min-height: 54px;
+  padding: 7px 8px 7px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border: 0.75px solid var(--glass-stroke);
+  border-radius: 999px;
+  background: linear-gradient(
+      145deg,
+      rgba(255, 255, 255, 0.1),
+      rgba(255, 255, 255, 0.035)
+    ),
+    rgba(20, 20, 21, 0.58);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.12),
+    0 16px 50px rgba(0, 0, 0, 0.24);
+  backdrop-filter: blur(16px) saturate(125%);
+  -webkit-backdrop-filter: blur(16px) saturate(125%);
+  transform: translateX(-50%);
+}
+
+.site-nav::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 5%;
+  right: 5%;
+  height: 1.5rem;
+  background: linear-gradient(to bottom, rgba(9, 9, 10, 0.55), transparent);
+  pointer-events: none;
+}
+
+.brand-mark {
+  font-family: "ChugChug Rounded", ui-rounded, system-ui, sans-serif;
+  font-size: 19px;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  word-spacing: 0.18em;
+}
+
+.site-nav .brand-mark {
+  color: var(--gold);
+}
+
+.glass-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.07);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+/* Solid control on translucent nav — never stack light glass on glass */
+.site-nav .nav-download,
+.site-nav .glass-pill,
+.site-nav .privacy-back {
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  background: rgba(255, 255, 255, 0.16);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.14);
+}
+
+.nav-download {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--touch-min);
+  padding: 0 16px;
+  gap: 7px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 999px;
+  color: var(--muted-strong);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  transition: background 100ms ease-out, color 100ms ease-out, transform 100ms ease-out;
+}
+
+.nav-download:hover {
+  color: var(--paper);
+  background: rgba(242, 207, 121, 0.22);
+  transform: translateY(-1px);
+}
+
+.nav-download:active {
+  transform: scale(0.97);
+}
+
+.unified-footer {
+  width: min(calc(100% - 40px), 1120px);
+  margin: 0 auto;
+  padding: 22px 0 28px;
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 20px;
+}
+
+.unified-footer__brand {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 8px 14px;
+  margin-right: auto;
+}
+
+.unified-footer__brand .brand-mark {
+  color: var(--paper);
+  font-size: 16px;
+}
+
+.unified-footer__links {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.unified-footer__links a {
+  transition: color 100ms ease-out, transform 100ms ease-out;
+}
+
+.unified-footer__links a:hover {
+  color: var(--paper);
+}
+
+.unified-footer__links a:active {
+  transform: scale(0.97);
+}
+
+.unified-footer__copy {
+  margin: 0;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.language-switcher {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px;
+  gap: 1px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.1);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+.language-switcher a {
+  min-width: var(--touch-min);
+  min-height: var(--touch-min);
+  padding: 0 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  text-align: center;
+  font-size: 12px;
+  font-weight: 650;
+  letter-spacing: 0.02em;
+  transition: color 100ms ease-out, background 100ms ease-out, transform 100ms ease-out;
+}
+
+.language-switcher a:active {
+  transform: scale(0.97);
+}
+
+.language-switcher a.is-active {
+  color: var(--cta-ink);
+  background: var(--gold);
+}
+
+@media (max-width: 680px) {
+  .site-nav {
+    top: 10px;
+    width: calc(100% - 20px);
+  }
+
+  .site-nav .brand-mark {
+    max-width: 58vw;
+    overflow: hidden;
+    font-size: 16px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .unified-footer {
+    width: calc(100% - 32px);
+    padding: 20px 0 24px;
+    gap: 10px 14px;
+  }
+
+  .unified-footer__brand {
+    width: 100%;
+    margin-right: 0;
+  }
+
+  .unified-footer__links {
+    flex-wrap: wrap;
+    gap: 10px 14px;
+  }
+}
+
+@media (pointer: coarse) {
+  .language-switcher a {
+    padding: 0 12px;
+  }
+}

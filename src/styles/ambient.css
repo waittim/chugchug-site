@@ -1,0 +1,178 @@
+.ambient {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  background: linear-gradient(180deg, #09090a 0%, #080809 100%);
+}
+
+.ambient::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: 0.12;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.95' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.18'/%3E%3C/svg%3E");
+  mix-blend-mode: soft-light;
+}
+
+.ambient__light {
+  position: absolute;
+  display: block;
+  border-radius: 50%;
+  filter: blur(24px);
+  opacity: 0.58;
+  transform: translate3d(0, 0, 0);
+}
+
+.ambient__light--primary {
+  width: min(72vw, 920px);
+  height: min(44vw, 560px);
+  top: -25%;
+  right: -16%;
+  background: radial-gradient(
+    ellipse,
+    rgba(238, 182, 77, 0.3) 0%,
+    rgba(238, 182, 77, 0.15) 30%,
+    rgba(238, 182, 77, 0.03) 65%,
+    transparent 85%
+  );
+  transform: rotate(-12deg);
+}
+
+.ambient__light--support {
+  width: min(54vw, 700px);
+  height: min(38vw, 470px);
+  left: -20%;
+  top: 24%;
+  background: radial-gradient(
+    ellipse,
+    rgba(214, 136, 194, 0.26) 0%,
+    rgba(214, 136, 194, 0.12) 30%,
+    rgba(214, 136, 194, 0.03) 65%,
+    transparent 85%
+  );
+  transform: rotate(16deg);
+}
+
+.ambient__light--accent {
+  width: min(34vw, 430px);
+  height: min(22vw, 280px);
+  right: 7%;
+  bottom: 2%;
+  background: radial-gradient(
+    ellipse,
+    rgba(230, 170, 75, 0.18) 0%,
+    rgba(230, 170, 75, 0.05) 50%,
+    transparent 85%
+  );
+}
+
+.ambient--soft .ambient__light--primary {
+  top: 5%;
+  right: -28%;
+  opacity: 0.35;
+}
+
+.ambient--soft .ambient__light--support {
+  left: -28%;
+  top: 48%;
+  opacity: 0.4;
+}
+
+.ambient--games .ambient__light--primary {
+  top: 18%;
+  right: -30%;
+  opacity: 0.42;
+}
+
+.ambient--games .ambient__light--support {
+  top: 56%;
+  left: -22%;
+  opacity: 0.38;
+}
+
+.ambient--games .ambient__light--accent {
+  bottom: 4%;
+  right: 5%;
+  opacity: 0.22;
+}
+
+.ambient--download .ambient__light--primary {
+  width: min(88vw, 1050px);
+  height: min(52vw, 610px);
+  top: 8%;
+  right: -15%;
+  opacity: 0.58;
+}
+
+.ambient--download .ambient__light--support {
+  top: 44%;
+  left: -20%;
+  opacity: 0.44;
+}
+
+.ambient--privacy {
+  position: fixed;
+}
+
+.ambient--privacy .ambient__light--primary {
+  width: min(70vw, 860px);
+  height: min(38vw, 470px);
+  top: -18%;
+  right: -20%;
+  opacity: 0.5;
+  background: radial-gradient(ellipse, rgba(238, 182, 77, 0.28), rgba(238, 182, 77, 0.08) 48%, transparent 76%);
+  transform: rotate(-12deg);
+}
+
+.ambient--privacy .ambient__light--support {
+  width: min(52vw, 640px);
+  height: min(34vw, 420px);
+  top: 48%;
+  left: -24%;
+  opacity: 0.34;
+  background: radial-gradient(ellipse, rgba(214, 136, 194, 0.24), rgba(214, 136, 194, 0.06) 52%, transparent 78%);
+  transform: rotate(14deg);
+}
+
+@media (max-width: 680px) {
+  .ambient__light {
+    filter: blur(10px);
+    opacity: 0.42;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .ambient__light--primary {
+    animation: ambient-primary 24s ease-in-out infinite alternate;
+  }
+
+  .ambient__light--support {
+    animation: ambient-support 29s ease-in-out infinite alternate;
+  }
+
+  .ambient__light--accent {
+    animation: ambient-accent 21s ease-in-out infinite alternate;
+  }
+}
+
+@keyframes ambient-primary {
+  to { transform: translate3d(-2%, 3%, 0) rotate(-10deg) scale(1.02); }
+}
+
+@keyframes ambient-support {
+  to { transform: translate3d(3%, -2%, 0) rotate(14deg) scale(0.99); }
+}
+
+@keyframes ambient-accent {
+  to { transform: translate3d(-3%, -2%, 0) scale(1.015); opacity: 0.52; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ambient__light--primary,
+  .ambient__light--support,
+  .ambient__light--accent {
+    animation: none !important;
+  }
+}
