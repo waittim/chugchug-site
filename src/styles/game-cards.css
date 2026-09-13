@@ -246,11 +246,6 @@
   font-weight: 600;
 }
 
-.game-card--featured .wine-level svg.is-full {
-  color: var(--accent);
-  fill: color-mix(in srgb, var(--accent) 45%, transparent);
-}
-
 .game-card:focus-visible {
   outline: none;
   box-shadow: 0 0 0 2px var(--canvas), 0 0 0 4px var(--gold);
@@ -303,21 +298,10 @@
   letter-spacing: 0.02em;
 }
 
-.game-card__meta > span:last-child,
-.wine-level {
+.game-card__meta > span:last-child {
   display: inline-flex;
   align-items: center;
   gap: 4px;
-}
-
-.wine-level svg {
-  opacity: 0.2;
-}
-
-.wine-level svg.is-full {
-  color: var(--accent);
-  fill: color-mix(in srgb, var(--accent) 45%, transparent);
-  opacity: 1;
 }
 
 .game-card__back {
@@ -408,10 +392,6 @@
         var(--glass-tint),
         rgba(255, 255, 255, 0.035)
       );
-  }
-
-  .wine-level {
-    gap: 2px;
   }
 
   .game-card__rules {

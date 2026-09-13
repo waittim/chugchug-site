@@ -18,7 +18,6 @@ export const GAMES = [
     id: 'dice',
     name: { zh: '骰子', 'zh-Hant': '骰子', en: 'Dice' },
     icon: <Dices size={32} />,
-    drunkLevel: 3,
     duration: '∞',
     rules: {
       zh: '用于“吹牛骰”，“大话骰”。\n或者掷骰决定点数/顺序（按你们玩法）。\n每轮结束后，输的人喝一口或接受惩罚。',
@@ -28,9 +27,8 @@ export const GAMES = [
   },
   {
     id: 'poker',
-    name: { zh: '扑克', 'zh-Hant': '撲克', en: 'Poker' },
+    name: { zh: '扑克', 'zh-Hant': '撲克', en: 'Playing Cards' },
     icon: <Spade size={32} />,
-    drunkLevel: 3,
     duration: '∞',
     rules: {
       zh: '点击抽牌。\n按牌面执行你们的规则（例如：A=指定喝，K=罚酒等）。',
@@ -42,7 +40,6 @@ export const GAMES = [
     id: 'buzzcards',
     name: { zh: '上头卡牌', 'zh-Hant': '上頭卡牌', en: 'Buzz Cards' },
     icon: <Spade size={32} />,
-    drunkLevel: 5,
     duration: '60m',
     rules: {
       zh: '抽取一张卡牌。\n根据抽中的卡牌执行惩罚。',
@@ -54,7 +51,6 @@ export const GAMES = [
     id: 'six',
     name: { zh: '六一', 'zh-Hant': '六一', en: 'Six Ones' },
     icon: <Dices size={32} />,
-    drunkLevel: 4,
     duration: '5m',
     rules: {
       zh: '双方各 5 颗骰子。\n同时摇骰：掷到 6 的骰子移除；掷到 1 的骰子转给对方。\n先清空自己所有骰子的一方获胜！',
@@ -66,7 +62,6 @@ export const GAMES = [
     id: 'lucky',
     name: { zh: 'Lucky', 'zh-Hant': 'Lucky', en: 'Lucky' },
     icon: <Dices size={32} />,
-    drunkLevel: 4,
     duration: '2m',
     rules: {
       zh: '5 骰=牌型；大小：1（Ace）>6≥5≥4≥3≥2。\n同时按住摇骰比牌，输家可锁定部分骰子重摇未锁定的骰子。\n若翻盘则胜负互换；否则输家出局。\n循环直到有人救场失败，最后留下者获胜！',
@@ -78,7 +73,6 @@ export const GAMES = [
     id: 'truth',
     name: { zh: '真心话大冒险', 'zh-Hant': '真心話大冒險', en: 'Truth or Dare' },
     icon: <Heart size={32} />,
-    drunkLevel: 2,
     duration: '∞',
     rules: {
       zh: '轮到你：选 真心话 / 大冒险。\n拒绝回答或完成：喝一口。\n可选不同等级。',
@@ -88,9 +82,8 @@ export const GAMES = [
   },
   {
     id: 'roulette',
-    name: { zh: '指尖轮盘', 'zh-Hant': '指尖輪盤', en: 'Finger Roulette' },
+    name: { zh: '指尖轮盘', 'zh-Hant': '指尖輪盤', en: 'Finger Picker' },
     icon: <Fingerprint size={32} />,
-    drunkLevel: 4,
     duration: '1m',
     rules: {
       zh: '点击开始随机点名。\n被选中的人执行：喝/讲故事/做任务（任选）。',
@@ -102,7 +95,6 @@ export const GAMES = [
     id: 'king',
     name: { zh: '国王游戏', 'zh-Hant': '國王遊戲', en: "King's Game" },
     icon: <Crown size={32} />,
-    drunkLevel: 1,
     duration: '2m',
     rules: {
       zh: '抽到国王的人下命令。\n被点到的人必须执行。\n拒绝：喝两口或加罚。',
@@ -114,7 +106,6 @@ export const GAMES = [
     id: 'charades',
     name: { zh: '猜词游戏', 'zh-Hant': '猜詞遊戲', en: 'Heads Up' },
     icon: <Type size={32} />,
-    drunkLevel: 3,
     duration: '5m',
     rules: {
       zh: '选择类别并开始计时。\n表演/描述但不能说出关键词。\n猜中得分；失败喝一口。',
@@ -126,7 +117,6 @@ export const GAMES = [
     id: 'execution',
     name: { zh: '公开处刑', 'zh-Hant': '公開處刑', en: 'Most Likely To' },
     icon: <AlertTriangle size={32} />,
-    drunkLevel: 3,
     duration: '∞',
     rules: {
       zh: '读出题目“最可能…”。\n大家同时指向一个人。\n票最多的和指自己的人喝一口。',
@@ -138,7 +128,6 @@ export const GAMES = [
     id: 'undercover',
     name: { zh: '谁是卧底', 'zh-Hant': '誰是臥底', en: 'Undercover' },
     icon: <Search size={32} />,
-    drunkLevel: 2,
     duration: '15m',
     rules: {
       zh: '每人拿到词：多数相同，卧底不同。\n轮流描述但不能说出词。\n每一轮投票淘汰，直到找出卧底或卧底活到最后。',
@@ -150,7 +139,6 @@ export const GAMES = [
     id: 'wavelength',
     name: { zh: '心电感应', 'zh-Hant': '心電感應', en: 'Wavelength' },
     icon: <Radio size={32} />,
-    drunkLevel: 4,
     duration: '3m',
     rules: {
       zh: '出题人记住目标位置。\n根据出题人给出的例子，猜测方拖动指针。\n确认后揭晓答案，判断误差。根据结果进行奖惩。',
@@ -162,7 +150,6 @@ export const GAMES = [
     id: 'aron36',
     name: { zh: '36问', 'zh-Hant': '36問', en: '36 Questions' },
     icon: <MessagesSquare size={32} />,
-    drunkLevel: 1,
     duration: '45m',
     rules: {
       zh: '轮流回答亚瑟·阿伦著名的 36 个问题。\n帮助你们深入了解彼此。\n没有对错，真诚回答就好。',
@@ -174,7 +161,6 @@ export const GAMES = [
     id: 'angryoldman',
     name: { zh: '愤怒的老头', 'zh-Hant': '憤怒的老頭', en: 'Angry Old Man' },
     icon: <Frown size={32} />,
-    drunkLevel: 3,
     duration: '1m',
     rules: {
       zh: '屏幕上会出现一群老头。\n轮流选择，避免戳中会发怒的老头。\n戳中发怒老头的接受惩罚。',

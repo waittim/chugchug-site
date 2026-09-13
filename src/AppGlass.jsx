@@ -7,7 +7,6 @@ import SiteFooter from './components/SiteFooter.jsx';
 import InAppGuideModal from './components/InAppGuideModal.jsx';
 import AppleLogo from './components/AppleLogo.jsx';
 import AmbientLights from './components/AmbientLights.jsx';
-import WineRating from './components/WineRating.jsx';
 import { usePressHandlers } from './hooks/usePressHandlers.js';
 import { SUPPORT_EMAIL } from './contact.js';
 import { GAMES } from './content/games.jsx';
@@ -99,7 +98,6 @@ const GameCardFace = ({
   side,
   game,
   lang,
-  drunkLevel,
   duration,
   name,
   currentText,
@@ -117,7 +115,6 @@ const GameCardFace = ({
         <span className="game-card__spacer" />
         <strong>{name}</strong>
         <span className="game-card__meta">
-          <WineRating rating={drunkLevel} />
           <span>
             <Clock3 size={11} aria-hidden="true" />
             {duration}
@@ -145,7 +142,6 @@ const GameCard = ({
   isFeatured,
   cardLabel,
   currentText,
-  drunkLevel,
   duration,
   name,
   onFlipChange,
@@ -376,7 +372,6 @@ const GameCard = ({
             hidden={isFlipped}
             game={game}
             lang={lang}
-            drunkLevel={drunkLevel}
             duration={duration}
             name={name}
             currentText={currentText}
@@ -387,7 +382,6 @@ const GameCard = ({
             hidden={!isFlipped}
             game={game}
             lang={lang}
-            drunkLevel={drunkLevel}
             duration={duration}
             name={name}
             currentText={currentText}
@@ -404,7 +398,6 @@ const GameCard = ({
             side="front"
             game={game}
             lang={lang}
-            drunkLevel={drunkLevel}
             duration={duration}
             name={name}
             currentText={currentText}
@@ -414,7 +407,6 @@ const GameCard = ({
             side="back"
             game={game}
             lang={lang}
-            drunkLevel={drunkLevel}
             duration={duration}
             name={name}
             currentText={currentText}
@@ -1033,14 +1025,12 @@ const App = () => {
 
           <div className="games-grid">
             {orderedGames.map((game) => {
-              const drunkLevel = game.drunkLevel ?? 1;
               const duration = game.duration ?? '∞';
               const isFlipped = flippedIds.has(game.id);
               const isFeatured = FEATURED_IDS.has(game.id);
               const name = game.name[lang] ?? game.name.zh ?? game.name.en;
-              const cardLabel = (currentText.a11y_game_card || '{name}, drunk level {level}, duration {duration}')
+              const cardLabel = (currentText.a11y_game_card || '{name}, duration {duration}')
                 .replace('{name}', name)
-                .replace('{level}', String(drunkLevel))
                 .replace('{duration}', String(duration));
               return (
                 <GameCard
@@ -1051,7 +1041,6 @@ const App = () => {
                   isFeatured={isFeatured}
                   cardLabel={cardLabel}
                   currentText={currentText}
-                  drunkLevel={drunkLevel}
                   duration={duration}
                   name={name}
                   onFlipChange={setCardFlipped}
