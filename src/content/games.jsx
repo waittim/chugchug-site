@@ -38,7 +38,7 @@ export const GAMES = [
   },
   {
     id: 'buzzcards',
-    name: { zh: '上头卡牌', 'zh-Hant': '上頭卡牌', en: 'Buzz Cards' },
+    name: { zh: 'Chug牌', 'zh-Hant': 'Chug牌', en: 'Chug Cards' },
     icon: <Spade size={32} />,
     duration: '60m',
     rules: {
