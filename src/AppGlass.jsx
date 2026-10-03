@@ -7,6 +7,7 @@ import SiteFooter from './components/SiteFooter.jsx';
 import InAppGuideModal from './components/InAppGuideModal.jsx';
 import AppleLogo from './components/AppleLogo.jsx';
 import AmbientLights from './components/AmbientLights.jsx';
+import AppStoreQRCode from './components/AppStoreQRCode.jsx';
 import { usePressHandlers } from './hooks/usePressHandlers.js';
 import { SUPPORT_EMAIL } from './contact.js';
 import { GAMES } from './content/games.jsx';
@@ -103,37 +104,42 @@ const GameCardFace = ({
   currentText,
   isFeatured,
   hidden = false,
-}) => (
-  <span
-    className={`game-card__face game-card__${side}${hidden ? ' game-card__face--hidden' : ''}`}
-  >
-    {side === 'front' ? (
-      <>
-        <span className="game-card__icon">
-          {React.cloneElement(game.icon, { size: isFeatured ? 34 : 28, className: '' })}
-        </span>
-        <span className="game-card__spacer" />
-        <strong>{name}</strong>
-        <span className="game-card__meta">
-          <span>
-            <Clock3 size={11} aria-hidden="true" />
-            {duration}
+}) => {
+  const tagline = game.tagline?.[lang] ?? game.tagline?.zh ?? game.tagline?.en ?? '';
+  return (
+    <span
+      className={`game-card__face game-card__${side}${hidden ? ' game-card__face--hidden' : ''}`}
+    >
+      {side === 'front' ? (
+        <>
+          <div className="game-card__top">
+            <span className="game-card__icon">
+              {React.cloneElement(game.icon, { size: isFeatured ? 28 : 22, className: '' })}
+            </span>
+            <span className="game-card__meta">
+              <Clock3 size={11} aria-hidden="true" />
+              <span>{duration}</span>
+            </span>
+          </div>
+          <div className="game-card__main">
+            <strong>{name}</strong>
+            {tagline && <p className="game-card__tagline">{tagline}</p>}
+          </div>
+          <span className="game-card__hint">{currentText.card_hint_front}</span>
+        </>
+      ) : (
+        <>
+          <span className="game-card__back-label">{currentText.rules_title}</span>
+          <strong>{name}</strong>
+          <span className="game-card__rules">
+            {game.rules?.[lang] ?? game.rules?.zh ?? game.rules?.en ?? ''}
           </span>
-        </span>
-        <span className="game-card__hint">{currentText.card_hint_front}</span>
-      </>
-    ) : (
-      <>
-        <span className="game-card__back-label">{currentText.rules_title}</span>
-        <strong>{name}</strong>
-        <span className="game-card__rules">
-          {game.rules?.[lang] ?? game.rules?.zh ?? game.rules?.en ?? ''}
-        </span>
-        <span className="game-card__return">{currentText.card_hint_back}</span>
-      </>
-    )}
-  </span>
-);
+          <span className="game-card__return">{currentText.card_hint_back}</span>
+        </>
+      )}
+    </span>
+  );
+};
 
 const GameCard = ({
   game,
@@ -358,6 +364,7 @@ const GameCard = ({
       type="button"
       className={cardClass}
       aria-label={cardLabel}
+      aria-expanded={isFlipped}
       aria-pressed={isFlipped}
       data-game-key={game.id}
       onPointerDown={handlePointerDown}
@@ -1001,11 +1008,14 @@ const App = () => {
               <h2>{currentText.highlights_title}</h2>
               <p>{currentText.highlights_intro}</p>
             </header>
-            <div className="feature-list">
-              {currentText.highlights.map(([title, body]) => (
-                <article className="feature-row" key={title}>
-                  <h3>{title}</h3>
-                  <p>{body}</p>
+            <div className="feature-grid">
+              {currentText.highlights.map(([title, body], index) => (
+                <article className="feature-card" key={title}>
+                  <span className="feature-card__num">
+                    {String(index + 1).padStart(2, '0')}
+                  </span>
+                  <h3 className="feature-card__title">{title}</h3>
+                  <p className="feature-card__body">{body}</p>
                 </article>
               ))}
             </div>
@@ -1029,9 +1039,11 @@ const App = () => {
               const isFlipped = flippedIds.has(game.id);
               const isFeatured = FEATURED_IDS.has(game.id);
               const name = game.name[lang] ?? game.name.zh ?? game.name.en;
-              const cardLabel = (currentText.a11y_game_card || '{name}, duration {duration}')
+              const hintText = isFlipped ? currentText.card_hint_back : currentText.card_hint_front;
+              const baseLabel = (currentText.a11y_game_card || '{name}, duration {duration}')
                 .replace('{name}', name)
                 .replace('{duration}', String(duration));
+              const cardLabel = hintText ? `${baseLabel}，${hintText}` : baseLabel;
               return (
                 <GameCard
                   key={game.id}
@@ -1060,15 +1072,18 @@ const App = () => {
               <strong>{currentText.cta_badge}</strong>
             </p>
             <h2>{currentText.cta_title}</h2>
-            <StoreButton
-              label={currentText.btn_download}
-              lead={currentText.store_badge_lead}
-              onClick={handleDownloadClick}
-            />
+            <div className="download-actions">
+              <StoreButton
+                label={currentText.btn_download}
+                lead={currentText.store_badge_lead}
+                onClick={handleDownloadClick}
+              />
+              <AppStoreQRCode label={currentText.qr_prompt} />
+            </div>
             <div className="download-facts">
-              <span>{currentText.feat_ios}</span>
-              <span>{currentText.feat_ads}</span>
-              <span>{currentText.feat_drunk}</span>
+              <span className="download-badge">{currentText.feat_ios}</span>
+              <span className="download-badge">{currentText.feat_ads}</span>
+              <span className="download-badge">{currentText.feat_drunk}</span>
             </div>
           </div>
         </section>

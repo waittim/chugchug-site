@@ -17,6 +17,11 @@ export const GAMES = [
   {
     id: 'dice',
     name: { zh: '骰子', 'zh-Hant': '骰子', en: 'Dice' },
+    tagline: {
+      zh: '吹牛与大话骰，派对永恒硬通货',
+      'zh-Hant': '吹牛與大話骰，派對永恆硬通貨',
+      en: 'The timeless bar classic for bluffing & high stakes',
+    },
     icon: <Dices size={32} />,
     duration: '∞',
     rules: {
@@ -26,8 +31,29 @@ export const GAMES = [
     },
   },
   {
+    id: 'undercover',
+    name: { zh: '谁是卧底', 'zh-Hant': '誰是臥底', en: 'Undercover' },
+    tagline: {
+      zh: '暗流涌动的文字伪装，找出隐秘卧底',
+      'zh-Hant': '暗流湧動的文字偽裝，找出隱秘臥底',
+      en: 'Deception and deduction to hunt down the outsider',
+    },
+    icon: <Search size={32} />,
+    duration: '15m',
+    rules: {
+      zh: '每人拿到词：多数相同，卧底不同。\n轮流描述但不能说出词。\n每一轮投票淘汰，直到找出卧底或卧底活到最后。',
+      'zh-Hant': '每人拿到詞：多數相同，臥底不同。\n輪流描述但不能說出詞。\n每一輪投票淘汰，直到找出臥底或臥底活到最後。',
+      en: 'Everyone gets a word: most same, undercover different.\nTake turns describing without saying the word.\nVote each round to eliminate until finding the undercover or they survive to the end.',
+    },
+  },
+  {
     id: 'poker',
     name: { zh: '扑克', 'zh-Hant': '撲克', en: 'Playing Cards' },
+    tagline: {
+      zh: '经典标准扑克，随抽随玩自定义规则',
+      'zh-Hant': '經典標準撲克，隨抽隨玩自定義規則',
+      en: 'Universal standard deck ready for any drinking rules',
+    },
     icon: <Spade size={32} />,
     duration: '∞',
     rules: {
@@ -39,6 +65,11 @@ export const GAMES = [
   {
     id: 'buzzcards',
     name: { zh: 'Chug牌', 'zh-Hant': 'Chug牌', en: 'Chug Cards' },
+    tagline: {
+      zh: '即抽即惩罚，打破冷场的快速指令牌',
+      'zh-Hant': '即抽即懲罰，打破冷場的快速指令牌',
+      en: 'Rapid-fire cards with instant social penalties',
+    },
     icon: <Spade size={32} />,
     duration: '60m',
     rules: {
@@ -50,6 +81,11 @@ export const GAMES = [
   {
     id: 'six',
     name: { zh: '六一', 'zh-Hant': '六一', en: 'Six Ones' },
+    tagline: {
+      zh: '掷六消除掷一转让，紧张刺激的比拼',
+      'zh-Hant': '擲六消除擲一轉讓，緊張刺激的比拼',
+      en: 'Fast roll-off: clear your dice or pass them on',
+    },
     icon: <Dices size={32} />,
     duration: '5m',
     rules: {
@@ -61,6 +97,11 @@ export const GAMES = [
   {
     id: 'lucky',
     name: { zh: 'Lucky', 'zh-Hant': 'Lucky', en: 'Lucky' },
+    tagline: {
+      zh: '按住摇骰比牌型，绝地翻盘的命运较量',
+      'zh-Hant': '按住搖骰比牌型，絕地翻盤的命運較量',
+      en: 'Press, roll, match poker dice, and turn the tables',
+    },
     icon: <Dices size={32} />,
     duration: '2m',
     rules: {
@@ -72,6 +113,11 @@ export const GAMES = [
   {
     id: 'truth',
     name: { zh: '真心话大冒险', 'zh-Hant': '真心話大冒險', en: 'Truth or Dare' },
+    tagline: {
+      zh: '深度剖白或大胆出击，迅速拉近距离',
+      'zh-Hant': '深度剖白或大膽出擊，迅速拉近距離',
+      en: 'Spicy confessions and daring feats to break the ice',
+    },
     icon: <Heart size={32} />,
     duration: '∞',
     rules: {
@@ -83,6 +129,11 @@ export const GAMES = [
   {
     id: 'roulette',
     name: { zh: '指尖轮盘', 'zh-Hant': '指尖輪盤', en: 'Finger Picker' },
+    tagline: {
+      zh: '多指轻触屏幕，命悬一线的随机点名',
+      'zh-Hant': '多指輕觸螢幕，命懸一線的隨機點名',
+      en: 'Multi-touch finger picker to select the next player',
+    },
     icon: <Fingerprint size={32} />,
     duration: '1m',
     rules: {
@@ -94,6 +145,11 @@ export const GAMES = [
   {
     id: 'king',
     name: { zh: '国王游戏', 'zh-Hant': '國王遊戲', en: "King's Game" },
+    tagline: {
+      zh: '抽中王冠号令全场，绝对服从的国王密令',
+      'zh-Hant': '抽中王冠號令全場，絕對服從的國王密令',
+      en: 'The King commands, everyone else must obey',
+    },
     icon: <Crown size={32} />,
     duration: '2m',
     rules: {
@@ -105,6 +161,11 @@ export const GAMES = [
   {
     id: 'charades',
     name: { zh: '猜词游戏', 'zh-Hant': '猜詞遊戲', en: 'Heads Up' },
+    tagline: {
+      zh: '争分夺秒，肢体表演与爆笑猜词大作战',
+      'zh-Hant': '爭分奪秒，肢體表演與爆笑猜詞大作戰',
+      en: 'Timed acting and hilarious high-energy guessing',
+    },
     icon: <Type size={32} />,
     duration: '5m',
     rules: {
@@ -116,6 +177,11 @@ export const GAMES = [
   {
     id: 'execution',
     name: { zh: '公开处刑', 'zh-Hant': '公開處刑', en: 'Most Likely To' },
+    tagline: {
+      zh: '全员倒数指认，公开处刑谁最符合人设',
+      'zh-Hant': '全員倒數指認，公開處刑誰最符合人設',
+      en: 'Count down and point: most votes takes the penalty',
+    },
     icon: <AlertTriangle size={32} />,
     duration: '∞',
     rules: {
@@ -125,30 +191,29 @@ export const GAMES = [
     },
   },
   {
-    id: 'undercover',
-    name: { zh: '谁是卧底', 'zh-Hant': '誰是臥底', en: 'Undercover' },
-    icon: <Search size={32} />,
-    duration: '15m',
-    rules: {
-      zh: '每人拿到词：多数相同，卧底不同。\n轮流描述但不能说出词。\n每一轮投票淘汰，直到找出卧底或卧底活到最后。',
-      'zh-Hant': '每人拿到詞：多數相同，臥底不同。\n輪流描述但不能說出詞。\n每一輪投票淘汰，直到找出臥底或臥底活到最後。',
-      en: 'Everyone gets a word: most same, undercover different.\nTake turns describing without saying the word.\nVote each round to eliminate until finding the undercover or they survive to the end.',
-    },
-  },
-  {
     id: 'wavelength',
     name: { zh: '心电感应', 'zh-Hant': '心電感應', en: 'Wavelength' },
+    tagline: {
+      zh: '寻找同一波长，考验彼此默契的心灵指针',
+      'zh-Hant': '尋找同一波長，考驗彼此默契的心靈指針',
+      en: 'Tune into the exact same mental frequency',
+    },
     icon: <Radio size={32} />,
     duration: '3m',
     rules: {
       zh: '出题人记住目标位置。\n根据出题人给出的例子，猜测方拖动指针。\n确认后揭晓答案，判断误差。根据结果进行奖惩。',
       'zh-Hant': '出題人記住目標位置。\n根據出題人給出的例子，猜測方拖動指針。\n確認後揭曉答案，判斷誤差。根據結果進行獎懲。',
-      en: 'Psychic remembers target position.\nBased on Psychic\'s examples, guessers drag pointer.\nConfirm to reveal answer and judge error.\nReward or penalty based on results.',
+      en: "Psychic remembers target position.\nBased on Psychic's examples, guessers drag pointer.\nConfirm to reveal answer and judge error.\nReward or penalty based on results.",
     },
   },
   {
     id: 'aron36',
     name: { zh: '36问', 'zh-Hant': '36問', en: '36 Questions' },
+    tagline: {
+      zh: '心理学经典36问，剥开防备的灵魂对话',
+      'zh-Hant': '心理學經典36問，剝開防備的靈魂對話',
+      en: 'Aron’s 36 questions to connect on a deeper level',
+    },
     icon: <MessagesSquare size={32} />,
     duration: '45m',
     rules: {
@@ -160,6 +225,11 @@ export const GAMES = [
   {
     id: 'angryoldman',
     name: { zh: '愤怒的老头', 'zh-Hant': '憤怒的老頭', en: 'Angry Old Man' },
+    tagline: {
+      zh: '谁也不想惊醒他，心跳加速的避雷淘汰',
+      'zh-Hant': '誰也不想驚醒他，心跳加速的避雷淘汰',
+      en: 'Tense turn-taking: poke the board without getting caught',
+    },
     icon: <Frown size={32} />,
     duration: '1m',
     rules: {
