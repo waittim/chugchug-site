@@ -228,6 +228,9 @@
 }
 
 .game-card__meta {
+  position: absolute;
+  right: 20px;
+  bottom: 16px;
   display: inline-flex;
   align-items: center;
   gap: 5px;
@@ -272,8 +275,9 @@
 .game-card__hint {
   position: absolute;
   left: 20px;
-  right: 20px;
+  right: auto;
   bottom: 16px;
+  max-width: calc(100% - 88px);
   color: var(--muted);
   font-size: 11px;
   font-weight: 600;
@@ -374,9 +378,14 @@
     -webkit-backdrop-filter: none;
   }
 
+  .game-card__meta {
+    right: 16px;
+    bottom: 12px;
+  }
+
   .game-card__hint {
     left: 16px;
-    right: 16px;
+    right: auto;
     bottom: 12px;
   }
 

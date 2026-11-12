@@ -237,11 +237,6 @@
   transform-origin: center center;
 }
 
-.phone-frame--featured {
-  z-index: 1;
-  scale: 1.06;
-}
-
 .phone-frame picture,
 .phone-frame img {
   width: 100%;

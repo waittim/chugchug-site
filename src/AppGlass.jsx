@@ -164,7 +164,7 @@ const GameCardFace = ({
       ) : (
         <>
           <span className="game-card__back-label">{currentText.rules_title}</span>
-          <strong>{name}</strong>
+          {isFeatured ? <strong>{name}</strong> : null}
           <span className="game-card__rules">
             {game.rules?.[lang] ?? game.rules?.zh ?? game.rules?.en ?? ''}
           </span>
@@ -992,7 +992,7 @@ const App = () => {
                     {screenshots.map((shot, index) => (
                       <figure
                         key={`${isDuplicate ? 'duplicate' : 'primary'}-${shot.id}`}
-                        className={`phone-frame ${shot.featured ? 'phone-frame--featured' : ''}`}
+                        className="phone-frame"
                       >
                         <picture>
                           <source srcSet={shot.srcWebp} type="image/webp" />
