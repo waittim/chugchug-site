@@ -1,25 +1,19 @@
 ---
 name: ChugChug
-description: Dark glass marketing site for an iOS party drinking-game app
+description: Dark marketing site for an iOS party drinking-game app
 colors:
   canvas: "#09090a"
   canvas-deep: "#080809"
   paper: "#f4f1eb"
-  muted: "rgba(244, 241, 235, 0.56)"
+  muted: "rgba(244, 241, 235, 0.68)"
   gold: "#f2cf79"
   ambient-warm: "#eeb64d"
-  ambient-balance: "#d688c2"
   cta: "#e9d5a3"
   cta-ink: "#171512"
   cta-hover: "#f3e2b8"
   glass-tint: "rgba(255, 255, 255, 0.1)"
   glass-stroke: "rgba(255, 255, 255, 0.11)"
   line: "rgba(255, 255, 255, 0.1)"
-  accent-teal: "#79cbd2"
-  accent-pink: "#dc8bc9"
-  accent-violet: "#b082dd"
-  accent-rose: "#e58b92"
-  accent-amber: "#e9aa6b"
 typography:
   display:
     fontFamily: "ChugChug Rounded, ui-rounded, system-ui, sans-serif"
@@ -163,7 +157,7 @@ components:
     rounded: "{rounded.control}"
     height: "{spacing.touch-min}"
   game-card:
-    backgroundColor: "rgba(18, 18, 19, 0.88)"
+    backgroundColor: "#161618"
     textColor: "{colors.paper}"
     rounded: "{rounded.card}"
 ---
@@ -174,31 +168,30 @@ components:
 
 **Creative North Star: "After-Hours Glass Bar"**
 
-深色夜晚画布上的半透明玻璃与暖金高光，像派对后半场的吧台灯光：品牌字要大、截图要真、交互要少而明确。气质偏 iOS 营销页，而不是仪表盘或卡片堆砌的 SaaS 模板。
+深色夜晚画布上，品牌字和真实截图是画面，暖金只出现在品牌和下载按钮上。导航保留一层磨砂，其余表面是实色。气质偏 iOS 营销页，而不是仪表盘或卡片堆砌的 SaaS 模板。
 
-拒绝：浅色奶油衬线海报风、紫色霓虹 AI 默认、报纸细线排版、首屏塞满统计与徽章。
+拒绝：浅色奶油衬线海报风、紫色或洋红霓虹、第二强调色、首屏塞满统计与徽章。
 
 **Key Characteristics:**
-- 深色 canvas + 暖金强调
-- 玻璃描边与轻投影，而不是厚重多层阴影
+- 深色 canvas + 单一暖金
+- 磨砂只用于导航
 - 品牌展示字（ChugChug Rounded）压过正文
 - 真实手机截图作为主视觉证据
 
 ## Colors
 
-夜晚派对色板：近黑底、奶油纸色字、暖金 CTA，辅以粉金环境光。
+夜晚派对色板：近黑底、奶油纸色字、暖金只用于品牌字、焦点环和 App Store 按钮。页面不再使用第二强调色。
 
 ### Primary
-- **Warm Gold** (`#f2cf79`): 品牌标记、强调词、焦点环、关键高光
+- **Warm Gold** (`#f2cf79`): 品牌标记、焦点环
 - **CTA Champagne** (`#e9d5a3`): App Store 按钮底色，文字用深墨 `#171512`
-
-### Secondary
-- **Ambient Pink** (`#d688c2`): 背景光晕平衡暖金，不作为主按钮色
 
 ### Neutral
 - **Canvas** (`#09090a` / `#080809`): 页面底
 - **Paper** (`#f4f1eb`): 主文字
-- **Muted** (`rgba(244,241,235,0.56)`): 次级说明，保持 ≥4.5:1
+- **Muted** (`rgba(244,241,235,0.68)`): 次级说明，保持 ≥4.5:1
+
+环境光只有一团暖金，放在画面边缘。不要洋红、青、紫作为分区或卡片染色。
 
 ## Typography
 
@@ -222,9 +215,9 @@ components:
 
 ## Elevation & Depth
 
-- 结构深度来自半透明层、细描边与短投影（`--glass-shadow`）
-- 环境光用大面积径向模糊，装饰性而非交互层
-- 毛玻璃：导航保留轻 blur；卡片/下载区默认用不透明玻璃底，仅在可悬停桌面增强 blur，避免低端机掉帧
+- 结构深度来自实色平面和少量投影。毛玻璃只用于固定导航。
+- 功能说明用文字行，不用图标卡片。游戏卡是实色平面，不再按游戏分色。
+- 环境光是一团暖金，静止，不闪烁。
 
 ## Shapes
 
@@ -236,8 +229,8 @@ components:
 
 - **Store button**：香槟底、Apple 标记、双行文案，高度 60px
 - **Glass nav**：固定居中胶囊，品牌金字 + 下载 pill
-- **Game card**：可翻转按钮，`--accent` 按 `data-game-key` 着色；需有 `:focus-visible` 金环
-- **Screenshot marquee**：可拖拽、按钮与方向键；循环宽度取主 `.screens-group` 的 `offsetWidth`（勿对克隆组使用 `content-visibility`，以免 `scrollWidth`/高度跳变）
+- **Game card**：可翻转按钮，图标与时长用纸色，不按 `data-game-key` 分色；需有 `:focus-visible` 金环
+- **Screenshot marquee**：可拖拽、按钮与方向键；循环宽度取主 `.screens-group` 的 `offsetWidth`（勿对克隆组使用 `content-visibility`，以免 `scrollWidth`/高度跳变）。菜单截图略大，两侧以遮罩收进画面。下载区不再套玻璃卡片。
 - **Language switcher**：≥44px 触控目标
 
 ## Do's and Don'ts

@@ -116,7 +116,6 @@
   border: 1px solid rgba(242, 207, 121, 0.35);
   background: radial-gradient(circle at center, rgba(242, 207, 121, 0.2), rgba(242, 207, 121, 0.05));
   color: var(--gold);
-  box-shadow: 0 0 24px rgba(242, 207, 121, 0.2);
 }
 
 .inapp-title {
@@ -347,9 +346,7 @@
   .screens-control,
   .glass-pill,
   .nav-download,
-  .download-card,
-  .game-card__face,
-  .feature-card {
+  .game-card__face {
     background: rgba(20, 20, 21, 0.96);
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
@@ -366,7 +363,6 @@
     background: rgba(12, 12, 13, 0.98);
   }
 
-  .download-card,
   .game-card__face {
     border: 1px solid rgba(255, 255, 255, 0.28);
     background: rgba(12, 12, 13, 0.98);
