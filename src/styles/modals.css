@@ -348,7 +348,8 @@
   .glass-pill,
   .nav-download,
   .download-card,
-  .game-card__face {
+  .game-card__face,
+  .feature-card {
     background: rgba(20, 20, 21, 0.96);
     backdrop-filter: none;
     -webkit-backdrop-filter: none;

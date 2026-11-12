@@ -1,7 +1,7 @@
 import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { animate } from 'motion';
 import { useReducedMotion } from 'motion/react';
-import { ChevronLeft, ChevronRight, Clock3 } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Clock3, Zap, WifiOff, ShieldCheck, Sparkles } from 'lucide-react';
 import SiteHeader from './components/SiteHeader.jsx';
 import SiteFooter from './components/SiteFooter.jsx';
 import InAppGuideModal from './components/InAppGuideModal.jsx';
@@ -43,6 +43,13 @@ const SCREEN_WIDTH = 750;
 const SCREEN_HEIGHT = 1630;
 
 const FEATURED_IDS = new Set(['undercover', 'dice']);
+
+const HIGHLIGHT_ICONS = [
+  <Zap size={20} strokeWidth={1.75} aria-hidden="true" />,
+  <WifiOff size={20} strokeWidth={1.75} aria-hidden="true" />,
+  <ShieldCheck size={20} strokeWidth={1.75} aria-hidden="true" />,
+  <Sparkles size={20} strokeWidth={1.75} aria-hidden="true" />,
+];
 
 /** Homepage marquee: menu + every available game screenshot */
 const SCREENSHOT_REEL = [
@@ -1009,13 +1016,18 @@ const App = () => {
               <p>{currentText.highlights_intro}</p>
             </header>
             <div className="feature-grid">
-              {currentText.highlights.map(([title, body], index) => (
-                <article className="feature-card" key={title}>
-                  <span className="feature-card__num">
-                    {String(index + 1).padStart(2, '0')}
-                  </span>
-                  <h3 className="feature-card__title">{title}</h3>
-                  <p className="feature-card__body">{body}</p>
+              {currentText.highlights.map(([title, body, tag], index) => (
+                <article className={`feature-card feature-card--${index}`} key={title}>
+                  <div className="feature-card__top">
+                    <span className="feature-card__icon-badge">
+                      {HIGHLIGHT_ICONS[index]}
+                    </span>
+                    {tag && <span className="feature-card__tag">{tag}</span>}
+                  </div>
+                  <div className="feature-card__content">
+                    <h3 className="feature-card__title">{title}</h3>
+                    <p className="feature-card__body">{body}</p>
+                  </div>
                 </article>
               ))}
             </div>
@@ -1026,9 +1038,8 @@ const App = () => {
           <AmbientLights variant="games" />
           <header className="games-header">
             <h2>
-              {currentText.grid_title_prefix}
-              <br />
-              <em>{currentText.grid_title_suffix}</em>
+              <span>{currentText.grid_title_prefix}</span>{' '}
+              <span className="games-title__accent">{currentText.grid_title_suffix}</span>
             </h2>
             <p>{currentText.grid_desc}</p>
           </header>
