@@ -315,6 +315,10 @@
   letter-spacing: -0.03em;
 }
 
+.game-card:not(.game-card--featured) .game-card__rules {
+  margin-top: 0;
+}
+
 .game-card__rules {
   margin-top: 14px;
   flex: 1;

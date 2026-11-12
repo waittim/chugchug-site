@@ -163,7 +163,9 @@ const GameCardFace = ({
         </>
       ) : (
         <>
-          <span className="game-card__back-label">{currentText.rules_title}</span>
+          {isFeatured ? (
+            <span className="game-card__back-label">{currentText.rules_title}</span>
+          ) : null}
           {isFeatured ? <strong>{name}</strong> : null}
           <span className="game-card__rules">
             {game.rules?.[lang] ?? game.rules?.zh ?? game.rules?.en ?? ''}
