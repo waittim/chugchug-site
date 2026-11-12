@@ -42,7 +42,22 @@ const DOWNLOAD_ANCHOR = '#download';
 const SCREEN_WIDTH = 750;
 const SCREEN_HEIGHT = 1630;
 
-const FEATURED_IDS = new Set(['undercover', 'dice']);
+const FEATURED_IDS = new Set(['dice', 'truth']);
+const FEATURED_SHOT_FILE = {
+  dice: 'dice',
+  truth: 'truthordare',
+};
+
+function featuredShot(gameId, baseUrl, isChinese) {
+  const file = FEATURED_SHOT_FILE[gameId];
+  if (!file) return null;
+  const folder = `${baseUrl}screenshot/${isChinese ? 'zh' : 'en'}/`;
+  return {
+    src: `${folder}${file}.jpeg`,
+    srcWebp: `${folder}${file}.webp`,
+    focus: gameId,
+  };
+}
 
 /** Homepage marquee: menu + every available game screenshot */
 const SCREENSHOT_REEL = [
@@ -103,6 +118,7 @@ const GameCardFace = ({
   name,
   currentText,
   isFeatured,
+  shot = null,
   hidden = false,
 }) => {
   const tagline = game.tagline?.[lang] ?? game.tagline?.zh ?? game.tagline?.en ?? '';
@@ -110,21 +126,39 @@ const GameCardFace = ({
     <span
       className={`game-card__face game-card__${side}${hidden ? ' game-card__face--hidden' : ''}`}
     >
-      {side === 'front' ? (
+      {side === 'front' && shot ? (
+        <>
+          <picture className={`game-card__shot game-card__shot--${shot.focus}`}>
+            <source srcSet={shot.srcWebp} type="image/webp" />
+            <img
+              src={shot.src}
+              alt=""
+              width={SCREEN_WIDTH}
+              height={SCREEN_HEIGHT}
+              draggable={false}
+              loading="lazy"
+              decoding="async"
+            />
+          </picture>
+          <span className="game-card__shot-copy">
+            <strong>{name}</strong>
+            {tagline && <p className="game-card__tagline">{tagline}</p>}
+            <span className="game-card__hint">{currentText.card_hint_front}</span>
+          </span>
+        </>
+      ) : side === 'front' ? (
         <>
           <div className="game-card__top">
             <span className="game-card__icon">
-              {React.cloneElement(game.icon, { size: isFeatured ? 28 : 22, className: '' })}
+              {React.cloneElement(game.icon, { size: isFeatured ? 22 : 18, className: '' })}
             </span>
+            <strong>{name}</strong>
             <span className="game-card__meta">
               <Clock3 size={11} aria-hidden="true" />
               <span>{duration}</span>
             </span>
           </div>
-          <div className="game-card__main">
-            <strong>{name}</strong>
-            {tagline && <p className="game-card__tagline">{tagline}</p>}
-          </div>
+          {tagline && <p className="game-card__tagline">{tagline}</p>}
           <span className="game-card__hint">{currentText.card_hint_front}</span>
         </>
       ) : (
@@ -150,6 +184,7 @@ const GameCard = ({
   currentText,
   duration,
   name,
+  shot = null,
   onFlipChange,
   reduceMotion,
 }) => {
@@ -383,6 +418,7 @@ const GameCard = ({
             name={name}
             currentText={currentText}
             isFeatured={isFeatured}
+            shot={shot}
           />
           <GameCardFace
             side="back"
@@ -393,6 +429,7 @@ const GameCard = ({
             name={name}
             currentText={currentText}
             isFeatured={isFeatured}
+            shot={shot}
           />
         </span>
       ) : (
@@ -409,6 +446,7 @@ const GameCard = ({
             name={name}
             currentText={currentText}
             isFeatured={isFeatured}
+            shot={shot}
           />
           <GameCardFace
             side="back"
@@ -418,6 +456,7 @@ const GameCard = ({
             name={name}
             currentText={currentText}
             isFeatured={isFeatured}
+            shot={shot}
           />
         </span>
       )}
@@ -1008,12 +1047,9 @@ const App = () => {
               <p>{currentText.highlights_intro}</p>
             </header>
             <ul className="feature-list">
-              {currentText.highlights.map(([title, body, tag]) => (
+              {currentText.highlights.map(([title, body]) => (
                 <li className="feature-row" key={title}>
-                  <div className="feature-row__head">
-                    <h3>{title}</h3>
-                    {tag && <span className="feature-row__tag">{tag}</span>}
-                  </div>
+                  <h3>{title}</h3>
                   <p>{body}</p>
                 </li>
               ))}
@@ -1053,6 +1089,7 @@ const App = () => {
                   currentText={currentText}
                   duration={duration}
                   name={name}
+                  shot={isFeatured ? featuredShot(game.id, baseUrl, isChinese) : null}
                   onFlipChange={setCardFlipped}
                   reduceMotion={reduceMotion}
                 />
