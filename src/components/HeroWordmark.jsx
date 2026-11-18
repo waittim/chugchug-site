@@ -20,7 +20,7 @@ function Clink({ side, text, gold = false, wash = 'gold' }) {
   );
 }
 
-export default function HeroWordmark({ words, compact = false }) {
+export default function HeroWordmark({ words, compact = false, label = 'ChugChug' }) {
   const [clinkCount, setClinkCount] = useState(0);
   const beats = words.filter(Boolean);
 
@@ -55,8 +55,8 @@ export default function HeroWordmark({ words, compact = false }) {
       }}
       tabIndex={0}
       role="button"
-      aria-label="ChugChug - 点击碰杯"
-      title="点击碰杯"
+      aria-label={label}
+      title={label}
     >
       {wordmarkContent}
     </h1>

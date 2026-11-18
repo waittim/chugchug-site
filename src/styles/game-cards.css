@@ -1,6 +1,5 @@
 .games-section {
-  min-height: 100dvh;
-  padding: 7.5rem 1.5rem 6.5rem;
+  padding: clamp(96px, 12vw, 160px) 1.5rem clamp(72px, 8vw, 120px);
   box-sizing: border-box;
   scroll-snap-align: start;
   scroll-snap-stop: always;
@@ -363,17 +362,18 @@
 }
 
 .game-card__back strong {
-  margin-top: 12px;
-  font-size: 19px;
+  margin-top: 0;
+  font-size: clamp(16px, 1.5vw, 19px);
   letter-spacing: -0.03em;
+  line-height: 1.2;
 }
 
-.game-card:not(.game-card--featured) .game-card__rules {
-  margin-top: 0;
+.game-card--featured .game-card__back strong {
+  margin-top: 8px;
 }
 
 .game-card__rules {
-  margin-top: 14px;
+  margin-top: 10px;
   flex: 1;
   overflow: auto;
   white-space: pre-line;

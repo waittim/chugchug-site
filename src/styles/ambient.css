@@ -25,26 +25,11 @@
     rgba(238, 182, 77, 0.07) 38%,
     transparent 72%
   );
-  will-change: transform;
-  animation: ambient-drift 16s ease-in-out infinite alternate;
 }
 
-@keyframes ambient-drift {
-  0% {
-    transform: translate3d(0, 0, 0) scale(1);
-  }
-  50% {
-    transform: translate3d(-2.5%, 1.8%, 0) scale(1.05);
-  }
-  100% {
-    transform: translate3d(1.8%, -1.5%, 0) scale(0.97);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .ambient__light--primary {
-    animation: none;
-  }
+.ambient--page {
+  position: fixed;
+  z-index: -1;
 }
 
 .ambient--soft .ambient__light--primary {

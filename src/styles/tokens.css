@@ -1,12 +1,14 @@
 html {
-  scroll-snap-type: y mandatory;
+  /* Resting positions are settled in useSectionSnap. Native proximity snapped unevenly. */
+  scroll-snap-type: none;
+  scroll-behavior: auto;
 }
 
 body {
   margin: 0;
   background: var(--canvas, #09090a);
   color: var(--paper, #f4f1eb);
-  scroll-behavior: smooth;
+  scroll-behavior: auto;
 }
 
 #root {

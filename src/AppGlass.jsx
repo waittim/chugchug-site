@@ -11,6 +11,7 @@ import HeroWordmark from './components/HeroWordmark.jsx';
 import AppStoreQRCode from './components/AppStoreQRCode.jsx';
 import { usePressHandlers } from './hooks/usePressHandlers.js';
 import { useInView } from './hooks/useInView.js';
+import { useSectionSnap } from './hooks/useSectionSnap.js';
 import { SUPPORT_EMAIL } from './contact.js';
 import { GAMES } from './content/games.jsx';
 import { HOME_COPY } from './content/home.js';
@@ -153,7 +154,7 @@ const GameCardFace = ({
           {isFeatured ? (
             <span className="game-card__back-label">{currentText.rules_title}</span>
           ) : null}
-          {isFeatured ? <strong>{name}</strong> : null}
+          <strong>{name}</strong>
           <span className="game-card__rules">
             {game.rules?.[lang] ?? game.rules?.zh ?? game.rules?.en ?? ''}
           </span>
@@ -475,11 +476,14 @@ const GameCard = ({
   );
 };
 
-const ScreensSection = ({ screenshots, currentText, baseUrl }) => {
+const ScreensSection = ({ screenshots, currentText, baseUrl, reduceMotion = false }) => {
   const [activeScreenIndex, setActiveScreenIndex] = useState(0);
+  const [userPaused, setUserPaused] = useState(false);
+  const userPausedRef = useRef(false);
   const activeScreenIndexRef = useRef(0);
   const marqueeRef = useRef(null);
-  const marqueeApiRef = useRef({ nudge: () => {}, goToIndex: () => {} });
+  const marqueeApiRef = useRef({ nudge: () => {}, goToIndex: () => {}, setPaused: () => {} });
+  const { isPressed: pausePressed, pressProps: pausePressProps } = usePressHandlers();
 
   useEffect(() => {
     const marquee = marqueeRef.current;
@@ -678,6 +682,17 @@ const ScreensSection = ({ screenshots, currentText, baseUrl }) => {
       coastRafId = requestAnimationFrame(step);
     };
 
+    const hold = { pointer: false, focus: false };
+
+    const autoplayBlocked = () => (
+      !inView
+      || reduceMotionQuery.matches
+      || activePointerId !== null
+      || userPausedRef.current
+      || hold.pointer
+      || hold.focus
+    );
+
     const stopAuto = () => {
       if (rafId) cancelAnimationFrame(rafId);
       rafId = 0;
@@ -687,7 +702,7 @@ const ScreensSection = ({ screenshots, currentText, baseUrl }) => {
     };
 
     const scheduleAutoResume = () => {
-      if (reduceMotionQuery.matches || activePointerId !== null) return;
+      if (autoplayBlocked()) return;
       if (resumeTimeoutId) window.clearTimeout(resumeTimeoutId);
       const delay = Math.max(0, resumeAt - performance.now());
       resumeTimeoutId = window.setTimeout(() => {
@@ -697,20 +712,15 @@ const ScreensSection = ({ screenshots, currentText, baseUrl }) => {
     };
 
     const startAuto = () => {
-      if (!inView || reduceMotionQuery.matches || activePointerId !== null || rafId) return;
+      if (autoplayBlocked() || rafId) return;
       if (performance.now() < resumeAt) {
         scheduleAutoResume();
         return;
       }
 
       const step = (time) => {
-        if (!inView || activePointerId !== null || reduceMotionQuery.matches) {
+        if (autoplayBlocked()) {
           stopAuto();
-          return;
-        }
-        if (time < resumeAt) {
-          stopAuto();
-          scheduleAutoResume();
           return;
         }
 
@@ -832,7 +842,56 @@ const ScreensSection = ({ screenshots, currentText, baseUrl }) => {
         const targetOffset = offset + diff * interval;
         springTo(targetOffset, 0, finishInteraction);
       },
+      setPaused: (paused) => {
+        userPausedRef.current = paused;
+        if (paused) {
+          stopAuto();
+          return;
+        }
+        hold.focus = false;
+        resumeAt = 0;
+        startAuto();
+      },
     };
+
+    const stage = marquee.closest('.screens-stage');
+    const track = marquee.closest('.screens-track');
+    const canHoverHold = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+
+    const onTrackPointerEnter = () => {
+      if (!canHoverHold) return;
+      hold.pointer = true;
+      stopAuto();
+    };
+
+    const onTrackPointerLeave = () => {
+      if (!hold.pointer) return;
+      hold.pointer = false;
+      if (userPausedRef.current || hold.focus) return;
+      resumeAt = performance.now() + resumeDelayMs;
+      scheduleAutoResume();
+    };
+
+    const onStageFocus = () => {
+      hold.focus = true;
+      stopAuto();
+    };
+
+    const onStageBlur = () => {
+      hold.focus = false;
+      if (userPausedRef.current || hold.pointer) return;
+      resumeAt = performance.now() + resumeDelayMs;
+      scheduleAutoResume();
+    };
+
+    if (track && canHoverHold) {
+      track.addEventListener('pointerenter', onTrackPointerEnter);
+      track.addEventListener('pointerleave', onTrackPointerLeave);
+    }
+    if (stage) {
+      stage.addEventListener('focus', onStageFocus);
+      stage.addEventListener('blur', onStageBlur);
+    }
 
     const viewTarget = marquee.closest('.screens-section') || marquee.parentElement;
     if (viewTarget && typeof IntersectionObserver !== 'undefined') {
@@ -869,16 +928,31 @@ const ScreensSection = ({ screenshots, currentText, baseUrl }) => {
       marquee.removeEventListener('pointerup', onPointerUp);
       marquee.removeEventListener('pointercancel', onPointerUp);
       marquee.removeEventListener('click', onClickCapture, true);
+      if (track && canHoverHold) {
+        track.removeEventListener('pointerenter', onTrackPointerEnter);
+        track.removeEventListener('pointerleave', onTrackPointerLeave);
+      }
+      if (stage) {
+        stage.removeEventListener('focus', onStageFocus);
+        stage.removeEventListener('blur', onStageBlur);
+      }
       reduceMotionQuery.removeEventListener('change', onReduceMotionChange);
       marquee.style.transform = '';
       marquee.style.willChange = 'auto';
       marquee.style.removeProperty('--marquee-stretch');
-      marqueeApiRef.current = { nudge: () => {}, goToIndex: () => {} };
+      marqueeApiRef.current = { nudge: () => {}, goToIndex: () => {}, setPaused: () => {} };
     };
   }, [screenshots]);
 
   const nudgeMarquee = (direction) => {
     marqueeApiRef.current.nudge(direction);
+  };
+
+  const togglePause = () => {
+    const next = !userPausedRef.current;
+    userPausedRef.current = next;
+    setUserPaused(next);
+    marqueeApiRef.current.setPaused(next);
   };
 
   const onScreensKeyDown = (event) => {
@@ -892,7 +966,7 @@ const ScreensSection = ({ screenshots, currentText, baseUrl }) => {
   };
 
   return (
-    <section id="screens" className="screens-section">
+    <section id="screens" data-snap className="screens-section">
       <div
         className="screens-stage"
         role="region"
@@ -900,11 +974,6 @@ const ScreensSection = ({ screenshots, currentText, baseUrl }) => {
         tabIndex={0}
         onKeyDown={onScreensKeyDown}
       >
-        <ScreensControl
-          direction={-1}
-          label={currentText.a11y_screens_prev}
-          onNudge={nudgeMarquee}
-        />
         <div className="screens-track no-scrollbar">
           <div className="screens-marquee" ref={marqueeRef}>
             {[false, true].map((isDuplicate) => (
@@ -940,25 +1009,46 @@ const ScreensSection = ({ screenshots, currentText, baseUrl }) => {
             ))}
           </div>
         </div>
-        <ScreensControl
-          direction={1}
-          label={currentText.a11y_screens_next}
-          onNudge={nudgeMarquee}
-        />
-        <div
-          className="screens-pagination"
-          role="group"
-          aria-label={currentText.a11y_screens_pagination}
-        >
-          {screenshots.map((shot, index) => (
+        <div className="screens-toolbar">
+          <ScreensControl
+            direction={-1}
+            label={currentText.a11y_screens_prev}
+            onNudge={nudgeMarquee}
+          />
+          <div
+            className="screens-pagination"
+            role="group"
+            aria-label={currentText.a11y_screens_pagination}
+          >
+            {screenshots.map((shot, index) => (
+              <button
+                key={shot.id}
+                type="button"
+                className={`screens-dot ${index === activeScreenIndex ? 'is-active' : ''}`}
+                aria-label={`${shot.alt} (${index + 1}/${screenshots.length})`}
+                aria-current={index === activeScreenIndex ? 'true' : undefined}
+                onClick={() => marqueeApiRef.current.goToIndex(index)}
+              >
+                <span className="screens-dot__mark" aria-hidden="true" />
+              </button>
+            ))}
+          </div>
+          <ScreensControl
+            direction={1}
+            label={currentText.a11y_screens_next}
+            onNudge={nudgeMarquee}
+          />
+          {reduceMotion ? null : (
             <button
-              key={shot.id}
               type="button"
-              className={`screens-dot ${index === activeScreenIndex ? 'is-active' : ''}`}
-              aria-label={`${shot.alt} (${index + 1}/${screenshots.length})`}
-              onClick={() => marqueeApiRef.current.goToIndex(index)}
-            />
-          ))}
+              className={`screens-pause${pausePressed ? ' is-pressed' : ''}`}
+              aria-pressed={userPaused}
+              onClick={togglePause}
+              {...pausePressProps}
+            >
+              {userPaused ? currentText.a11y_screens_play : currentText.a11y_screens_pause}
+            </button>
+          )}
         </div>
       </div>
     </section>
@@ -970,6 +1060,7 @@ const App = () => {
   const [flippedIds, setFlippedIds] = useState(() => new Set());
   const [showInAppGuide, setShowInAppGuide] = useState(false);
   const reduceMotion = useReducedMotion();
+  useSectionSnap();
   const currentText = HOME_COPY[lang] ?? HOME_COPY.en;
   const isChinese = lang === 'zh' || lang === 'zh-Hant';
   const brand = lang === 'zh' ? '吨吨吨 · ChugChug' : 'ChugChug';
@@ -1057,6 +1148,7 @@ const App = () => {
 
   return (
     <div className="site-shell">
+      <AmbientLights variant="page" />
       <a href="#main-content" className="skip-link">
         {currentText.a11y_skip}
       </a>
@@ -1072,8 +1164,7 @@ const App = () => {
       </SiteHeader>
 
       <main id="main-content">
-        <section id="top" className="hero-section">
-          <AmbientLights />
+        <section id="top" data-snap className="hero-section">
           <div className="hero-copy">
             <div className="hero-mark">
               <HeroWordmark
@@ -1083,6 +1174,7 @@ const App = () => {
                     : [currentText.hero_title_1, currentText.hero_title_2]
                 }
                 compact={lang === 'zh'}
+                label={currentText.a11y_clink}
               />
               <span className="hero-rule" aria-hidden="true" />
             </div>
@@ -1100,10 +1192,10 @@ const App = () => {
           screenshots={screenshots}
           currentText={currentText}
           baseUrl={baseUrl}
+          reduceMotion={reduceMotion}
         />
 
-        <section id="experience" ref={expRef} className={`experience-section ${expInView ? 'is-in-view' : ''}`}>
-          <AmbientLights variant="soft" />
+        <section id="experience" data-snap ref={expRef} className={`experience-section ${expInView ? 'is-in-view' : ''}`}>
           <div className="experience-layout">
             <header className="experience-lead">
               <h2>{currentText.highlights_title}</h2>
@@ -1122,8 +1214,7 @@ const App = () => {
           </div>
         </section>
 
-        <section ref={gamesRef} className={`games-section ${gamesInView ? 'is-in-view' : ''}`}>
-          <AmbientLights variant="games" />
+        <section data-snap="games" ref={gamesRef} className={`games-section ${gamesInView ? 'is-in-view' : ''}`}>
           <header className="games-header">
             <h2>
               <span>{currentText.grid_title_prefix}</span>{' '}
@@ -1143,7 +1234,8 @@ const App = () => {
               const baseLabel = (currentText.a11y_game_card || '{name}, duration {duration}')
                 .replace('{name}', name)
                 .replace('{duration}', String(duration));
-              const cardLabel = hintText ? `${baseLabel}，${hintText}` : baseLabel;
+              const joiner = lang === 'en' ? ', ' : '，';
+              const cardLabel = hintText ? `${baseLabel}${joiner}${hintText}` : baseLabel;
               return (
                 <GameCard
                   key={game.id}
@@ -1164,15 +1256,13 @@ const App = () => {
           </div>
         </section>
 
-        <section id="download" ref={downloadRef} className={`download-section ${downloadInView ? 'is-in-view' : ''}`}>
-          <AmbientLights variant="download" />
+        <section id="download" data-snap="download" ref={downloadRef} className={`download-section ${downloadInView ? 'is-in-view' : ''}`}>
           <div className="download-card">
             <h2>{currentText.cta_title}</h2>
             <p className="download-card__lead">
-              {currentText.cta_lead}
-              {lang.startsWith('zh') ? '。' : '. '}
-              {currentText.cta_badge}
-              {lang.startsWith('zh') ? '。' : '.'}
+              {lang.startsWith('zh')
+                ? `${currentText.cta_lead}。${currentText.cta_badge}。`
+                : `${currentText.cta_lead}. ${currentText.cta_badge}.`}
             </p>
             <div className="download-actions">
               <StoreButton
