@@ -98,6 +98,8 @@
 .hero-clink__ink,
 .hero-clink__wash {
   grid-area: 1 / 1;
+  padding-bottom: 0.22em;
+  margin-bottom: -0.22em;
 }
 
 .hero-clink__wash {
@@ -119,26 +121,26 @@
 }
 
 .hero-title--toast:not(.hero-title--stack) .hero-clink--away .hero-clink__wash {
-  background-image: linear-gradient(to left, var(--wash-color) 0 40%, transparent 56%);
-  background-size: 260% 100%;
+  background-image: linear-gradient(to left, var(--wash-color) 0 46%, transparent 62%);
+  background-size: 320% 100%;
   background-position: 0% 50%;
 }
 
 .hero-title--toast:not(.hero-title--stack) .hero-clink--meet .hero-clink__wash {
-  background-image: linear-gradient(to right, var(--wash-color) 0 40%, transparent 56%);
-  background-size: 260% 100%;
+  background-image: linear-gradient(to right, var(--wash-color) 0 46%, transparent 62%);
+  background-size: 320% 100%;
   background-position: 100% 50%;
 }
 
 .hero-title--stack .hero-clink--away .hero-clink__wash {
-  background-image: linear-gradient(to top, var(--wash-color) 0 40%, transparent 56%);
-  background-size: 100% 260%;
+  background-image: linear-gradient(to top, var(--wash-color) 0 46%, transparent 62%);
+  background-size: 100% 320%;
   background-position: 50% 0%;
 }
 
 .hero-title--stack .hero-clink--meet .hero-clink__wash {
-  background-image: linear-gradient(to bottom, var(--wash-color) 0 40%, transparent 56%);
-  background-size: 100% 260%;
+  background-image: linear-gradient(to bottom, var(--wash-color) 0 46%, transparent 62%);
+  background-size: 100% 320%;
   background-position: 50% 100%;
 }
 
