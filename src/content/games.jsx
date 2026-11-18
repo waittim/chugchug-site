@@ -2,6 +2,7 @@ import React from 'react';
 import {
   AlertTriangle,
   Crown,
+  Dice5,
   Dices,
   Fingerprint,
   Frown,
@@ -18,16 +19,16 @@ export const GAMES = [
     id: 'dice',
     name: { zh: '骰子', 'zh-Hant': '骰子', en: 'Dice' },
     tagline: {
-      zh: '吹牛与大话骰，派对永恒硬通货',
-      'zh-Hant': '吹牛與大話骰，派對永恆硬通貨',
-      en: 'The timeless bar classic for bluffing & high stakes',
+      zh: '按住摇骰，决定点数、顺序或惩罚',
+      'zh-Hant': '按住搖骰，決定點數、順序或懲罰',
+      en: 'Hold to roll for a number, an order, or a penalty',
     },
     icon: <Dices size={32} />,
     duration: '∞',
     rules: {
-      zh: '用于“吹牛骰”，“大话骰”。\n或者掷骰决定点数/顺序（按你们玩法）。\n每轮结束后，输的人喝一口或接受惩罚。',
-      'zh-Hant': '用於「吹牛骰」、「大話骰」。\n或者擲骰決定點數/順序（按你們玩法）。\n每輪結束後，輸的人喝一口或接受懲罰。',
-      en: 'Roll to decide numbers/order (house rules).\nEnd of round: loser drinks or takes a challenge.',
+      zh: '按住按钮或摇动手机摇骰。\n用来决定点数或顺序（按你们玩法）。\n每轮结束后，输的人喝一口或接受惩罚。',
+      'zh-Hant': '按住按鈕或搖動手機搖骰。\n用來決定點數或順序（按你們玩法）。\n每輪結束後，輸的人喝一口或接受懲罰。',
+      en: 'Hold the button or shake the phone to roll.\nUse the result for a number or an order (house rules).\nEnd of round: loser drinks or takes a challenge.',
     },
   },
   {
@@ -108,6 +109,22 @@ export const GAMES = [
       zh: '5 骰=牌型；大小：1（Ace）>6≥5≥4≥3≥2。\n同时按住摇骰比牌，输家可锁定部分骰子重摇未锁定的骰子。\n若翻盘则胜负互换；否则输家出局。\n循环直到有人救场失败，最后留下者获胜！',
       'zh-Hant': '5 骰=牌型；大小：1（Ace）>6≥5≥4≥3≥2。\n同時按住搖骰比牌，輸家可鎖定部分骰子重搖未鎖定的骰子。\n若翻盤則勝負互換；否則輸家出局。\n循環直到有人救場失敗，最後留下者獲勝！',
       en: '5 dice form a hand; rank: 1 (Ace) > 6 ≥ 5 ≥ 4 ≥ 3 ≥ 2.\nRoll together; compare hands. Loser may lock dice and re-roll the rest.\nIf the new hand beats the winner, swap roles; otherwise the loser is out.\nRepeat until someone can’t save - last player standing wins.',
+    },
+  },
+  {
+    id: 'perudo',
+    name: { zh: '大话骰', 'zh-Hant': '吹牛骰子', en: 'Perudo' },
+    tagline: {
+      zh: '摇好骰子轮流报点，判断对手是否在虚张声势',
+      'zh-Hant': '搖好骰子輪流報點，判斷對手是否在虛張聲勢',
+      en: 'Roll, bid in turn, and decide when to call the bluff',
+    },
+    icon: <Dice5 size={32} />,
+    duration: '5m',
+    rules: {
+      zh: '2–6 人联机，每人 5 颗骰子，开骰前只看自己的点数。\n轮流报点：加数量，或数量不变时提高点数。\n质疑就开骰核对。1 点是否万能，开局前约定。',
+      'zh-Hant': '2–6 人連線，每人 5 顆骰子，開骰前只看自己的點數。\n輪流報點：加數量，或數量不變時提高點數。\n質疑就開骰核對。1 點是否萬能，開局前約定。',
+      en: '2–6 players, five dice each. See only your own.\nRaise the count, or keep it and raise the face.\nCall to reveal. Agree first if 1s are wild.',
     },
   },
   {

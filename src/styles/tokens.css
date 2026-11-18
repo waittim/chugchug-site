@@ -1,6 +1,8 @@
-html,
+html {
+  scroll-snap-type: y mandatory;
+}
+
 body {
-  height: 100%;
   margin: 0;
   background: var(--canvas, #09090a);
   color: var(--paper, #f4f1eb);

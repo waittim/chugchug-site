@@ -87,6 +87,7 @@
 .unified-footer {
   width: min(calc(100% - 40px), 1120px);
   margin: 0 auto;
+  scroll-snap-align: end;
   padding: 18px 0 calc(24px + env(safe-area-inset-bottom, 0px));
   border-top: 1px solid var(--line);
   color: var(--muted);

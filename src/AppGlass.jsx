@@ -7,6 +7,7 @@ import SiteFooter from './components/SiteFooter.jsx';
 import InAppGuideModal from './components/InAppGuideModal.jsx';
 import AppleLogo from './components/AppleLogo.jsx';
 import AmbientLights from './components/AmbientLights.jsx';
+import HeroWordmark from './components/HeroWordmark.jsx';
 import AppStoreQRCode from './components/AppStoreQRCode.jsx';
 import { usePressHandlers } from './hooks/usePressHandlers.js';
 import { SUPPORT_EMAIL } from './contact.js';
@@ -43,21 +44,6 @@ const SCREEN_WIDTH = 750;
 const SCREEN_HEIGHT = 1630;
 
 const FEATURED_IDS = new Set(['dice', 'truth']);
-const FEATURED_SHOT_FILE = {
-  dice: 'dice',
-  truth: 'truthordare',
-};
-
-function featuredShot(gameId, baseUrl, isChinese) {
-  const file = FEATURED_SHOT_FILE[gameId];
-  if (!file) return null;
-  const folder = `${baseUrl}screenshot/${isChinese ? 'zh' : 'en'}/`;
-  return {
-    src: `${folder}${file}.jpeg`,
-    srcWebp: `${folder}${file}.webp`,
-    focus: gameId,
-  };
-}
 
 /** Homepage marquee: menu + every available game screenshot */
 const SCREENSHOT_REEL = [
@@ -533,6 +519,8 @@ const App = () => {
     const resumeDelayMs = 1500;
 
     let offset = 0;
+    let inView = typeof IntersectionObserver === 'undefined';
+    let viewObserver = null;
     let rafId = 0;
     let coastRafId = 0;
     let resumeTimeoutId = 0;
@@ -722,14 +710,14 @@ const App = () => {
     };
 
     const startAuto = () => {
-      if (reduceMotionQuery.matches || activePointerId !== null || rafId) return;
+      if (!inView || reduceMotionQuery.matches || activePointerId !== null || rafId) return;
       if (performance.now() < resumeAt) {
         scheduleAutoResume();
         return;
       }
 
       const step = (time) => {
-        if (activePointerId !== null || reduceMotionQuery.matches) {
+        if (!inView || activePointerId !== null || reduceMotionQuery.matches) {
           stopAuto();
           return;
         }
@@ -859,7 +847,22 @@ const App = () => {
       },
     };
 
-    if (!reduceMotionQuery.matches) scheduleAutoResume();
+    const viewTarget = marquee.closest('.screens-section') || marquee.parentElement;
+    if (viewTarget && typeof IntersectionObserver !== 'undefined') {
+      viewObserver = new IntersectionObserver(([entry]) => {
+        inView = entry.isIntersecting;
+        if (!inView) {
+          stopAuto();
+          if (activePointerId === null) setWillChange(false);
+          return;
+        }
+        if (!reduceMotionQuery.matches && activePointerId === null) scheduleAutoResume();
+      }, { threshold: 0.12 });
+      viewObserver.observe(viewTarget);
+    } else if (!reduceMotionQuery.matches) {
+      inView = true;
+      scheduleAutoResume();
+    }
 
     marquee.addEventListener('pointerdown', onPointerDown);
     marquee.addEventListener('pointermove', onPointerMove);
@@ -869,6 +872,7 @@ const App = () => {
     reduceMotionQuery.addEventListener('change', onReduceMotionChange);
 
     return () => {
+      viewObserver?.disconnect();
       cancelSpring();
       stopCoast();
       stopAuto();
@@ -952,16 +956,17 @@ const App = () => {
         <section id="top" className="hero-section">
           <AmbientLights />
           <div className="hero-copy">
-            <h1 className="hero-title">
-              {lang === 'zh' ? (
-                <span>吨吨吨</span>
-              ) : (
-                <>
-                  <span>Chug</span>
-                  <span className="hero-title__ghost">Chug</span>
-                </>
-              )}
-            </h1>
+            <div className="hero-mark">
+              <HeroWordmark
+                words={
+                  lang === 'zh'
+                    ? [currentText.hero_title_1, currentText.hero_title_2, currentText.hero_title_3]
+                    : [currentText.hero_title_1, currentText.hero_title_2]
+                }
+                compact={lang === 'zh'}
+              />
+              <span className="hero-rule" aria-hidden="true" />
+            </div>
             <p className="hero-subtitle">{currentText.hero_subtitle}</p>
             <StoreButton
               label={currentText.btn_download}
@@ -970,7 +975,9 @@ const App = () => {
               onClick={handleDownloadClick}
             />
           </div>
+        </section>
 
+        <section id="screens" className="screens-section">
           <div
             className="screens-stage"
             role="region"
@@ -1043,16 +1050,18 @@ const App = () => {
 
         <section id="experience" className="experience-section">
           <AmbientLights variant="soft" />
-          <div className="section-stack">
-            <header className="section-intro">
+          <div className="experience-layout">
+            <header className="experience-lead">
               <h2>{currentText.highlights_title}</h2>
+              <span className="hero-rule" aria-hidden="true" />
               <p>{currentText.highlights_intro}</p>
             </header>
             <ul className="feature-list">
-              {currentText.highlights.map(([title, body]) => (
+              {currentText.highlights.map(([title, body, label]) => (
                 <li className="feature-row" key={title}>
                   <h3>{title}</h3>
                   <p>{body}</p>
+                  {label ? <span className="feature-row__label">{label}</span> : null}
                 </li>
               ))}
             </ul>
@@ -1066,6 +1075,7 @@ const App = () => {
               <span>{currentText.grid_title_prefix}</span>{' '}
               <span className="games-title__accent">{currentText.grid_title_suffix}</span>
             </h2>
+            <span className="hero-rule" aria-hidden="true" />
             <p>{currentText.grid_desc}</p>
           </header>
 
@@ -1073,7 +1083,7 @@ const App = () => {
             {orderedGames.map((game) => {
               const duration = game.duration ?? '∞';
               const isFlipped = flippedIds.has(game.id);
-              const isFeatured = FEATURED_IDS.has(game.id);
+              const isFeatured = false;
               const name = game.name[lang] ?? game.name.zh ?? game.name.en;
               const hintText = isFlipped ? currentText.card_hint_back : currentText.card_hint_front;
               const baseLabel = (currentText.a11y_game_card || '{name}, duration {duration}')
@@ -1091,7 +1101,7 @@ const App = () => {
                   currentText={currentText}
                   duration={duration}
                   name={name}
-                  shot={isFeatured ? featuredShot(game.id, baseUrl, isChinese) : null}
+                  shot={null}
                   onFlipChange={setCardFlipped}
                   reduceMotion={reduceMotion}
                 />
