@@ -10,6 +10,7 @@ import AmbientLights from './components/AmbientLights.jsx';
 import HeroWordmark from './components/HeroWordmark.jsx';
 import AppStoreQRCode from './components/AppStoreQRCode.jsx';
 import { usePressHandlers } from './hooks/usePressHandlers.js';
+import { useInView } from './hooks/useInView.js';
 import { SUPPORT_EMAIL } from './contact.js';
 import { GAMES } from './content/games.jsx';
 import { HOME_COPY } from './content/home.js';
@@ -197,10 +198,22 @@ const GameCard = ({
     rotateRef.current = value;
     const el = innerRef.current;
     if (!el) return;
+    const rad = ((value % 360) * Math.PI) / 180;
+    const elevation = Math.abs(Math.sin(rad)) * 28;
+    const shadowSpread = Math.abs(Math.sin(rad)) * 36;
+    const shadowOpacity = 0.72 - Math.abs(Math.sin(rad)) * 0.35;
+    const sheen = Math.min(1, Math.max(0, value / 180));
+    const sheenOpacity = Math.abs(Math.sin(rad)) * 0.9;
+
     const sx = 1 + stretch;
     el.style.transform = stretch
-      ? `rotateY(${value}deg) scaleX(${sx})`
-      : `rotateY(${value}deg)`;
+      ? `translate3d(0, 0, ${elevation.toFixed(1)}px) rotateY(${value}deg) scaleX(${sx})`
+      : `translate3d(0, 0, ${elevation.toFixed(1)}px) rotateY(${value}deg)`;
+    el.style.setProperty('--card-z', `${elevation.toFixed(1)}px`);
+    el.style.setProperty('--card-shadow-blur', `${(36 + shadowSpread).toFixed(0)}px`);
+    el.style.setProperty('--card-shadow-opacity', shadowOpacity.toFixed(2));
+    el.style.setProperty('--card-sheen-x', `${(sheen * 100).toFixed(1)}%`);
+    el.style.setProperty('--card-sheen-opacity', sheenOpacity.toFixed(2));
   };
 
   const cancelSpring = () => {
@@ -292,6 +305,7 @@ const GameCard = ({
     pointerRef.current = {
       active: true,
       pointerId: event.pointerId,
+      targetEl: event.currentTarget,
       startX: event.clientX,
       startY: event.clientY,
       startRotate: rotateRef.current,
@@ -300,11 +314,7 @@ const GameCard = ({
     };
     addSample(event.clientX);
     setIsPressed(true);
-    try {
-      event.currentTarget.setPointerCapture(event.pointerId);
-    } catch {
-      // capture is best-effort
-    }
+    // Defer setPointerCapture until horizontal intent is confirmed to avoid blocking native page scrolling
   };
 
   const handlePointerMove = (event) => {
@@ -316,7 +326,8 @@ const GameCard = ({
 
     if (!state.committed) {
       if (Math.hypot(dx, dy) < DRAG_THRESHOLD) return;
-      if (Math.abs(dy) > Math.abs(dx) * 1.35) {
+      // If user is scrolling vertically, immediately release so page scrolls smoothly
+      if (Math.abs(dy) > Math.abs(dx) * 1.15) {
         state.active = false;
         setIsPressed(false);
         setIsDragging(false);
@@ -327,6 +338,11 @@ const GameCard = ({
       state.startRotate = rotateRef.current;
       setIsDragging(true);
       setIsPressed(false);
+      try {
+        state.targetEl?.setPointerCapture(event.pointerId);
+      } catch {
+        // capture is best-effort
+      }
     }
 
     addSample(event.clientX);
@@ -345,6 +361,13 @@ const GameCard = ({
   const handlePointerEnd = (event) => {
     const state = pointerRef.current;
     if (!state.active || (event.pointerId != null && event.pointerId !== state.pointerId)) return;
+    if (state.committed && state.targetEl && event.pointerId != null) {
+      try {
+        state.targetEl.releasePointerCapture(event.pointerId);
+      } catch {
+        // release is best-effort
+      }
+    }
     state.active = false;
     setIsPressed(false);
     setIsDragging(false);
@@ -452,59 +475,7 @@ const GameCard = ({
   );
 };
 
-const App = () => {
-  const [lang] = useState(getInitialLang);
-  const [flippedIds, setFlippedIds] = useState(() => new Set());
-  const [showInAppGuide, setShowInAppGuide] = useState(false);
-  const reduceMotion = useReducedMotion();
-  const currentText = HOME_COPY[lang] ?? HOME_COPY.en;
-  const isChinese = lang === 'zh' || lang === 'zh-Hant';
-  const brand = lang === 'zh' ? '吨吨吨 · ChugChug' : 'ChugChug';
-  const baseUrl = import.meta.env.BASE_URL || '/';
-
-  useEffect(() => {
-    document.title =
-      lang === 'zh'
-        ? '吨吨吨 - 派对游戏 App'
-        : lang === 'zh-Hant'
-          ? 'ChugChug - 派對遊戲 App'
-          : 'ChugChug - Party Game App';
-  }, [lang]);
-
-  const screenshots = useMemo(() => {
-    const folder = `${baseUrl}screenshot/${isChinese ? 'zh' : 'en'}/`;
-    const gameById = Object.fromEntries(GAMES.map((game) => [game.id, game]));
-
-    return SCREENSHOT_REEL.map((entry) => {
-      const file =
-        entry.featured && isChinese ? 'menu-zh.jpeg' : `${entry.file}.jpeg`;
-      const webp = file.replace(/\.jpeg$/, '.webp');
-      const game = entry.gameId ? gameById[entry.gameId] : null;
-      const gameName = game
-        ? game.name[lang] ?? game.name.zh ?? game.name.en
-        : null;
-
-      return {
-        id: entry.file,
-        src: `${folder}${file}`,
-        srcWebp: `${folder}${webp}`,
-        featured: Boolean(entry.featured),
-        alt: entry.featured
-          ? currentText.a11y_screen_menu
-          : (currentText.a11y_screen_game || '{name}').replace(
-              '{name}',
-              gameName || entry.file,
-            ),
-      };
-    });
-  }, [baseUrl, currentText, isChinese, lang]);
-
-  const orderedGames = useMemo(() => {
-    const featured = GAMES.filter((game) => FEATURED_IDS.has(game.id));
-    const rest = GAMES.filter((game) => !FEATURED_IDS.has(game.id));
-    return [...featured, ...rest];
-  }, []);
-
+const ScreensSection = ({ screenshots, currentText, baseUrl }) => {
   const [activeScreenIndex, setActiveScreenIndex] = useState(0);
   const activeScreenIndexRef = useRef(0);
   const marqueeRef = useRef(null);
@@ -537,6 +508,23 @@ const App = () => {
     let coastVelocity = 0;
     const velocitySamples = [];
 
+    let cachedLoopWidth = 0;
+    let cachedSnapInterval = 0;
+
+    const measureLayout = () => {
+      const primary = marquee.querySelector('.screens-group:not(.screens-group--clone)');
+      if (!primary) return;
+      cachedLoopWidth = primary.offsetWidth || marquee.scrollWidth / 2 || 0;
+      const frame = primary.querySelector('.phone-frame');
+      if (frame) {
+        const gap = parseFloat(getComputedStyle(primary).columnGap || getComputedStyle(primary).gap) || 0;
+        cachedSnapInterval = frame.getBoundingClientRect().width + gap;
+      }
+    };
+
+    measureLayout();
+    window.addEventListener('resize', measureLayout);
+
     const setWillChange = (enabled) => {
       marquee.style.willChange = enabled ? 'transform' : 'auto';
     };
@@ -546,16 +534,15 @@ const App = () => {
     };
 
     const getLoopWidth = () => {
-      const primary = marquee.querySelector('.screens-group:not(.screens-group--clone)');
-      return primary?.offsetWidth || marquee.scrollWidth / 2 || 0;
+      if (cachedLoopWidth > 0) return cachedLoopWidth;
+      measureLayout();
+      return cachedLoopWidth || marquee.scrollWidth / 2 || 0;
     };
 
     const getSnapInterval = () => {
-      const group = marquee.querySelector('.screens-group:not(.screens-group--clone)');
-      const frame = group?.querySelector('.phone-frame');
-      if (!group || !frame) return 0;
-      const gap = parseFloat(getComputedStyle(group).columnGap || getComputedStyle(group).gap) || 0;
-      return frame.getBoundingClientRect().width + gap;
+      if (cachedSnapInterval > 0) return cachedSnapInterval;
+      measureLayout();
+      return cachedSnapInterval || 0;
     };
 
     const nearestSnapPoint = (position) => {
@@ -872,6 +859,7 @@ const App = () => {
     reduceMotionQuery.addEventListener('change', onReduceMotionChange);
 
     return () => {
+      window.removeEventListener('resize', measureLayout);
       viewObserver?.disconnect();
       cancelSpring();
       stopCoast();
@@ -902,6 +890,137 @@ const App = () => {
       nudgeMarquee(1);
     }
   };
+
+  return (
+    <section id="screens" className="screens-section">
+      <div
+        className="screens-stage"
+        role="region"
+        aria-label={currentText.a11y_screens}
+        tabIndex={0}
+        onKeyDown={onScreensKeyDown}
+      >
+        <ScreensControl
+          direction={-1}
+          label={currentText.a11y_screens_prev}
+          onNudge={nudgeMarquee}
+        />
+        <div className="screens-track no-scrollbar">
+          <div className="screens-marquee" ref={marqueeRef}>
+            {[false, true].map((isDuplicate) => (
+              <div
+                className={`screens-group${isDuplicate ? ' screens-group--clone' : ''}`}
+                key={isDuplicate ? 'duplicate' : 'primary'}
+                aria-hidden={isDuplicate || undefined}
+              >
+                {screenshots.map((shot, index) => (
+                  <figure
+                    key={`${isDuplicate ? 'duplicate' : 'primary'}-${shot.id}`}
+                    className="phone-frame"
+                  >
+                    <picture>
+                      <source srcSet={shot.srcWebp} type="image/webp" />
+                      <img
+                        src={shot.src}
+                        width={SCREEN_WIDTH}
+                        height={SCREEN_HEIGHT}
+                        alt={isDuplicate ? '' : shot.alt}
+                        loading={isDuplicate || index > 2 ? 'lazy' : 'eager'}
+                        decoding="async"
+                        fetchpriority={isDuplicate || index > 0 ? 'low' : 'high'}
+                        draggable={false}
+                        onError={(event) => {
+                          event.currentTarget.src = `${baseUrl}placeholder.svg`;
+                        }}
+                      />
+                    </picture>
+                  </figure>
+                ))}
+              </div>
+            ))}
+          </div>
+        </div>
+        <ScreensControl
+          direction={1}
+          label={currentText.a11y_screens_next}
+          onNudge={nudgeMarquee}
+        />
+        <div
+          className="screens-pagination"
+          role="group"
+          aria-label={currentText.a11y_screens_pagination}
+        >
+          {screenshots.map((shot, index) => (
+            <button
+              key={shot.id}
+              type="button"
+              className={`screens-dot ${index === activeScreenIndex ? 'is-active' : ''}`}
+              aria-label={`${shot.alt} (${index + 1}/${screenshots.length})`}
+              onClick={() => marqueeApiRef.current.goToIndex(index)}
+            />
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+};
+
+const App = () => {
+  const [lang] = useState(getInitialLang);
+  const [flippedIds, setFlippedIds] = useState(() => new Set());
+  const [showInAppGuide, setShowInAppGuide] = useState(false);
+  const reduceMotion = useReducedMotion();
+  const currentText = HOME_COPY[lang] ?? HOME_COPY.en;
+  const isChinese = lang === 'zh' || lang === 'zh-Hant';
+  const brand = lang === 'zh' ? '吨吨吨 · ChugChug' : 'ChugChug';
+  const baseUrl = import.meta.env.BASE_URL || '/';
+
+  useEffect(() => {
+    document.title =
+      lang === 'zh'
+        ? '吨吨吨 - 派对游戏 App'
+        : lang === 'zh-Hant'
+          ? 'ChugChug - 派對遊戲 App'
+          : 'ChugChug - Party Game App';
+  }, [lang]);
+
+  const screenshots = useMemo(() => {
+    const folder = `${baseUrl}screenshot/${isChinese ? 'zh' : 'en'}/`;
+    const gameById = Object.fromEntries(GAMES.map((game) => [game.id, game]));
+
+    return SCREENSHOT_REEL.map((entry) => {
+      const file =
+        entry.featured && isChinese ? 'menu-zh.jpeg' : `${entry.file}.jpeg`;
+      const webp = file.replace(/\.jpeg$/, '.webp');
+      const game = entry.gameId ? gameById[entry.gameId] : null;
+      const gameName = game
+        ? game.name[lang] ?? game.name.zh ?? game.name.en
+        : null;
+
+      return {
+        id: entry.file,
+        src: `${folder}${file}`,
+        srcWebp: `${folder}${webp}`,
+        featured: Boolean(entry.featured),
+        alt: entry.featured
+          ? currentText.a11y_screen_menu
+          : (currentText.a11y_screen_game || '{name}').replace(
+              '{name}',
+              gameName || entry.file,
+            ),
+      };
+    });
+  }, [baseUrl, currentText, isChinese, lang]);
+
+  const orderedGames = useMemo(() => {
+    const featured = GAMES.filter((game) => FEATURED_IDS.has(game.id));
+    const rest = GAMES.filter((game) => !FEATURED_IDS.has(game.id));
+    return [...featured, ...rest];
+  }, []);
+
+  const [expRef, expInView] = useInView({ threshold: 0.1 });
+  const [gamesRef, gamesInView] = useInView({ threshold: 0.1 });
+  const [downloadRef, downloadInView] = useInView({ threshold: 0.12 });
 
   const track = (event, url) => {
     if (typeof window.gtag !== 'function') return;
@@ -977,78 +1096,13 @@ const App = () => {
           </div>
         </section>
 
-        <section id="screens" className="screens-section">
-          <div
-            className="screens-stage"
-            role="region"
-            aria-label={currentText.a11y_screens}
-            tabIndex={0}
-            onKeyDown={onScreensKeyDown}
-          >
-            <ScreensControl
-              direction={-1}
-              label={currentText.a11y_screens_prev}
-              onNudge={nudgeMarquee}
-            />
-            <div className="screens-track no-scrollbar">
-              <div className="screens-marquee" ref={marqueeRef}>
-                {[false, true].map((isDuplicate) => (
-                  <div
-                    className={`screens-group${isDuplicate ? ' screens-group--clone' : ''}`}
-                    key={isDuplicate ? 'duplicate' : 'primary'}
-                    aria-hidden={isDuplicate || undefined}
-                  >
-                    {screenshots.map((shot, index) => (
-                      <figure
-                        key={`${isDuplicate ? 'duplicate' : 'primary'}-${shot.id}`}
-                        className="phone-frame"
-                      >
-                        <picture>
-                          <source srcSet={shot.srcWebp} type="image/webp" />
-                          <img
-                            src={shot.src}
-                            width={SCREEN_WIDTH}
-                            height={SCREEN_HEIGHT}
-                            alt={isDuplicate ? '' : shot.alt}
-                            loading={isDuplicate || index > 2 ? 'lazy' : 'eager'}
-                            decoding="async"
-                            fetchpriority={isDuplicate || index > 0 ? 'low' : 'high'}
-                            draggable={false}
-                            onError={(event) => {
-                              event.currentTarget.src = `${baseUrl}placeholder.svg`;
-                            }}
-                          />
-                        </picture>
-                      </figure>
-                    ))}
-                  </div>
-                ))}
-              </div>
-            </div>
-            <ScreensControl
-              direction={1}
-              label={currentText.a11y_screens_next}
-              onNudge={nudgeMarquee}
-            />
-            <div
-              className="screens-pagination"
-              role="group"
-              aria-label={currentText.a11y_screens_pagination}
-            >
-              {screenshots.map((shot, index) => (
-                <button
-                  key={shot.id}
-                  type="button"
-                  className={`screens-dot ${index === activeScreenIndex ? 'is-active' : ''}`}
-                  aria-label={`${shot.alt} (${index + 1}/${screenshots.length})`}
-                  onClick={() => marqueeApiRef.current.goToIndex(index)}
-                />
-              ))}
-            </div>
-          </div>
-        </section>
+        <ScreensSection
+          screenshots={screenshots}
+          currentText={currentText}
+          baseUrl={baseUrl}
+        />
 
-        <section id="experience" className="experience-section">
+        <section id="experience" ref={expRef} className={`experience-section ${expInView ? 'is-in-view' : ''}`}>
           <AmbientLights variant="soft" />
           <div className="experience-layout">
             <header className="experience-lead">
@@ -1068,7 +1122,7 @@ const App = () => {
           </div>
         </section>
 
-        <section className="games-section">
+        <section ref={gamesRef} className={`games-section ${gamesInView ? 'is-in-view' : ''}`}>
           <AmbientLights variant="games" />
           <header className="games-header">
             <h2>
@@ -1110,7 +1164,7 @@ const App = () => {
           </div>
         </section>
 
-        <section id="download" className="download-section">
+        <section id="download" ref={downloadRef} className={`download-section ${downloadInView ? 'is-in-view' : ''}`}>
           <AmbientLights variant="download" />
           <div className="download-card">
             <h2>{currentText.cta_title}</h2>

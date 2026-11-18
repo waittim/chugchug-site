@@ -1,6 +1,18 @@
 .site-shell {
+  position: relative;
   min-height: 100dvh;
   background: var(--canvas);
+}
+
+/* Tactile matte grain: eliminates banding on OLED displays and creates after-hours luxury feel */
+.site-shell::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  pointer-events: none;
+  opacity: 0.024;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
 }
 
 .hero-section,
@@ -80,11 +92,94 @@
   -webkit-text-stroke: 0;
 }
 
-.hero-title__word {
+.hero-title__word,
+.hero-title__stack-wrapper {
+  position: relative;
   display: inline-flex;
   align-items: baseline;
   justify-content: center;
   max-width: 100%;
+}
+
+.hero-title--stack .hero-title__stack-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+/* Glass contact glint on collision (refined optical ping) */
+.hero-clink__glint,
+.hero-clink__spark-emitter {
+  position: relative;
+  width: 0;
+  height: 0;
+  display: inline-block;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.hero-title:not(.hero-title--stack) .hero-clink__glint,
+.hero-title:not(.hero-title--stack) .hero-clink__spark-emitter {
+  top: 0;
+  left: 0;
+}
+
+.hero-title--stack .hero-clink__glint,
+.hero-title--stack .hero-clink__spark-emitter {
+  top: 0;
+  left: 2.8em;
+}
+
+.hero-clink__glint-core,
+.hero-clink__glint-flare {
+  position: absolute;
+  left: 0;
+  pointer-events: none;
+  will-change: transform, opacity;
+}
+
+.hero-title:not(.hero-title--stack) .hero-clink__glint-core,
+.hero-title:not(.hero-title--stack) .hero-clink__glint-flare {
+  top: -0.68em;
+}
+
+.hero-title--stack .hero-clink__glint-core,
+.hero-title--stack .hero-clink__glint-flare {
+  top: 0;
+}
+
+.hero-clink__glint-core {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  opacity: 0;
+  background: radial-gradient(
+    circle,
+    #ffffff 0%,
+    rgba(255, 248, 225, 0.95) 20%,
+    rgba(242, 207, 121, 0.5) 45%,
+    rgba(242, 207, 121, 0.12) 70%,
+    transparent 100%
+  );
+  box-shadow: 0 0 8px rgba(242, 207, 121, 0.55), 0 0 2px #ffffff;
+}
+
+.hero-clink__glint-flare {
+  width: 30px;
+  height: 1.5px;
+  border-radius: 999px;
+  transform: translate(-50%, -50%) scaleX(0);
+  opacity: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(242, 207, 121, 0.25) 22%,
+    #ffffff 50%,
+    rgba(242, 207, 121, 0.25) 78%,
+    transparent 100%
+  );
+  box-shadow: 0 0 4px rgba(242, 207, 121, 0.4);
 }
 
 .hero-clink {
@@ -145,19 +240,19 @@
 }
 
 .hero-clink--away {
-  transform-origin: right center;
+  transform-origin: 15% 100%;
 }
 
 .hero-clink--meet {
-  transform-origin: left center;
+  transform-origin: 85% 100%;
 }
 
 .hero-title--stack .hero-clink--away {
-  transform-origin: center bottom;
+  transform-origin: 20% 90%;
 }
 
 .hero-title--stack .hero-clink--meet {
-  transform-origin: center top;
+  transform-origin: 80% 10%;
 }
 
 
@@ -351,8 +446,20 @@
   border: 4px solid #141416;
   border-radius: clamp(36px, 3.2vh, 48px);
   background: #141416;
-  box-shadow: 0 28px 56px -24px rgba(0, 0, 0, 0.78);
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.08),
+    0 28px 56px -24px rgba(0, 0, 0, 0.85);
   transform-origin: center center;
+  transition: transform 300ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 300ms ease;
+}
+
+.phone-frame::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.16);
 }
 
 .phone-frame picture,
@@ -556,8 +663,9 @@
 .store-button:hover {
   background: var(--cta-hover);
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.4),
-    0 18px 40px rgba(0, 0, 0, 0.32);
+    inset 0 1px 0 rgba(255, 255, 255, 0.45),
+    0 20px 42px -10px rgba(238, 182, 77, 0.28),
+    0 10px 24px rgba(0, 0, 0, 0.32);
   transform: translateY(-2px);
 }
 
@@ -678,60 +786,111 @@
   border-left: 1px solid var(--line);
 }
 
+.hero-title--interactive {
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+  transition: transform 140ms cubic-bezier(0.16, 1, 0.3, 1), filter 140ms ease;
+}
+
+.hero-title--interactive:hover {
+  filter: brightness(1.06);
+}
+
+.hero-title--interactive:active {
+  transform: scale(0.985);
+}
+
+.hero-title--interactive:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 8px;
+  border-radius: 12px;
+}
+
 @media (prefers-reduced-motion: no-preference) {
   .hero-title--toast .hero-clink--away {
-    animation: hero-toast-away 780ms linear both;
+    transform-origin: 15% 100%;
+    animation: hero-toast-away 880ms cubic-bezier(0.2, 0.9, 0.3, 1) both;
   }
 
   .hero-title--toast .hero-clink--meet {
-    animation: hero-toast-meet 780ms linear both;
+    transform-origin: 85% 100%;
+    animation: hero-toast-meet 880ms cubic-bezier(0.2, 0.9, 0.3, 1) both;
   }
 
   .hero-title--stack .hero-clink--away {
+    transform-origin: 20% 90%;
     animation-name: hero-toast-upper;
   }
 
   .hero-title--stack .hero-clink--meet {
+    transform-origin: 80% 10%;
     animation-name: hero-toast-lower;
   }
 
+  .hero-clink__glint-core {
+    animation: hero-glint-core-pulse 880ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  .hero-clink__glint-flare {
+    animation: hero-glint-flare-pulse 880ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
   .hero-title--toast:not(.hero-title--stack) .hero-clink--away .hero-clink__wash {
-    animation: hero-wash-from-right 780ms linear both;
+    animation: hero-wash-from-right 880ms cubic-bezier(0.2, 0.9, 0.3, 1) both;
   }
 
   .hero-title--toast:not(.hero-title--stack) .hero-clink--meet .hero-clink__wash {
-    animation: hero-wash-from-left 780ms linear both;
+    animation: hero-wash-from-left 880ms cubic-bezier(0.2, 0.9, 0.3, 1) both;
   }
 
   .hero-title--stack .hero-clink--away .hero-clink__wash {
-    animation: hero-wash-from-bottom 780ms linear both;
+    animation: hero-wash-from-bottom 880ms cubic-bezier(0.2, 0.9, 0.3, 1) both;
   }
 
   .hero-title--stack .hero-clink--meet .hero-clink__wash {
-    animation: hero-wash-from-top 780ms linear both;
+    animation: hero-wash-from-top 880ms cubic-bezier(0.2, 0.9, 0.3, 1) both;
   }
 
   .hero-mark .hero-rule {
     transform-origin: center;
-    animation: hero-toast-rule 780ms linear both;
+    animation: hero-toast-rule 880ms cubic-bezier(0.16, 1, 0.3, 1) both;
   }
 }
 
 @keyframes hero-toast-away {
   0% {
-    transform: translate3d(-0.55em, 0, 0) rotate(-2.5deg);
+    transform: translate3d(-0.16em, 0.04em, 0) rotate(-6deg);
+    animation-timing-function: cubic-bezier(0.32, 0, 0.22, 1);
   }
 
-  34% {
-    transform: translate3d(-0.18em, 0, 0) rotate(-0.4deg);
+  22% {
+    /* Anticipation: arm lowers and tilts back to prepare for cheers */
+    transform: translate3d(-0.25em, 0.08em, 0) rotate(-11deg);
+    animation-timing-function: cubic-bezier(0.12, 0.82, 0.25, 1);
   }
 
-  48% {
-    transform: translate3d(0.02em, 0, 0) rotate(3deg) scale(0.98);
+  44% {
+    /* Upward arc swing and inward tilt: CLINK! Rims strike */
+    transform: translate3d(0.06em, -0.09em, 0) rotate(12.5deg) scale(0.97);
+    animation-timing-function: cubic-bezier(0.16, 0.9, 0.3, 1.25);
   }
 
-  60% {
-    transform: translate3d(-0.06em, 0, 0) rotate(-0.8deg) scale(1.015);
+  56% {
+    /* Damped recoil bounce */
+    transform: translate3d(-0.06em, 0.02em, 0) rotate(-3.5deg) scale(1.015);
+    animation-timing-function: cubic-bezier(0.25, 1, 0.5, 1);
+  }
+
+  72% {
+    /* Secondary gentle settle */
+    transform: translate3d(0.015em, -0.01em, 0) rotate(1.2deg) scale(0.995);
+    animation-timing-function: cubic-bezier(0.25, 1, 0.5, 1);
+  }
+
+  86% {
+    transform: translate3d(-0.005em, 0, 0) rotate(-0.3deg);
+    animation-timing-function: cubic-bezier(0.25, 1, 0.5, 1);
   }
 
   100% {
@@ -741,19 +900,37 @@
 
 @keyframes hero-toast-meet {
   0% {
-    transform: translate3d(0.38em, 0, 0) rotate(2deg);
+    transform: translate3d(0.16em, 0.04em, 0) rotate(6deg);
+    animation-timing-function: cubic-bezier(0.32, 0, 0.22, 1);
   }
 
-  34% {
-    transform: translate3d(0.12em, 0, 0) rotate(0.4deg);
+  22% {
+    /* Anticipation: arm lowers and tilts back to prepare for cheers */
+    transform: translate3d(0.25em, 0.08em, 0) rotate(11deg);
+    animation-timing-function: cubic-bezier(0.12, 0.82, 0.25, 1);
   }
 
-  48% {
-    transform: translate3d(-0.015em, 0, 0) rotate(-2.2deg) scale(0.985);
+  44% {
+    /* Upward arc swing and inward tilt: CLINK! Rims strike */
+    transform: translate3d(-0.06em, -0.09em, 0) rotate(-12.5deg) scale(0.97);
+    animation-timing-function: cubic-bezier(0.16, 0.9, 0.3, 1.25);
   }
 
-  60% {
-    transform: translate3d(0.04em, 0, 0) rotate(0.6deg) scale(1.01);
+  56% {
+    /* Damped recoil bounce */
+    transform: translate3d(0.06em, 0.02em, 0) rotate(3.5deg) scale(1.015);
+    animation-timing-function: cubic-bezier(0.25, 1, 0.5, 1);
+  }
+
+  72% {
+    /* Secondary gentle settle */
+    transform: translate3d(-0.015em, -0.01em, 0) rotate(-1.2deg) scale(0.995);
+    animation-timing-function: cubic-bezier(0.25, 1, 0.5, 1);
+  }
+
+  86% {
+    transform: translate3d(0.005em, 0, 0) rotate(0.3deg);
+    animation-timing-function: cubic-bezier(0.25, 1, 0.5, 1);
   }
 
   100% {
@@ -763,19 +940,28 @@
 
 @keyframes hero-toast-upper {
   0% {
-    transform: translate3d(-0.08em, -0.28em, 0) rotate(-2deg);
+    transform: translate3d(-0.08em, -0.04em, 0) rotate(-5deg);
+    animation-timing-function: cubic-bezier(0.32, 0, 0.22, 1);
   }
 
-  34% {
-    transform: translate3d(-0.02em, -0.1em, 0) rotate(-0.4deg);
+  22% {
+    transform: translate3d(-0.14em, -0.08em, 0) rotate(-8deg);
+    animation-timing-function: cubic-bezier(0.12, 0.82, 0.25, 1);
   }
 
-  48% {
-    transform: translate3d(0.02em, 0.035em, 0) rotate(2.4deg) scale(0.98);
+  44% {
+    transform: translate3d(0.04em, 0.05em, 0) rotate(11deg) scale(0.97);
+    animation-timing-function: cubic-bezier(0.16, 0.9, 0.3, 1.25);
   }
 
-  60% {
-    transform: translate3d(0, -0.03em, 0) rotate(-0.4deg) scale(1.012);
+  56% {
+    transform: translate3d(-0.03em, -0.02em, 0) rotate(-3deg) scale(1.012);
+    animation-timing-function: cubic-bezier(0.25, 1, 0.5, 1);
+  }
+
+  72% {
+    transform: translate3d(0.01em, 0.01em, 0) rotate(1deg) scale(0.995);
+    animation-timing-function: cubic-bezier(0.25, 1, 0.5, 1);
   }
 
   100% {
@@ -785,19 +971,28 @@
 
 @keyframes hero-toast-lower {
   0% {
-    transform: translate3d(0.14em, 0.26em, 0) rotate(2deg);
+    transform: translate3d(0.08em, 0.04em, 0) rotate(5deg);
+    animation-timing-function: cubic-bezier(0.32, 0, 0.22, 1);
   }
 
-  34% {
-    transform: translate3d(0.05em, 0.1em, 0) rotate(0.5deg);
+  22% {
+    transform: translate3d(0.14em, 0.08em, 0) rotate(8deg);
+    animation-timing-function: cubic-bezier(0.12, 0.82, 0.25, 1);
   }
 
-  48% {
-    transform: translate3d(-0.015em, -0.03em, 0) rotate(-2deg) scale(0.985);
+  44% {
+    transform: translate3d(-0.04em, -0.05em, 0) rotate(-11deg) scale(0.97);
+    animation-timing-function: cubic-bezier(0.16, 0.9, 0.3, 1.25);
   }
 
-  60% {
-    transform: translate3d(0.015em, 0.025em, 0) rotate(0.4deg) scale(1.01);
+  56% {
+    transform: translate3d(0.03em, 0.02em, 0) rotate(3deg) scale(1.012);
+    animation-timing-function: cubic-bezier(0.25, 1, 0.5, 1);
+  }
+
+  72% {
+    transform: translate3d(-0.01em, -0.01em, 0) rotate(-1deg) scale(0.995);
+    animation-timing-function: cubic-bezier(0.25, 1, 0.5, 1);
   }
 
   100% {
@@ -805,17 +1000,77 @@
   }
 }
 
-@keyframes hero-wash-from-right {
+@keyframes hero-glint-core-pulse {
   0%,
-  38% {
-    background-position: 0% 50%;
+  40% {
+    transform: translate(-50%, -50%) scale(0);
+    opacity: 0;
+  }
+
+  44% {
+    /* Precise, instantaneous optical contact ping */
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
   }
 
   48% {
+    /* Rapid exponential decay */
+    transform: translate(-50%, -50%) scale(0.72);
+    opacity: 0.45;
+  }
+
+  53% {
+    /* Extinguished within ~80ms */
+    transform: translate(-50%, -50%) scale(0.18);
+    opacity: 0;
+  }
+
+  100% {
+    transform: translate(-50%, -50%) scale(0);
+    opacity: 0;
+  }
+}
+
+@keyframes hero-glint-flare-pulse {
+  0%,
+  41% {
+    transform: translate(-50%, -50%) scaleX(0);
+    opacity: 0;
+  }
+
+  44% {
+    /* Delicate anamorphic streak along the glass rim contact */
+    transform: translate(-50%, -50%) scaleX(1);
+    opacity: 0.85;
+  }
+
+  48% {
+    transform: translate(-50%, -50%) scaleX(1.2);
+    opacity: 0.3;
+  }
+
+  53% {
+    transform: translate(-50%, -50%) scaleX(1.35);
+    opacity: 0;
+  }
+
+  100% {
+    transform: translate(-50%, -50%) scaleX(0);
+    opacity: 0;
+  }
+}
+
+@keyframes hero-wash-from-right {
+  0%,
+  22% {
+    background-position: 0% 50%;
+  }
+
+  44% {
     background-position: 100% 50%;
   }
 
-  72%,
+  68%,
   100% {
     background-position: 0% 50%;
   }
@@ -823,15 +1078,15 @@
 
 @keyframes hero-wash-from-left {
   0%,
-  38% {
+  22% {
     background-position: 100% 50%;
   }
 
-  48% {
+  44% {
     background-position: 0% 50%;
   }
 
-  72%,
+  68%,
   100% {
     background-position: 100% 50%;
   }
@@ -839,15 +1094,15 @@
 
 @keyframes hero-wash-from-bottom {
   0%,
-  38% {
+  22% {
     background-position: 50% 0%;
   }
 
-  48% {
+  44% {
     background-position: 50% 100%;
   }
 
-  72%,
+  68%,
   100% {
     background-position: 50% 0%;
   }
@@ -855,15 +1110,15 @@
 
 @keyframes hero-wash-from-top {
   0%,
-  38% {
+  22% {
     background-position: 50% 100%;
   }
 
-  48% {
+  44% {
     background-position: 50% 0%;
   }
 
-  72%,
+  68%,
   100% {
     background-position: 50% 100%;
   }
@@ -871,25 +1126,68 @@
 
 @keyframes hero-toast-rule {
   0%,
-  38% {
-    transform: scaleX(0.12);
+  36% {
+    transform: scaleX(0.08);
     opacity: 0;
+    filter: drop-shadow(0 0 0 transparent);
   }
 
-  52% {
-    transform: scaleX(1.08);
+  44% {
+    transform: scaleX(1.12);
     opacity: 1;
+    filter: drop-shadow(0 0 8px rgba(242, 207, 121, 0.6));
   }
 
-  64% {
-    transform: scaleX(0.94);
+  58% {
+    transform: scaleX(0.98);
     opacity: 1;
+    filter: drop-shadow(0 0 3px rgba(242, 207, 121, 0.2));
   }
 
   100% {
     transform: none;
     opacity: 1;
+    filter: none;
   }
+}
+
+/* Viewport scroll entrance transitions */
+@media (prefers-reduced-motion: no-preference) {
+  .experience-lead,
+  .feature-row,
+  .games-header,
+  .game-card,
+  .download-card {
+    opacity: 0;
+    transform: translateY(22px);
+    transition: opacity 600ms cubic-bezier(0.16, 1, 0.3, 1), transform 600ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .is-in-view .experience-lead,
+  .is-in-view.experience-lead,
+  .is-in-view .feature-row,
+  .is-in-view.feature-row,
+  .is-in-view .games-header,
+  .is-in-view.games-header,
+  .is-in-view .game-card,
+  .is-in-view.game-card,
+  .is-in-view .download-card,
+  .is-in-view.download-card {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .feature-list .feature-row:nth-child(1) { transition-delay: 60ms; }
+  .feature-list .feature-row:nth-child(2) { transition-delay: 130ms; }
+  .feature-list .feature-row:nth-child(3) { transition-delay: 200ms; }
+  .feature-list .feature-row:nth-child(4) { transition-delay: 270ms; }
+
+  .games-grid .game-card:nth-child(1) { transition-delay: 40ms; }
+  .games-grid .game-card:nth-child(2) { transition-delay: 90ms; }
+  .games-grid .game-card:nth-child(3) { transition-delay: 140ms; }
+  .games-grid .game-card:nth-child(4) { transition-delay: 190ms; }
+  .games-grid .game-card:nth-child(5) { transition-delay: 240ms; }
+  .games-grid .game-card:nth-child(6) { transition-delay: 290ms; }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -898,6 +1196,11 @@
   }
 
   .hero-clink__wash {
+    display: none;
+  }
+
+  .hero-clink__spark-emitter,
+  .hero-clink__glint {
     display: none;
   }
 }
