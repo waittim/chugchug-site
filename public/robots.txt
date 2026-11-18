@@ -1,3 +1,7 @@
 User-agent: *
 Allow: /
+
+# Summary for language-model and agent crawlers
+# https://chugchug.app/llms.txt
+
 Sitemap: https://chugchug.app/sitemap.xml

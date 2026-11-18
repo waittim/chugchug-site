@@ -1,0 +1,34 @@
+# ChugChug
+
+> ChugChug（吨吨吨） is an iOS-only party drinking-game app. Rules and props are built in. It plays offline, has no ads, and does not require an account.
+
+App Store: https://apps.apple.com/us/app/chugchug-party-game/id6758532049
+
+The app is iOS only. There is no Android version.
+
+## Pages
+
+- [English home](https://chugchug.app/): product overview, screenshots, and the 15 games.
+- [简体中文](https://chugchug.app/zh/): 吨吨吨首页。
+- [繁體中文](https://chugchug.app/zh-Hant/): 繁體中文首頁。
+- [Privacy policy](https://chugchug.app/privacy.html): local play, no account, no personal data collection.
+- [隐私政策](https://chugchug.app/zh/privacy.html)
+- [隱私政策](https://chugchug.app/zh-Hant/privacy.html)
+
+## Games
+
+- Dice: Hold to roll for a number, an order, or a penalty
+- Undercover: Deception and deduction to hunt down the outsider
+- Playing Cards: Universal standard deck ready for any drinking rules
+- Chug Cards: Rapid-fire cards with instant social penalties
+- Six Ones: Fast roll-off: clear your dice or pass them on
+- Lucky: Press, roll, match poker dice, and turn the tables
+- Perudo: Roll, bid in turn, and decide when to call the bluff
+- Truth or Dare: Spicy confessions and daring feats to break the ice
+- Finger Picker: Multi-touch finger picker to select the next player
+- King's Game: The King commands, everyone else must obey
+- Heads Up: Timed acting and hilarious high-energy guessing
+- Most Likely To: Count down and point: most votes takes the penalty
+- Wavelength: Tune into the exact same mental frequency
+- 36 Questions: Aron’s 36 questions to connect on a deeper level
+- Angry Old Man: Tense turn-taking: poke the board without getting caught

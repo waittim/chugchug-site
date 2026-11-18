@@ -7,11 +7,12 @@ import AmbientLights from './components/AmbientLights.jsx';
 import { SUPPORT_EMAIL } from './contact.js';
 import { PRIVACY_COPY } from './content/privacy.js';
 import { getInitialLang, getLocalizedPath } from './i18n.js';
+import { PRIVACY_META } from './seo.js';
 import './nunito-font.css';
 import './index.css';
 
-const PrivacyPage = () => {
-  const [lang] = useState(getInitialLang);
+const PrivacyPage = ({ initialLang } = {}) => {
+  const [lang] = useState(() => initialLang || getInitialLang());
 
   const current = PRIVACY_COPY[lang] ?? PRIVACY_COPY.en;
   const brand = lang === 'zh' ? '吨吨吨 · ChugChug' : 'ChugChug';
@@ -19,15 +20,7 @@ const PrivacyPage = () => {
 
   useEffect(() => {
     if (typeof document === 'undefined') return;
-    if (lang === 'zh') {
-      document.title = '隐私政策 - 吨吨吨';
-      return;
-    }
-    if (lang === 'zh-Hant') {
-      document.title = '隱私政策 - ChugChug';
-      return;
-    }
-    document.title = 'Privacy Policy - ChugChug';
+    document.title = (PRIVACY_META[lang] || PRIVACY_META.en).title;
   }, [lang]);
 
   return (
@@ -144,19 +137,17 @@ const PrivacyPage = () => {
   );
 };
 
-const container = document.getElementById('root');
+export default PrivacyPage;
 
-if (container?.hasChildNodes()) {
-  hydrateRoot(
-    container,
-    <React.StrictMode>
-      <PrivacyPage />
-    </React.StrictMode>,
-  );
-} else {
-  createRoot(container).render(
-    <React.StrictMode>
-      <PrivacyPage />
-    </React.StrictMode>,
-  );
+if (typeof document !== 'undefined') {
+  const container = document.getElementById('root');
+  if (container) {
+    const tree = (
+      <React.StrictMode>
+        <PrivacyPage />
+      </React.StrictMode>
+    );
+    if (container.hasChildNodes()) hydrateRoot(container, tree);
+    else createRoot(container).render(tree);
+  }
 }

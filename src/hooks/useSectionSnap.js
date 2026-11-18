@@ -14,10 +14,8 @@ export function chooseSnapTarget({ y, dir = 0, vh, points, gamesTop = null, down
   const first = points[0];
   const last = points[points.length - 1];
   if (y < first - 1) return Math.abs(first - y) < 2 ? null : first;
-  if (y > last) {
-    if (y - last <= vh * 0.2) return Math.abs(y - last) < 2 ? null : last;
-    return null;
-  }
+  // Past the download screen: the footer lives here and must stay where it was scrolled.
+  if (y > last) return null;
 
   let prev = first;
   let next = last;

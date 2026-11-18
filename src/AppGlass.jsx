@@ -1,4 +1,4 @@
-import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { animate } from 'motion';
 import { useReducedMotion } from 'motion/react';
 import { ChevronLeft, ChevronRight, Clock3 } from 'lucide-react';
@@ -16,6 +16,7 @@ import { SUPPORT_EMAIL } from './contact.js';
 import { GAMES } from './content/games.jsx';
 import { HOME_COPY } from './content/home.js';
 import { getInitialLang, getLocalizedPath } from './i18n.js';
+import { HOME_META } from './seo.js';
 import { APP_STORE_URL, ITMS_APP_STORE_URL, isInAppBrowser } from './utils/inAppBrowser.js';
 
 const DRAG_THRESHOLD = 10;
@@ -278,9 +279,8 @@ const GameCard = ({
 
   useEffect(() => () => cancelSpring(), []);
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     applyRotate(rotateRef.current, 0);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const addSample = (x) => {
@@ -1055,8 +1055,8 @@ const ScreensSection = ({ screenshots, currentText, baseUrl, reduceMotion = fals
   );
 };
 
-const App = () => {
-  const [lang] = useState(getInitialLang);
+const App = ({ initialLang } = {}) => {
+  const [lang] = useState(() => initialLang || getInitialLang());
   const [flippedIds, setFlippedIds] = useState(() => new Set());
   const [showInAppGuide, setShowInAppGuide] = useState(false);
   const reduceMotion = useReducedMotion();
@@ -1067,12 +1067,7 @@ const App = () => {
   const baseUrl = import.meta.env.BASE_URL || '/';
 
   useEffect(() => {
-    document.title =
-      lang === 'zh'
-        ? '吨吨吨 - 派对游戏 App'
-        : lang === 'zh-Hant'
-          ? 'ChugChug - 派對遊戲 App'
-          : 'ChugChug - Party Game App';
+    document.title = (HOME_META[lang] || HOME_META.en).title;
   }, [lang]);
 
   const screenshots = useMemo(() => {

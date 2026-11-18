@@ -31,16 +31,34 @@ export const getUrlLang = () => {
   return normalizeLang(new URLSearchParams(window.location.search).get('lang'));
 };
 
+export const getPathLang = () => {
+  if (typeof window === 'undefined') return null;
+  const base = (import.meta.env?.BASE_URL || '/').replace(/\/$/, '');
+  let path = window.location.pathname;
+  if (base && path.startsWith(base)) path = path.slice(base.length) || '/';
+  if (!path.startsWith('/')) path = `/${path}`;
+  if (path === '/zh-Hant' || path.startsWith('/zh-Hant/')) return 'zh-Hant';
+  if (path === '/zh' || path.startsWith('/zh/')) return 'zh';
+  return null;
+};
+
+export const getDocumentLang = () => {
+  if (typeof document === 'undefined') return null;
+  return normalizeLang(document.documentElement.getAttribute('data-lang'));
+};
+
 export const getInitialLang = () => {
   if (typeof window !== 'undefined') {
     const forced = normalizeLang(window.__LANG__);
     if (forced) return forced;
+    const fromUrl = getUrlLang();
+    if (fromUrl) return fromUrl;
+    const fromPath = getPathLang();
+    if (fromPath) return fromPath;
   }
 
-  if (typeof document !== 'undefined') {
-    const htmlLang = normalizeLang(document.documentElement.lang);
-    if (htmlLang) return htmlLang;
-  }
+  const fromDocument = getDocumentLang();
+  if (fromDocument) return fromDocument;
 
   const preferred = getNavigatorLang();
   if (preferred) return preferred;
@@ -54,10 +72,17 @@ export const toHtmlLang = (lang) => {
   return DEFAULT_LANG;
 };
 
+const LOCALE_PREFIX = {
+  en: '',
+  zh: 'zh/',
+  'zh-Hant': 'zh-Hant/',
+};
+
 export const getLocalizedPath = (page = '', lang = DEFAULT_LANG) => {
   const baseUrl = (typeof import.meta !== 'undefined' && import.meta.env?.BASE_URL) || '/';
+  const prefix = LOCALE_PREFIX[lang] ?? '';
   const cleanPage = page.startsWith('/') ? page.slice(1) : page;
-  return `${baseUrl}${cleanPage}?lang=${lang}`;
+  return `${baseUrl}${prefix}${cleanPage}`;
 };
 
 export const initDocumentLang = () => {
@@ -65,8 +90,9 @@ export const initDocumentLang = () => {
     return DEFAULT_LANG;
   }
 
-  const lang = getUrlLang() || getNavigatorLang() || DEFAULT_LANG;
+  const lang = getUrlLang() || getPathLang() || getDocumentLang() || getNavigatorLang() || DEFAULT_LANG;
   window.__LANG__ = lang;
   document.documentElement.lang = toHtmlLang(lang);
+  document.documentElement.setAttribute('data-lang', lang);
   return lang;
 };

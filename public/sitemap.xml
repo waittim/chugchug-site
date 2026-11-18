@@ -1,21 +1,51 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>https://chugchug.app/?lang=en</loc>
+    <loc>https://chugchug.app/</loc>
+    <lastmod>2026-11-18</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://chugchug.app/" />
+    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://chugchug.app/zh/" />
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://chugchug.app/zh-Hant/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://chugchug.app/" />
   </url>
   <url>
-    <loc>https://chugchug.app/privacy.html?lang=en</loc>
+    <loc>https://chugchug.app/zh/</loc>
+    <lastmod>2026-11-18</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://chugchug.app/" />
+    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://chugchug.app/zh/" />
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://chugchug.app/zh-Hant/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://chugchug.app/" />
   </url>
   <url>
-    <loc>https://chugchug.app/?lang=zh</loc>
+    <loc>https://chugchug.app/zh-Hant/</loc>
+    <lastmod>2026-11-18</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://chugchug.app/" />
+    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://chugchug.app/zh/" />
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://chugchug.app/zh-Hant/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://chugchug.app/" />
   </url>
   <url>
-    <loc>https://chugchug.app/?lang=zh-Hant</loc>
+    <loc>https://chugchug.app/privacy.html</loc>
+    <lastmod>2026-11-18</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://chugchug.app/privacy.html" />
+    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://chugchug.app/zh/privacy.html" />
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://chugchug.app/zh-Hant/privacy.html" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://chugchug.app/privacy.html" />
   </url>
   <url>
-    <loc>https://chugchug.app/privacy.html?lang=zh</loc>
+    <loc>https://chugchug.app/zh/privacy.html</loc>
+    <lastmod>2026-11-18</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://chugchug.app/privacy.html" />
+    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://chugchug.app/zh/privacy.html" />
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://chugchug.app/zh-Hant/privacy.html" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://chugchug.app/privacy.html" />
   </url>
   <url>
-    <loc>https://chugchug.app/privacy.html?lang=zh-Hant</loc>
+    <loc>https://chugchug.app/zh-Hant/privacy.html</loc>
+    <lastmod>2026-11-18</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://chugchug.app/privacy.html" />
+    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://chugchug.app/zh/privacy.html" />
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://chugchug.app/zh-Hant/privacy.html" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://chugchug.app/privacy.html" />
   </url>
 </urlset>

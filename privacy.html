@@ -1,18 +1,47 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-lang="en">
   <head>
     <meta charset="UTF-8" />
+    <script>
+      (function () {
+        var path = location.pathname;
+        var privacy = /privacy\.html$/.test(path);
+        var page = privacy ? 'privacy.html' : '';
+        function prefix(code) {
+          var value = String(code || '').toLowerCase();
+          if (value.indexOf('zh-hant') === 0 || value.indexOf('zh-tw') === 0 || value.indexOf('zh-hk') === 0 || value.indexOf('zh-mo') === 0) return '/zh-Hant/';
+          if (value.indexOf('zh') === 0) return '/zh/';
+          return '/';
+        }
+        function here() {
+          if (privacy) return path;
+          return path.endsWith('/') ? path : path + '/';
+        }
+        var queryLang = new URLSearchParams(location.search).get('lang');
+        if (queryLang) {
+          var target = prefix(queryLang) + page;
+          if (here() !== target) location.replace(target);
+          return;
+        }
+        if (/\/zh-Hant(\/|$)/.test(path) || /\/zh(\/|$)/.test(path)) return;
+        var nav = ((navigator.languages && navigator.languages[0]) || navigator.language || '').toLowerCase();
+        var dest = prefix(nav);
+        if (dest === '/') return;
+        location.replace(dest + page);
+      })();
+    </script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#09090a" />
     <meta
       name="description"
-      content="Privacy policy for ChugChug, the party drinking game app."
+      content="Privacy policy for ChugChug, the party drinking game app. Local play, no account, no personal data collection."
     />
-    <link rel="canonical" href="https://chugchug.app/privacy.html?lang=en" />
-    <link rel="alternate" hreflang="en" href="https://chugchug.app/privacy.html?lang=en" />
-    <link rel="alternate" hreflang="zh-Hans" href="https://chugchug.app/privacy.html?lang=zh" />
-    <link rel="alternate" hreflang="zh-Hant" href="https://chugchug.app/privacy.html?lang=zh-Hant" />
-    <link rel="alternate" hreflang="x-default" href="https://chugchug.app/privacy.html?lang=en" />
+    <link rel="canonical" href="https://chugchug.app/privacy.html" />
+    <link rel="alternate" hreflang="en" href="https://chugchug.app/privacy.html" />
+    <link rel="alternate" hreflang="zh-Hans" href="https://chugchug.app/zh/privacy.html" />
+    <link rel="alternate" hreflang="zh-Hant" href="https://chugchug.app/zh-Hant/privacy.html" />
+    <link rel="alternate" hreflang="x-default" href="https://chugchug.app/privacy.html" />
+    <link rel="alternate" type="text/plain" href="/llms.txt" title="LLM site summary" />
 
     <meta property="og:title" content="Privacy Policy - ChugChug" />
     <meta
@@ -22,7 +51,7 @@
     <meta property="og:image" content="https://chugchug.app/og-image.jpg?v=20261112" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
-    <meta property="og:url" content="https://chugchug.app/privacy.html?lang=en" />
+    <meta property="og:url" content="https://chugchug.app/privacy.html" />
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="ChugChug" />
     <meta property="og:locale" content="en_US" />
@@ -56,6 +85,9 @@
       gtag('config', 'G-6H0BRJSW5S');
     </script>
 
+    <script type="application/ld+json" id="structured-data">
+      {"@context":"https://schema.org","@type":"WebPage","name":"Privacy Policy - ChugChug","url":"https://chugchug.app/privacy.html","inLanguage":"en"}
+    </script>
     <title>Privacy Policy - ChugChug</title>
     <script type="module">
       import { initDocumentLang } from '/src/i18n.js';
