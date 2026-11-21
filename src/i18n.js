@@ -47,6 +47,24 @@ export const getDocumentLang = () => {
   return normalizeLang(document.documentElement.getAttribute('data-lang'));
 };
 
+export const getSavedLang = () => {
+  if (typeof window === 'undefined') return null;
+  try {
+    return normalizeLang(localStorage.getItem('preferred_lang'));
+  } catch (_) {
+    return null;
+  }
+};
+
+export const setSavedLang = (lang) => {
+  if (typeof window === 'undefined') return;
+  try {
+    if (lang) {
+      localStorage.setItem('preferred_lang', lang);
+    }
+  } catch (_) {}
+};
+
 export const getInitialLang = () => {
   if (typeof window !== 'undefined') {
     const forced = normalizeLang(window.__LANG__);
@@ -59,6 +77,9 @@ export const getInitialLang = () => {
 
   const fromDocument = getDocumentLang();
   if (fromDocument) return fromDocument;
+
+  const fromSaved = getSavedLang();
+  if (fromSaved) return fromSaved;
 
   const preferred = getNavigatorLang();
   if (preferred) return preferred;
@@ -85,12 +106,20 @@ export const getLocalizedPath = (page = '', lang = DEFAULT_LANG) => {
   return `${baseUrl}${prefix}${cleanPage}`;
 };
 
+export const getLanguageHref = (page = '', lang = DEFAULT_LANG) => {
+  const baseUrl = (typeof import.meta !== 'undefined' && import.meta.env?.BASE_URL) || '/';
+  const prefix = LOCALE_PREFIX[lang] ?? '';
+  const cleanPage = page.startsWith('/') ? page.slice(1) : page;
+  const suffix = lang === 'en' ? '?lang=en' : '';
+  return `${baseUrl}${prefix}${cleanPage}${suffix}`;
+};
+
 export const initDocumentLang = () => {
   if (typeof window === 'undefined' || typeof document === 'undefined') {
     return DEFAULT_LANG;
   }
 
-  const lang = getUrlLang() || getPathLang() || getDocumentLang() || getNavigatorLang() || DEFAULT_LANG;
+  const lang = getUrlLang() || getPathLang() || getDocumentLang() || getSavedLang() || getNavigatorLang() || DEFAULT_LANG;
   window.__LANG__ = lang;
   document.documentElement.lang = toHtmlLang(lang);
   document.documentElement.setAttribute('data-lang', lang);

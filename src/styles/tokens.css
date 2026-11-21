@@ -6,14 +6,14 @@ html {
 
 body {
   margin: 0;
-  background: var(--canvas, #09090a);
+  background: var(--canvas, #0D0C10);
   color: var(--paper, #f4f1eb);
   scroll-behavior: auto;
 }
 
 #root {
   min-height: 100%;
-  background: var(--canvas, #09090a);
+  background: var(--canvas, #0D0C10);
 }
 
 .no-scrollbar {
@@ -31,8 +31,8 @@ body {
     Arial, sans-serif;
   font-synthesis: none;
   font-optical-sizing: auto;
-  --canvas: #09090a;
-  --canvas-deep: #080809;
+  --canvas: #0D0C10;
+  --canvas-deep: #0a090d;
   --paper: #f4f1eb;
   --muted: rgba(244, 241, 235, 0.68);
   --muted-strong: rgba(244, 241, 235, 0.82);

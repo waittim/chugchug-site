@@ -15,7 +15,7 @@ import { useSectionSnap } from './hooks/useSectionSnap.js';
 import { SUPPORT_EMAIL } from './contact.js';
 import { GAMES } from './content/games.jsx';
 import { HOME_COPY } from './content/home.js';
-import { getInitialLang, getLocalizedPath } from './i18n.js';
+import { getInitialLang, getLanguageHref, getLocalizedPath } from './i18n.js';
 import { HOME_META } from './seo.js';
 import { APP_STORE_URL, ITMS_APP_STORE_URL, isInAppBrowser } from './utils/inAppBrowser.js';
 
@@ -529,6 +529,13 @@ const ScreensSection = ({ screenshots, currentText, baseUrl, reduceMotion = fals
     measureLayout();
     window.addEventListener('resize', measureLayout);
 
+    let resizeObserver = null;
+    if (typeof ResizeObserver !== 'undefined') {
+      resizeObserver = new ResizeObserver(() => measureLayout());
+      const primary = marquee.querySelector('.screens-group:not(.screens-group--clone)');
+      if (primary) resizeObserver.observe(primary);
+    }
+
     const setWillChange = (enabled) => {
       marquee.style.willChange = enabled ? 'transform' : 'auto';
     };
@@ -919,6 +926,7 @@ const ScreensSection = ({ screenshots, currentText, baseUrl, reduceMotion = fals
 
     return () => {
       window.removeEventListener('resize', measureLayout);
+      resizeObserver?.disconnect();
       viewObserver?.disconnect();
       cancelSpring();
       stopCoast();
@@ -994,9 +1002,9 @@ const ScreensSection = ({ screenshots, currentText, baseUrl, reduceMotion = fals
                         width={SCREEN_WIDTH}
                         height={SCREEN_HEIGHT}
                         alt={isDuplicate ? '' : shot.alt}
-                        loading={isDuplicate || index > 2 ? 'lazy' : 'eager'}
+                        loading="eager"
                         decoding="async"
-                        fetchpriority={isDuplicate || index > 0 ? 'low' : 'high'}
+                        fetchpriority={index === 0 && !isDuplicate ? 'high' : 'auto'}
                         draggable={false}
                         onError={(event) => {
                           event.currentTarget.src = `${baseUrl}placeholder.svg`;
@@ -1161,7 +1169,7 @@ const App = ({ initialLang } = {}) => {
       <main id="main-content">
         <section id="top" data-snap className="hero-section">
           <div className="hero-copy">
-            <div className="hero-mark">
+            <div className={`hero-mark ${lang === 'zh' ? 'hero-mark--compact' : 'hero-mark--stack'}`}>
               <HeroWordmark
                 words={
                   lang === 'zh'
@@ -1282,7 +1290,7 @@ const App = ({ initialLang } = {}) => {
         copyright={currentText.footer_rights}
         footerLabel={currentText.a11y_footer}
         languageLabel={currentText.a11y_language}
-        languageHref={(code) => getLocalizedPath('', code)}
+        languageHref={(code) => getLanguageHref('', code)}
         links={[
           {
             href: getLocalizedPath('privacy.html', lang),

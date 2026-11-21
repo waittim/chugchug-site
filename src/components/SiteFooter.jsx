@@ -35,6 +35,11 @@ const SiteFooter = ({
           className={lang === code ? 'is-active' : ''}
           aria-current={lang === code ? 'page' : undefined}
           lang={code === 'zh' ? 'zh-Hans' : code}
+          onClick={() => {
+            try {
+              localStorage.setItem('preferred_lang', code);
+            } catch (_) {}
+          }}
         >
           {label}
         </a>

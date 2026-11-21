@@ -6,7 +6,7 @@ import SiteFooter from './components/SiteFooter.jsx';
 import AmbientLights from './components/AmbientLights.jsx';
 import { SUPPORT_EMAIL } from './contact.js';
 import { PRIVACY_COPY } from './content/privacy.js';
-import { getInitialLang, getLocalizedPath } from './i18n.js';
+import { getInitialLang, getLanguageHref, getLocalizedPath } from './i18n.js';
 import { PRIVACY_META } from './seo.js';
 import './nunito-font.css';
 import './index.css';
@@ -127,7 +127,7 @@ const PrivacyPage = ({ initialLang } = {}) => {
         brand={brand}
         footerLabel={current.a11y_footer}
         languageLabel={current.a11y_language}
-        languageHref={(code) => getLocalizedPath('privacy.html', code)}
+        languageHref={(code) => getLanguageHref('privacy.html', code)}
         links={[
           { href: homePath, label: current.back },
           { href: `mailto:${SUPPORT_EMAIL}`, label: current.footer_contact },

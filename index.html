@@ -19,11 +19,33 @@
         }
         var queryLang = new URLSearchParams(location.search).get('lang');
         if (queryLang) {
+          try { localStorage.setItem('preferred_lang', queryLang); } catch (e) {}
           var target = prefix(queryLang) + page;
-          if (here() !== target) location.replace(target);
+          if (here() !== target) {
+            location.replace(target);
+            return;
+          }
+          if (window.history && window.history.replaceState) {
+            window.history.replaceState(null, '', target);
+          }
           return;
         }
-        if (/\/zh-Hant(\/|$)/.test(path) || /\/zh(\/|$)/.test(path)) return;
+        if (/\/zh-Hant(\/|$)/.test(path)) {
+          try { localStorage.setItem('preferred_lang', 'zh-Hant'); } catch (e) {}
+          return;
+        }
+        if (/\/zh(\/|$)/.test(path)) {
+          try { localStorage.setItem('preferred_lang', 'zh'); } catch (e) {}
+          return;
+        }
+        var saved = null;
+        try { saved = localStorage.getItem('preferred_lang'); } catch (e) {}
+        if (saved) {
+          var savedDest = prefix(saved);
+          if (savedDest === '/') return;
+          location.replace(savedDest + page);
+          return;
+        }
         var nav = ((navigator.languages && navigator.languages[0]) || navigator.language || '').toLowerCase();
         var dest = prefix(nav);
         if (dest === '/') return;
@@ -71,6 +93,13 @@
     <link
       rel="preload"
       href="/fonts/nunito-800-latin.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link
+      rel="preload"
+      href="/fonts/nunito-900-latin.woff2"
       as="font"
       type="font/woff2"
       crossorigin

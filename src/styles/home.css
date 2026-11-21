@@ -104,7 +104,48 @@
 .hero-title--stack .hero-title__stack-wrapper {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  align-items: center;
+  gap: 0;
+  transform: skewX(-9deg);
+}
+
+.hero-title--stack {
+  font-family: "Nunito", "ChugChug Rounded", ui-rounded, system-ui, sans-serif;
+  font-weight: 900;
+  font-style: normal;
+  letter-spacing: -0.03em;
+  line-height: 0.82;
+  align-items: center;
+}
+
+.hero-title--stack .hero-clink--away {
+  position: relative;
+  left: -0.34em;
+  color: #F8F7F2;
+  transform-origin: 20% 90%;
+}
+
+.hero-title--stack .hero-clink--meet {
+  position: relative;
+  left: 0.34em;
+  margin-left: 0;
+  color: #FFD16A;
+  transform-origin: 80% 10%;
+}
+
+.hero-title--stack .hero-title__ghost {
+  margin-left: 0;
+  color: #FFD16A;
+}
+
+.hero-mark--stack .hero-rule {
+  width: clamp(3.8rem, 6.5vw, 5.2rem);
+  height: 3px;
+  border-radius: 999px;
+  margin-top: clamp(0.95rem, 1.8vw, 1.25rem);
+  background: #FFD16A;
+  position: relative;
+  left: 0.18em;
 }
 
 /* Glass contact glint on collision (refined optical ping) */
@@ -126,6 +167,7 @@
 
 .hero-title--stack .hero-clink__glint,
 .hero-title--stack .hero-clink__spark-emitter {
+  position: absolute;
   top: 0;
   left: 2.8em;
 }
@@ -228,12 +270,14 @@
 }
 
 .hero-title--stack .hero-clink--away .hero-clink__wash {
+  --wash-color: #FFD16A;
   background-image: linear-gradient(to top, var(--wash-color) 0 46%, transparent 62%);
   background-size: 100% 320%;
   background-position: 50% 0%;
 }
 
 .hero-title--stack .hero-clink--meet .hero-clink__wash {
+  --wash-color: #F8F7F2;
   background-image: linear-gradient(to bottom, var(--wash-color) 0 46%, transparent 62%);
   background-size: 100% 320%;
   background-position: 50% 100%;
@@ -440,7 +484,7 @@
 
 .screens-group {
   --screen-gap: clamp(16px, 2vw, 28px);
-  padding-left: var(--screen-gap);
+  padding: 0;
   padding-right: var(--screen-gap);
   display: flex;
   align-items: center;
@@ -750,7 +794,7 @@
   display: grid;
   place-items: center;
   border-radius: 12px;
-  background: var(--canvas, #09090a);
+  background: var(--canvas, #0D0C10);
 }
 
 .qr-svg {
@@ -764,7 +808,7 @@
   width: 32px;
   height: 32px;
   border-radius: 50%;
-  background: var(--canvas, #09090a);
+  background: var(--canvas, #0D0C10);
   display: grid;
   place-items: center;
   color: var(--paper, #f4f1eb);
@@ -1236,8 +1280,12 @@
     line-height: 0.92;
   }
 
-  .hero-title__ghost {
+  .hero-title:not(.hero-title--stack) .hero-title__ghost {
     margin-left: 0.28em;
+  }
+
+  .hero-title--stack .hero-title__ghost {
+    margin-left: 0;
   }
 
   .hero-subtitle {
@@ -1257,6 +1305,8 @@
 
   .screens-group {
     --screen-gap: 14px;
+    padding: 0;
+    padding-right: var(--screen-gap);
   }
 
   .phone-frame {
