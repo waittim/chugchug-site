@@ -1,8 +1,8 @@
 .games-section {
+  scroll-snap-align: start;
+  scroll-snap-stop: normal;
   padding: clamp(96px, 12vw, 160px) 1.5rem clamp(72px, 8vw, 120px);
   box-sizing: border-box;
-  scroll-snap-align: start;
-  scroll-snap-stop: always;
 }
 
 .games-header {
@@ -377,9 +377,15 @@
   flex: 1;
   overflow: auto;
   white-space: pre-line;
-  color: rgba(244, 241, 235, 0.72);
-  font-size: clamp(12px, 1.05vw, 13px);
-  line-height: 1.5;
+  color: var(--muted-strong);
+  font-size: clamp(13px, 1.1vw, 14px);
+  line-height: 1.55;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.game-card__rules::-webkit-scrollbar {
+  display: none;
 }
 
 .game-card__return {
@@ -463,10 +469,11 @@
   }
 
   .game-card__rules {
-    font-size: 12px;
+    font-size: 13px;
+    line-height: 1.55;
   }
 
   .game-card__hint {
-    font-size: 11px;
+    font-size: 12px;
   }
 }

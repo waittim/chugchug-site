@@ -27,8 +27,8 @@
 
 .inapp-arrow-guide {
   position: absolute;
-  top: 14px;
-  right: 20px;
+  top: max(14px, calc(env(safe-area-inset-top, 0px) + 12px));
+  right: max(20px, calc(env(safe-area-inset-right, 0px) + 16px));
   z-index: 1000;
   pointer-events: none;
   animation: inapp-bounce 1.8s ease-in-out infinite;
@@ -257,7 +257,7 @@
   display: grid;
   place-items: center;
   padding: 2rem;
-  background: var(--canvas, #09090a);
+  background: var(--canvas, #0D0C10);
   color: var(--paper, #f4f1eb);
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
 }

@@ -12,12 +12,12 @@
       "canvas": {
         "role": "neutral",
         "displayName": "Night Canvas",
-        "tonalRamp": ["#050505", "#09090a", "#141416", "#1f1f22", "#2c2c30", "#4a4a50", "#8a8a92", "#f4f1eb"]
+        "tonalRamp": ["#08070a", "#0D0C10", "#141318", "#1f1d24", "#2c2a32", "#4a4752", "#8a8694", "#f4f1eb"]
       },
       "ambient-balance": {
         "role": "secondary",
-        "displayName": "Ambient Pink",
-        "tonalRamp": ["#2a1524", "#4a2540", "#6e3760", "#964f84", "#bc6ba8", "#d688c2", "#e5b0d6", "#f4d8ec"]
+        "displayName": "Ambient Rose Purple",
+        "tonalRamp": ["#2a1524", "#4a2540", "#6e3760", "#964f84", "#bc6ba8", "#d88bc5", "#e5b0d6", "#f4d8ec"]
       },
       "cta": {
         "role": "primary",

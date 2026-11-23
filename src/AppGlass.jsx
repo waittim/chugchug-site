@@ -11,7 +11,6 @@ import HeroWordmark from './components/HeroWordmark.jsx';
 import AppStoreQRCode from './components/AppStoreQRCode.jsx';
 import { usePressHandlers } from './hooks/usePressHandlers.js';
 import { useInView } from './hooks/useInView.js';
-import { useSectionSnap } from './hooks/useSectionSnap.js';
 import { SUPPORT_EMAIL } from './contact.js';
 import { GAMES } from './content/games.jsx';
 import { HOME_COPY } from './content/home.js';
@@ -974,7 +973,7 @@ const ScreensSection = ({ screenshots, currentText, baseUrl, reduceMotion = fals
   };
 
   return (
-    <section id="screens" data-snap className="screens-section">
+    <section id="screens" className="screens-section">
       <div
         className="screens-stage"
         role="region"
@@ -1068,7 +1067,6 @@ const App = ({ initialLang } = {}) => {
   const [flippedIds, setFlippedIds] = useState(() => new Set());
   const [showInAppGuide, setShowInAppGuide] = useState(false);
   const reduceMotion = useReducedMotion();
-  useSectionSnap();
   const currentText = HOME_COPY[lang] ?? HOME_COPY.en;
   const isChinese = lang === 'zh' || lang === 'zh-Hant';
   const brand = lang === 'zh' ? '吨吨吨 · ChugChug' : 'ChugChug';
@@ -1167,7 +1165,7 @@ const App = ({ initialLang } = {}) => {
       </SiteHeader>
 
       <main id="main-content">
-        <section id="top" data-snap className="hero-section">
+        <section id="top" className="hero-section">
           <div className="hero-copy">
             <div className={`hero-mark ${lang === 'zh' ? 'hero-mark--compact' : 'hero-mark--stack'}`}>
               <HeroWordmark
@@ -1198,7 +1196,7 @@ const App = ({ initialLang } = {}) => {
           reduceMotion={reduceMotion}
         />
 
-        <section id="experience" data-snap ref={expRef} className={`experience-section ${expInView ? 'is-in-view' : ''}`}>
+        <section id="experience" ref={expRef} className={`experience-section ${expInView ? 'is-in-view' : ''}`}>
           <div className="experience-layout">
             <header className="experience-lead">
               <h2>{currentText.highlights_title}</h2>
@@ -1217,7 +1215,7 @@ const App = ({ initialLang } = {}) => {
           </div>
         </section>
 
-        <section data-snap="games" ref={gamesRef} className={`games-section ${gamesInView ? 'is-in-view' : ''}`}>
+        <section ref={gamesRef} className={`games-section ${gamesInView ? 'is-in-view' : ''}`}>
           <header className="games-header">
             <h2>
               <span>{currentText.grid_title_prefix}</span>{' '}
@@ -1259,7 +1257,7 @@ const App = ({ initialLang } = {}) => {
           </div>
         </section>
 
-        <section id="download" data-snap="download" ref={downloadRef} className={`download-section ${downloadInView ? 'is-in-view' : ''}`}>
+        <section id="download" ref={downloadRef} className={`download-section ${downloadInView ? 'is-in-view' : ''}`}>
           <div className="download-card">
             <h2>{currentText.cta_title}</h2>
             <p className="download-card__lead">
@@ -1276,6 +1274,7 @@ const App = ({ initialLang } = {}) => {
               <AppStoreQRCode label={currentText.qr_prompt} />
             </div>
             <ul className="download-facts">
+              <li>{currentText.free_download}</li>
               <li>{currentText.feat_ios}</li>
               <li>{currentText.feat_ads}</li>
               <li>{currentText.feat_drunk}</li>

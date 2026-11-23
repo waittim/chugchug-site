@@ -1,7 +1,7 @@
 .site-nav {
   position: fixed;
   z-index: 100;
-  top: 1rem;
+  top: max(1rem, calc(env(safe-area-inset-top, 0px) + 0.75rem));
   left: 50%;
   width: min(calc(100% - 28px), 1180px);
   min-height: 54px;
@@ -85,10 +85,11 @@
 }
 
 .unified-footer {
+  scroll-snap-align: end;
+  scroll-snap-stop: normal;
   position: relative;
   width: min(calc(100% - 40px), 1120px);
   margin: 0 auto;
-  scroll-snap-align: none;
   padding: 18px 0 calc(24px + env(safe-area-inset-bottom, 0px));
   border-top: 1px solid var(--line);
   color: var(--muted);
@@ -181,7 +182,7 @@
 
 @media (max-width: 680px) {
   .site-nav {
-    top: 10px;
+    top: max(10px, calc(env(safe-area-inset-top, 0px) + 8px));
     width: calc(100% - 20px);
   }
 

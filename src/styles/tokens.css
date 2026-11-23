@@ -1,14 +1,20 @@
 html {
-  /* Resting positions are settled in useSectionSnap. Native proximity snapped unevenly. */
-  scroll-snap-type: none;
-  scroll-behavior: auto;
+  scroll-behavior: smooth;
+  scroll-snap-type: y mandatory;
+  background: var(--canvas, #0D0C10);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+    scroll-snap-type: none;
+  }
 }
 
 body {
   margin: 0;
   background: var(--canvas, #0D0C10);
   color: var(--paper, #f4f1eb);
-  scroll-behavior: auto;
 }
 
 #root {
@@ -100,5 +106,5 @@ button:focus-visible {
 
 ::selection {
   background: var(--gold);
-  color: #09090a;
+  color: var(--canvas, #0D0C10);
 }
