@@ -34,10 +34,11 @@ function applyDocument(template, { page, lang, body, jsonLd }) {
   const locale = LOCALES.find((item) => item.code === lang);
   const url = pageUrl(page === 'privacy' ? 'privacy.html' : '', lang);
   let html = template;
+  const pageAttr = page === 'privacy' ? 'data-page="privacy"' : 'data-page="home"';
   html = replaceTag(
     html,
-    /<html lang="[^"]*" data-lang="[^"]*">/,
-    `<html lang="${locale.htmlLang}" data-lang="${lang}">`,
+    /<html lang="[^"]*" data-lang="[^"]*"( data-page="[^"]*")?>/,
+    `<html lang="${locale.htmlLang}" data-lang="${lang}" ${pageAttr}>`,
   );
   html = replaceTag(html, /<title>[^<]*<\/title>/, `<title>${escapeAttr(meta.title)}</title>`);
   html = replaceTag(

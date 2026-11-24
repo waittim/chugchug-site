@@ -1,12 +1,19 @@
 html {
   scroll-behavior: smooth;
-  scroll-snap-type: y mandatory;
   background: var(--canvas, #0D0C10);
+}
+
+html:has(.site-shell),
+html[data-page="home"] {
+  scroll-snap-type: y mandatory;
 }
 
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
+  }
+  html:has(.site-shell),
+  html[data-page="home"] {
     scroll-snap-type: none;
   }
 }

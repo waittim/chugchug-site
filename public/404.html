@@ -1,0 +1,210 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#0D0C10" />
+    <title>404 - 页面未找到 · ChugChug</title>
+    <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <style>
+      :root {
+        color-scheme: dark;
+        --canvas: #0D0C10;
+        --paper: #f4f1eb;
+        --muted: rgba(244, 241, 235, 0.68);
+        --gold: #f2cf79;
+        --glass-tint: rgba(255, 255, 255, 0.08);
+        --glass-stroke: rgba(255, 255, 255, 0.12);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html, body {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+        background: var(--canvas);
+        color: var(--paper);
+        font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      body {
+        min-height: 100dvh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 24px;
+        position: relative;
+        overflow: hidden;
+      }
+
+      /* Tactile matte grain */
+      body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        z-index: 1;
+        pointer-events: none;
+        opacity: 0.024;
+        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+      }
+
+      /* Ambient glow lights */
+      .ambient-glow {
+        position: fixed;
+        inset: 0;
+        z-index: 0;
+        pointer-events: none;
+        overflow: hidden;
+      }
+
+      .ambient-light-primary {
+        position: absolute;
+        top: -15%;
+        right: -10%;
+        width: min(70vw, 680px);
+        height: min(70vw, 680px);
+        border-radius: 50%;
+        background: radial-gradient(circle at center, rgba(241, 183, 78, 0.28) 0%, rgba(241, 183, 78, 0) 70%);
+        filter: blur(60px);
+      }
+
+      .ambient-light-secondary {
+        position: absolute;
+        bottom: -15%;
+        left: -10%;
+        width: min(70vw, 680px);
+        height: min(70vw, 680px);
+        border-radius: 50%;
+        background: radial-gradient(circle at center, rgba(216, 139, 197, 0.24) 0%, rgba(216, 139, 197, 0) 70%);
+        filter: blur(60px);
+      }
+
+      .container {
+        position: relative;
+        z-index: 2;
+        max-width: 540px;
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .kicker {
+        color: var(--gold);
+        font-size: 13px;
+        font-weight: 700;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        margin: 0 0 12px;
+      }
+
+      h1 {
+        margin: 0 0 16px;
+        font-size: clamp(36px, 8vw, 54px);
+        font-weight: 700;
+        letter-spacing: -0.035em;
+        line-height: 1.08;
+      }
+
+      p {
+        margin: 0 0 32px;
+        color: var(--muted);
+        font-size: clamp(14px, 3.5vw, 16px);
+        line-height: 1.6;
+        text-wrap: balance;
+      }
+
+      .home-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 14px 28px;
+        border-radius: 999px;
+        background: rgba(242, 207, 121, 0.16);
+        border: 1px solid rgba(242, 207, 121, 0.35);
+        color: var(--paper);
+        text-decoration: none;
+        font-size: 15px;
+        font-weight: 600;
+        letter-spacing: 0.02em;
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        transition: transform 120ms ease, background 150ms ease, border-color 150ms ease;
+      }
+
+      .home-btn:hover {
+        background: rgba(242, 207, 121, 0.24);
+        border-color: rgba(242, 207, 121, 0.55);
+        transform: scale(1.02);
+      }
+
+      .home-btn:active {
+        transform: scale(0.98);
+      }
+
+      footer {
+        position: absolute;
+        bottom: max(20px, calc(env(safe-area-inset-bottom, 0px) + 12px));
+        z-index: 2;
+        color: var(--muted);
+        font-size: 12px;
+        letter-spacing: 0.02em;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="ambient-glow" aria-hidden="true">
+      <div class="ambient-light-primary"></div>
+      <div class="ambient-light-secondary"></div>
+    </div>
+
+    <main class="container">
+      <span class="kicker">404 · CHUGCHUG</span>
+      <h1 id="title">页面走丢了</h1>
+      <p id="desc">找不到你要访问的页面，酒局可能已经换场了。</p>
+      <a href="/" id="home-link" class="home-btn">返回主页</a>
+    </main>
+
+    <footer>
+      <span>© 2026 ChugChug</span>
+    </footer>
+
+    <script>
+      (function () {
+        var path = location.pathname || '';
+        var saved = null;
+        try { saved = localStorage.getItem('preferred_lang'); } catch (e) {}
+        var nav = ((navigator.languages && navigator.languages[0]) || navigator.language || '').toLowerCase();
+        var isHant = (saved === 'zh-Hant') || (path.indexOf('/zh-Hant') === 0) || (nav.indexOf('zh-tw') === 0) || (nav.indexOf('zh-hk') === 0) || (nav.indexOf('zh-mo') === 0);
+        var isHans = (saved === 'zh') || (path.indexOf('/zh') === 0) || (nav.indexOf('zh') === 0);
+        var isEn = !isHant && !isHans;
+
+        var homeHref = isHant ? '/zh-Hant/' : isHans ? '/zh/' : '/';
+        var homeBtn = document.getElementById('home-link');
+        var titleEl = document.getElementById('title');
+        var descEl = document.getElementById('desc');
+
+        if (homeBtn) homeBtn.href = homeHref;
+
+        if (isHant) {
+          document.title = '404 - 找不到頁面 · ChugChug';
+          if (titleEl) titleEl.textContent = '頁面走丟了';
+          if (descEl) descEl.textContent = '找不到你要造訪的頁面，酒局可能已經換場了。';
+          if (homeBtn) homeBtn.textContent = '返回主頁';
+        } else if (isEn) {
+          document.title = '404 - Page Not Found · ChugChug';
+          if (titleEl) titleEl.textContent = 'Page Not Found';
+          if (descEl) descEl.textContent = "The page you're looking for doesn't exist or has moved.";
+          if (homeBtn) homeBtn.textContent = 'Back to Home';
+        }
+      })();
+    </script>
+  </body>
+</html>

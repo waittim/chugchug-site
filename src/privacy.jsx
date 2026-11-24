@@ -48,11 +48,12 @@ const PrivacyPage = ({ initialLang } = {}) => {
           <header className="privacy-header">
             <p className="section-kicker">{current.kicker}</p>
             <h1>{current.title}</h1>
+            <p className="privacy-effective">{current.effective_date}</p>
             <p>{current.subtitle}</p>
           </header>
 
           <section className="privacy-content">
-            <article className="privacy-card">
+            <article id="collection" className="privacy-card">
               <h2>{current.s1}</h2>
               <p>{current.s1b}</p>
               <ul>
@@ -65,7 +66,7 @@ const PrivacyPage = ({ initialLang } = {}) => {
               <p>{current.s1c}</p>
             </article>
 
-            <article className="privacy-card">
+            <article id="permissions" className="privacy-card">
               <h2>{current.s2}</h2>
               <p>{current.s2b}</p>
               <ul>
@@ -82,27 +83,27 @@ const PrivacyPage = ({ initialLang } = {}) => {
               </ul>
             </article>
 
-            <article className="privacy-card">
+            <article id="third-party" className="privacy-card">
               <h2>{current.s3}</h2>
               <p>{current.s3b}</p>
             </article>
 
-            <article className="privacy-card">
+            <article id="children" className="privacy-card">
               <h2>{current.s4}</h2>
               <p>{current.s4b}</p>
             </article>
 
-            <article className="privacy-card">
+            <article id="security" className="privacy-card">
               <h2>{current.s5}</h2>
               <p>{current.s5b}</p>
             </article>
 
-            <article className="privacy-card">
+            <article id="changes" className="privacy-card">
               <h2>{current.s6}</h2>
               <p>{current.s6b}</p>
             </article>
 
-            <article className="privacy-card privacy-card--contact">
+            <article id="contact" className="privacy-card privacy-card--contact">
               <h2>{current.s7}</h2>
               <p>{current.s7b}</p>
               <ul>
